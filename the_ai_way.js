@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from "framer-motion";
 
+// Drive file id
+const DRIVE_ID = "1bWLkSMfXZ4AAtvuWk1sf_dmSVtQvA1aJ";
+const DRIVE_PRIMARY = `https://lh3.googleusercontent.com/d/${DRIVE_ID}=w1200`;
+const DRIVE_BACKUP  = `https://drive.google.com/uc?export=view&id=${DRIVE_ID}`;
+
+
 // This is the main App component that contains the entire website.
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   const icons = {
@@ -172,32 +178,31 @@ const getNextDayOfWeek = (dayIndices) => {
     }
   }
   
-  return closestDay ? closestDay.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' }) : '';
+  return closestDay ? `${closestDay.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}` : '';
 };
 
 // Utility function to get the date of the next alternate weekend
 const getNextAlternateWeekend = () => {
   const now = new Date();
+  const today = now.getDay(); // Sunday is 0
+  const daysUntilSaturday = (6 - today + 7) % 7;
   const nextSaturday = new Date(now);
-  const currentDay = now.getDay();
-  const daysUntilSaturday = (6 - currentDay + 7) % 7;
   nextSaturday.setDate(now.getDate() + daysUntilSaturday);
 
   // A simplified check to get the next alternate weekend. 
-  // It checks if the week is even or odd and adds 7 days if needed to be "alternate"
   const isCurrentWeekEven = Math.floor((nextSaturday.getTime() - new Date(nextSaturday.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7)) % 2 === 0;
 
-  if (isCurrentWeekEven) {
+  if (!isCurrentWeekEven) {
     nextSaturday.setDate(nextSaturday.getDate() + 7);
   }
-
+  
   const nextSunday = new Date(nextSaturday);
   nextSunday.setDate(nextSaturday.getDate() + 1);
 
   const start = nextSaturday.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
   const end = nextSunday.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
 
-  return `${start} - ${end}`;
+  return ` ${start} - ${end}`;
 };
 
 
@@ -801,64 +806,82 @@ const App = () => {
           </div>
         </div>
       </section>
-      
-{/* V. Meet Your Mentor (Mentors) */}
+    
+    
+{/* V. Meet The Mentor */}
 <motion.section
-  ref={sectionRefs.mentors}
+  ref={sectionRefs?.mentors}
   className="py-12 md:py-20 bg-gray-950"
   initial="hidden"
   whileInView="show"
-  viewport={{ once: true, amount: 0.2 }}
+  viewport={{ once: true, amount: 0.24 }}
 >
-  {/* Local animation styles */}
   <style>{`
-    @keyframes gradient-x { 
-      0%,100% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-    }
+    @keyframes gradient-x{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .animated-underline{position:relative;display:inline-block;padding-bottom:18px}
     .animated-underline::after{
-      content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px;
-      background: linear-gradient(90deg, #7c3aed, #22d3ee, #7c3aed);
-      background-size: 200% 100%;
-      animation: gradient-x 6s ease-in-out infinite;
-      border-radius: 9999px; opacity:.9;
+      content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+      background:linear-gradient(90deg,#7c3aed,#22d3ee,#7c3aed);
+      background-size:200% 100%;animation:gradient-x 6s ease-in-out infinite;border-radius:9999px;opacity:.9
     }
-    .animated-divider{
-      background: linear-gradient(180deg, rgba(124,58,237,.6), rgba(255,255,255,.12), rgba(34,211,238,.6));
-      background-size: 100% 200%;
-      animation: gradient-x 10s linear infinite;
-      opacity:.6;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .animated-underline::after, .animated-divider { animation: none; }
+    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .floaty{animation:floaty 7s ease-in-out infinite}
+    @media (prefers-reduced-motion: reduce){
+      .animated-underline::after{animation:none}
+      .floaty{animation:none}
     }
   `}</style>
 
   <div className="container mx-auto px-6 md:px-12">
+    {/* Heading */}
+    <motion.div
+      variants={{ hidden:{opacity:0,y:18}, show:{opacity:1,y:0,transition:{duration:.6}} }}
+      className="text-left"
+    >
+      <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight animated-underline mb-8 md:mb-12">
+        Meet The Mentor
+      </h2>
+      <p className="text-base md:text-lg text-gray-400 -mt-2 mb-8">
+        Learn from someone who has shipped analytics in the real world.
+      </p>
+    </motion.div>
+
+    {/* Two columns */}
     <motion.div
       className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start"
-      variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
+      variants={{ hidden:{opacity:0}, show:{opacity:1,transition:{staggerChildren:.08}} }}
     >
-      {/* Left column: title, intro, CTA */}
+      {/* LEFT: photo (circle) + name + intro + CTA */}
       <motion.div
+        variants={{ hidden:{opacity:0,y:16}, show:{opacity:1,y:0,transition:{duration:.55}} }}
         className="text-left"
-        variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
       >
-        <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight relative inline-block animated-underline">
-          Meet The Mentor
-        </h2>
-        <motion.p
-          className="text-base md:text-lg text-gray-400 mt-2 mb-6"
-          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-        >
-          Learn from someone who’s been in your shoes and shipped analytics in the real world.
-        </motion.p>
+        {/* Circular photo above the name */}
+        <div className="mb-5 md:mb-6 floaty">
+          <div className="relative inline-block">
+            {/* soft glow */}
+            <span className="absolute inset-0 rounded-full blur-xl opacity-30 bg-gradient-to-tr from-purple-500 to-cyan-400" />
+            {/* gradient ring */}
+            <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-purple-500 via-fuchsia-400 to-cyan-400">
+              <img
+                src={DRIVE_PRIMARY}
+                alt="Rwitapa Mitra"
+                referrerPolicy="no-referrer"
+                className="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover ring-1 ring-white/10 bg-gray-900"
+                onError={(e) => {
+                  if (e.currentTarget.src !== DRIVE_BACKUP) e.currentTarget.src = DRIVE_BACKUP;
+                }}
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
 
         <h3 className="text-xl md:text-2xl font-semibold text-white">Rwitapa Mitra</h3>
         <p className="text-gray-300 text-base md:text-lg mt-3 max-w-xl">
           Former Director of Analytics at Pilgrim with prior roles at PharmEasy, Flipkart, and Mu Sigma.
-          I build analytics systems that move KPIs, not slide decks—covering growth, retention, supply chain,
-          experimentation, and GenAI automation.
+          Builds analytics systems that move KPIs across growth, retention, supply chain, experimentation,
+          and practical GenAI automation.
         </p>
 
         <motion.button
@@ -871,10 +894,10 @@ const App = () => {
         </motion.button>
       </motion.div>
 
-      {/* Right column: credentials list (no image) */}
+      {/* RIGHT: credentials */}
       <motion.div
+        variants={{ hidden:{opacity:0,y:16}, show:{opacity:1,y:0,transition:{duration:.55}} }}
         className="text-left md:pl-6 relative"
-        variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
       >
         {/* animated divider on the left for desktop */}
         <span
@@ -883,23 +906,23 @@ const App = () => {
         />
         <motion.ul
           className="text-gray-300 text-base md:text-lg space-y-3"
-          variants={{ hidden: { opacity: 1 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
+          variants={{ hidden:{opacity:1}, show:{opacity:1,transition:{staggerChildren:.06}} }}
         >
           {[
-            "Spent 9+ years solving core business problems across growth, retention, supply chain, and P&L ownership.",
-            "Helped scale high-growth startups by turning analytics into action and measurable outcomes.",
+            "9+ years solving core business problems across growth, retention, supply chain, and P&L ownership.",
+            "Scaled high-growth startups by turning analytics into action with measurable outcomes.",
             "Winner of PharmEasy’s ₹5 lakh hackathon for building trust in Generics.",
-            "Recognized as the youngest and only female panelist at the Bharat Gen AI & Analytics Summit.",
-            "Mentor for Google’s Agentic AI Hackathon and Open Source Connect India 2025.",
-            "Founder of The AI Way — a learning community where business analysts master GenAI for real impact."
-          ].map((text, i) => (
+            "Youngest and only female panelist at Bharat Gen AI & Analytics Summit.",
+            "Mentor at Google’s Agentic AI Hackathon and Open Source Connect India 2025.",
+            "Founder of The AI Way, a learning community for practical GenAI in analytics."
+          ].map((t, i) => (
             <motion.li
               key={i}
               className="flex"
-              variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } }}
+              variants={{ hidden:{opacity:0,y:10}, show:{opacity:1,y:0,transition:{duration:.45}} }}
             >
               <span className="text-purple-400 font-semibold mr-2">•</span>
-              <span>{text}</span>
+              <span>{t}</span>
             </motion.li>
           ))}
         </motion.ul>
@@ -907,7 +930,6 @@ const App = () => {
     </motion.div>
   </div>
 </motion.section>
-
 
       {/* VII. Testimonials */}
       <section ref={sectionRefs.testimonials} className="py-16 md:py-24 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
