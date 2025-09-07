@@ -703,6 +703,29 @@ const App = () => {
     }
   ];
 
+  const whatYouLearnItems = [
+      {
+        icon: 'square-check',
+        title: 'Automate the boring stuff',
+        description: 'Free yourself from endless Excel updates and manual dashboards.'
+      },
+      {
+        icon: 'bolt',
+        title: 'AI fundamentals made practical',
+        description: 'Learn prompt engineering and agentic workflows through real business use cases.'
+      },
+      {
+        icon: 'check-circle',
+        title: 'Outcomes, not just concepts',
+        description: 'Graduate with SQL queries, no-code flows, and prompt libraries that actually work.'
+      },
+      {
+        icon: 'bar-chart',
+        title: 'Build credibility fast',
+        description: 'Use impact memos and automations as portfolio proof that hiring managers respect.'
+      }
+  ];
+
   const currentPageComponent = showCoursesPage ? (
     <CoursesPage onBack={() => setShowCoursesPage(false)} />
   ) : (
@@ -859,41 +882,6 @@ const App = () => {
           </div>
         </div>
       </section>
-
-      {/* IV. What You'll Learn (What you will get?) */}
-      <section ref={sectionRefs.whatYouGet} className="py-12 md:py-20 bg-gray-950">
-        <div className="container mx-auto px-6 md:px-12 text-center">
-          <h2 className="text-lg md:text-xl font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
-          <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
-            Learn how to free yourself from manual tasks and build credibility fast.
-          </p>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float">
-              <Icon name="square-check" size={32} className="text-purple-500 mb-4 mx-auto p-2 bg-gray-800 rounded-full w-fit" />
-              <h4 className="text-xl font-semibold text-white mb-2">Automate the boring stuff</h4>
-              <p className="text-gray-400">Free yourself from endless Excel updates and manual dashboards.</p>
-            </div>
-            <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float" style={{ animationDelay: '0.2s' }}>
-              <Icon name="bolt" size={32} className="text-purple-500 mb-4 mx-auto p-2 bg-gray-800 rounded-full w-fit" />
-              <h4 className="text-xl font-semibold text-white mb-2">AI fundamentals made practical</h4>
-              <p className="text-gray-400">Learn prompt engineering and agentic workflows through real business use cases.</p>
-            </div>
-            <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float" style={{ animationDelay: '0.4s' }}>
-              <Icon name="check-circle" size={32} className="text-purple-500 mb-4 mx-auto p-2 bg-gray-800 rounded-full w-fit" />
-              <h4 className="text-xl font-semibold text-white mb-2">Outcomes, not just concepts</h4>
-              <p className="text-gray-400">Graduate with SQL queries, no-code flows, and prompt libraries that actually work.</p>
-            </div>
-            <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float" style={{ animationDelay: '0.6s' }}>
-              <Icon name="bar-chart" size={32} className="text-purple-500 mb-4 mx-auto p-2 bg-gray-800 rounded-full w-fit" />
-              <h4 className="text-xl font-semibold text-white mb-2">Build credibility fast</h4>
-              <p className="text-gray-400">Use impact memos and automations as portfolio proof that hiring managers respect.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    
     
 {/* V. Meet The Mentor */}
 <motion.section
@@ -998,7 +986,7 @@ const App = () => {
   </div>
 </motion.section>
 
-      {/* VII. Testimonials */}
+      {/* VI. Testimonials */}
       <section ref={sectionRefs.testimonials} className="relative py-12 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden">
         <div className="animated-testimonials-bg" aria-hidden="true" />
         <div className="relative z-10 container mx-auto px-6 md:px-12">
@@ -1066,6 +1054,47 @@ const App = () => {
                 </button>
             </div>
           </div>
+        </div>
+      </section>
+
+       {/* VII. What You'll Learn */}
+      <section ref={sectionRefs.whatYouGet} className="py-12 md:py-20 bg-gray-950">
+        <div className="container mx-auto px-6 md:px-12 text-center">
+          <h2 className="text-lg md:text-xl font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
+          <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+            Learn how to free yourself from manual tasks and build credibility fast.
+          </p>
+
+          <motion.div 
+            className="flex flex-nowrap overflow-x-auto gap-6 pb-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {whatYouLearnItems.map((item, index) => (
+              <motion.div
+                key={index}
+                className="group relative flex-shrink-0 w-64 bg-gray-900 border border-gray-800 rounded-2xl p-6 text-left overflow-hidden transition-all duration-300"
+                variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0 }
+                }}
+                 whileHover={{ 
+                    y: -5,
+                    boxShadow: '0 0 25px rgba(168, 85, 247, 0.25)'
+                }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <div className="absolute -top-8 -right-8 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
+                <Icon name={item.icon} size={28} className="text-purple-500 mb-4" />
+                <h4 className="text-lg font-semibold text-white mb-2">{item.title}</h4>
+                <p className="text-sm text-gray-400">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
