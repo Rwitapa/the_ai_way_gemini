@@ -1,13 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Drive file id
-const DRIVE_ID = "1bWLkSMfXZ4AAtvuWk1sf_dmSVtQvA1aJ";
-const DRIVE_PRIMARY = `https://lh3.googleusercontent.com/d/${DRIVE_ID}=w1200`;
-const DRIVE_BACKUP  = `https://drive.google.com/uc?export=view&id=${DRIVE_ID}`;
-
-
-// This is the main App component that contains the entire website.
+// Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   const icons = {
     bolt: (
@@ -155,6 +149,7 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   return icons[name] || null;
 };
 
+// Payment and community links
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
 const SUPERSTAR_ACCELERATOR_URL = 'https://rzp.io/rzp/ubyT3MWl';
 
@@ -296,6 +291,7 @@ const courseData = {
   },
 };
 
+// Component for the dedicated courses page
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
 
@@ -418,11 +414,12 @@ const CoursesPage = ({ onBack }) => {
   );
 };
 
-
+// This is the main App component that contains the entire website.
 const App = () => {
   // State for the mobile menu's visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showCoursesPage, setShowCoursesPage] = useState(false);
+  const heroAnimationRef = useRef(null);
 
   // Refs for each section to enable smooth scrolling
   const sectionRefs = {
@@ -431,89 +428,136 @@ const App = () => {
     mentors: useRef(null),
     testimonials: useRef(null),
   };
-
-  // Ref for the canvas
-  const canvasRef = useRef(null);
-
-  // UseEffect to handle the canvas animation
+  
+  // Set document title on mount
   useEffect(() => {
-    try {
-      const canvas = canvasRef.current;
-      if (!canvas) {
-        return;
-      }
-      const ctx = canvas.getContext('2d');
-      let animationFrameId;
+    document.title = "The AI Way";
+  }, []);
 
-      const particles = [];
-      const numParticles = 250;
+  // UseEffect to handle the three.js hero animation
+  useEffect(() => {
+    let animationFrameId;
+    let renderer;
+    let scene;
+    let camera;
+    let particles;
+    let lines;
+    let points = [];
+    let isInitialized = false;
 
-      const resizeCanvas = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      };
+    // Dynamically load the three.js script
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+    script.async = true;
+    
+    const init = () => {
+        if(isInitialized) return;
+        const container = heroAnimationRef.current;
+        if (!container || typeof THREE === 'undefined') return;
+        
+        isInitialized = true;
 
-      class Particle {
-        constructor(x, y) {
-          this.x = x;
-          this.y = y;
-          this.size = Math.random() * 2 + 1;
-          this.speedX = Math.random() * 0.5 - 0.25;
-          this.speedY = Math.random() * 0.5 - 0.25;
-          this.color = `hsl(270, 80%, ${Math.random() * 30 + 60}%)`;
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 4000);
+        camera.position.z = 1000;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+      
+        points = [];
+        for (let i = 0; i < 150; i++) {
+            const point = new THREE.Vector3(
+              (Math.random() - 0.5) * 2000,
+              (Math.random() - 0.5) * 2000,
+              (Math.random() - 0.5) * 2000
+            );
+            point.velocity = new THREE.Vector3(
+              (Math.random() - 0.5) * 0.5,
+              (Math.random() - 0.5) * 0.5,
+              (Math.random() - 0.5) * 0.5
+            );
+            points.push(point);
         }
 
-        update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.PointsMaterial({ color: 0x8A2BE2, size: 4, transparent: true, opacity: 0.7 });
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
 
-          if (this.size > 0.2) this.size -= 0.01;
-        }
+        const lineGeometry = new THREE.BufferGeometry();
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
+        lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
 
-        draw() {
-          ctx.fillStyle = this.color;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+        window.addEventListener('resize', onWindowResize);
+        animate();
+    };
 
-      const init = () => {
-        particles.length = 0;
-        for (let i = 0; i < numParticles; i++) {
-          particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-        }
-      };
-
-      const animate = () => {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        for (let i = 0; i < particles.length; i++) {
-          particles[i].update();
-          particles[i].draw();
-
-          if (particles[i].size <= 0.2) {
-            particles.splice(i, 1);
-            particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-          }
-        }
-
+    const animate = () => {
         animationFrameId = requestAnimationFrame(animate);
-      };
+        if(!particles || !lines || !renderer || !scene || !camera) return;
 
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-      init();
-      animate();
+        const positions = particles.geometry.attributes.position.array;
+        const linePositions = [];
 
-      return () => {
-        cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('resize', resizeCanvas);
-      };
-    } catch (error) {
-      console.error("An error occurred during canvas animation setup:", error);
-    }
+        for (let i = 0; i < points.length; i++) {
+            const p = points[i];
+            p.add(p.velocity);
+
+            if (p.x < -1000 || p.x > 1000) p.velocity.x *= -1;
+            if (p.y < -1000 || p.y > 1000) p.velocity.y *= -1;
+            if (p.z < -1000 || p.z > 1000) p.velocity.z *= -1;
+
+            positions[i * 3] = p.x;
+            positions[i * 3 + 1] = p.y;
+            positions[i * 3 + 2] = p.z;
+        }
+
+        for (let i = 0; i < points.length; i++) {
+            for (let j = i + 1; j < points.length; j++) {
+                const p1 = points[i];
+                const p2 = points[j];
+                const dist = p1.distanceTo(p2);
+                if (dist < 150) {
+                    linePositions.push(p1.x, p1.y, p1.z);
+                    linePositions.push(p2.x, p2.y, p2.z);
+                }
+            }
+        }
+
+        lines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        particles.geometry.attributes.position.needsUpdate = true;
+        
+        renderer.render(scene, camera);
+    };
+
+    const onWindowResize = () => {
+        const container = heroAnimationRef.current;
+        if (!camera || !renderer || !container) return;
+        
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    };
+    
+    script.onload = init;
+    document.body.appendChild(script);
+
+    return () => {
+        if(animationFrameId) cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', onWindowResize);
+        const container = heroAnimationRef.current;
+        if (container && renderer && renderer.domElement) {
+           if(container.contains(renderer.domElement)){
+             container.removeChild(renderer.domElement);
+           }
+        }
+        if (document.body.contains(script)){
+            document.body.removeChild(script);
+        }
+    };
   }, []);
 
   const handleEnrollNow = (url) => {
@@ -626,25 +670,60 @@ const App = () => {
     },
   ];
 
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+
+  const handleNextTestimonial = () => {
+    setTestimonialIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+  };
+
+  const handlePrevTestimonial = () => {
+    setTestimonialIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
+  };
+
+  // Automatically cycle through testimonials
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNextTestimonial();
+    }, 3500); // Change testimonial every 3.5 seconds
+    return () => clearInterval(timer); // Cleanup the interval on component unmount
+  }, []);
+
+  const personas = [
+    {
+      icon: 'user',
+      text: 'Analysts (0-5 yrs) stuck in repetitive reporting.'
+    },
+    {
+      icon: 'book',
+      text: 'BI/Product/Data Analysts drowning in tools.'
+    },
+    {
+      icon: 'rocket',
+      text: 'Managers who want teams to deliver decisions.'
+    },
+    {
+      icon: 'user-check',
+      text: 'Professionals chasing promotions and influence.'
+    }
+  ];
+
   const currentPageComponent = showCoursesPage ? (
     <CoursesPage onBack={() => setShowCoursesPage(false)} />
   ) : (
     <>
       {/* I. Hero Section */}
-      <section className="relative overflow-hidden min-h-screen py-16 md:py-24 flex items-center bg-gray-950">
-        {/* Canvas Background */}
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-0"></canvas>
-        {/* Dark Overlay for Readability */}
+      <section className="relative overflow-hidden min-h-screen py-12 md:py-20 flex items-center bg-gray-950">
+        <div ref={heroAnimationRef} className="absolute inset-0 w-full h-full object-cover z-0" />
         <div className="absolute inset-0 z-10 bg-gray-950/70"></div>
 
         <div className="relative z-20 container mx-auto px-6 md:px-12 text-center max-w-5xl animate-fade-in">
-          <div className="mb-8 md:mb-12">
+          <div className="mb-6 md:mb-8">
             <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">Gen AI for Business Analysts</span>
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6 md:mb-8">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4 md:mb-6">
             Still stuck fixing reports? <span className="text-purple-400">Let AI make you your team's hero.</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 mb-10 md:mb-12 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-400 mb-8 md:mb-10 max-w-3xl mx-auto">
             Most analysts waste hours on manual dashboards and tool-hopping, only to stay invisible. The AI Way shows you how to use AI-code or no-code-to automate your work, prove ROI, and become the analyst your team can't live without.
           </p>
           <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6">
@@ -659,37 +738,49 @@ const App = () => {
       </section>
 
       {/* II. Who This Is For (Who is it for?) */}
-      <section className="py-16 md:py-24 bg-gray-950">
+       <section className="py-12 md:py-20 bg-gray-950">
         <div className="container mx-auto px-6 md:px-12 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-16">
-            You're ambitious, practical, and tired of being seen as a "report generator." You want clarity, speed, and visibility not another theory-heavy course that doesn't move the needle.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 text-left animate-fade-in">
-              <Icon name="user" size={28} className="text-purple-500 mb-4" />
-              <p className="text-gray-300 font-medium">Analysts (0-5 yrs) stuck in repetitive reporting with little recognition.</p>
-            </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 text-left animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <Icon name="book" size={28} className="text-purple-500 mb-4" />
-              <p className="text-gray-300 font-medium">BI/Product/Data Analysts drowning in tools but unable to show ROI.</p>
-            </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 text-left animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Icon name="rocket" size={28} className="text-purple-500 mb-4" />
-              <p className="text-gray-300 font-medium">Managers who want their teams to deliver decisions, not just decks.</p>
-            </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 text-left animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <Icon name="user-check" size={28} className="text-purple-500 mb-4" />
-              <p className="text-gray-300 font-medium">Professionals chasing promotions, cross-functional influence, or job mobility.</p>
-            </div>
-          </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+                You're ambitious, practical, and tired of being seen as a "report generator." You want clarity, speed, and visibility.
+            </p>
+
+            <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={{
+                    visible: { transition: { staggerChildren: 0.15 } }
+                }}
+            >
+                {personas.map((persona, index) => (
+                    <motion.div
+                        key={index}
+                        className="group bg-gray-900 border border-gray-800 rounded-2xl p-6 text-left flex items-center space-x-4 transition-all duration-300"
+                        variants={{
+                            hidden: { opacity: 0, y: 20 },
+                            visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                        }}
+                        whileHover={{ 
+                          scale: 1.05, 
+                          borderColor: 'rgba(168, 85, 247, 0.5)',
+                          boxShadow: '0 0 20px rgba(168, 85, 247, 0.2)'
+                        }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                    >
+                        <Icon name={persona.icon} size={28} className="text-purple-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                        <p className="text-gray-300 font-medium">{persona.text}</p>
+                    </motion.div>
+                ))}
+            </motion.div>
         </div>
       </section>
       
       {/* III. Courses / Pricing */}
-      <section ref={sectionRefs.courses} className="py-16 md:py-24 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
+      <section ref={sectionRefs.courses} className="py-12 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
         <div className="container mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">
               Stop being the report generator. Start being the ROI generator.
@@ -774,16 +865,16 @@ const App = () => {
       </section>
 
       {/* IV. What You'll Learn (What you will get?) */}
-      <section ref={sectionRefs.whatYouGet} className="py-16 md:py-24 bg-gray-950">
+      <section ref={sectionRefs.whatYouGet} className="py-12 md:py-20 bg-gray-950">
         <div className="container mx-auto px-6 md:px-12 text-center">
           <h2 className="text-lg md:text-xl font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
           <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-16">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Learn how to free yourself from manual tasks and build credibility fast.
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-float">
               <Icon name="square-check" size={32} className="text-purple-500 mb-4 mx-auto p-2 bg-gray-800 rounded-full w-fit" />
               <h4 className="text-xl font-semibold text-white mb-2">Automate the boring stuff</h4>
               <p className="text-gray-400">Free yourself from endless Excel updates and manual dashboards.</p>
@@ -816,29 +907,13 @@ const App = () => {
   whileInView="show"
   viewport={{ once: true, amount: 0.24 }}
 >
-  <style>{`
-    @keyframes gradient-x{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-    .animated-underline{position:relative;display:inline-block;padding-bottom:18px}
-    .animated-underline::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
-      background:linear-gradient(90deg,#7c3aed,#22d3ee,#7c3aed);
-      background-size:200% 100%;animation:gradient-x 6s ease-in-out infinite;border-radius:9999px;opacity:.9
-    }
-    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-    .floaty{animation:floaty 7s ease-in-out infinite}
-    @media (prefers-reduced-motion: reduce){
-      .animated-underline::after{animation:none}
-      .floaty{animation:none}
-    }
-  `}</style>
-
   <div className="container mx-auto px-6 md:px-12">
     {/* Heading */}
     <motion.div
       variants={{ hidden:{opacity:0,y:18}, show:{opacity:1,y:0,transition:{duration:.6}} }}
       className="text-left"
     >
-      <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight animated-underline mb-8 md:mb-12">
+      <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight animated-underline mb-6 md:mb-10">
         Meet The Mentor
       </h2>
       <p className="text-base md:text-lg text-gray-400 -mt-2 mb-8">
@@ -848,7 +923,7 @@ const App = () => {
 
     {/* Two columns */}
     <motion.div
-      className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start"
+      className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
       variants={{ hidden:{opacity:0}, show:{opacity:1,transition:{staggerChildren:.08}} }}
     >
       {/* LEFT: photo (circle) + name + intro + CTA */}
@@ -864,13 +939,9 @@ const App = () => {
             {/* gradient ring */}
             <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-purple-500 via-fuchsia-400 to-cyan-400">
               <img
-                src={DRIVE_PRIMARY}
+                src="nano-banana-no-bg-2025-08-30T05-10-02.jpg"
                 alt="Rwitapa Mitra"
-                referrerPolicy="no-referrer"
                 className="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover ring-1 ring-white/10 bg-gray-900"
-                onError={(e) => {
-                  if (e.currentTarget.src !== DRIVE_BACKUP) e.currentTarget.src = DRIVE_BACKUP;
-                }}
                 loading="lazy"
               />
             </div>
@@ -932,32 +1003,81 @@ const App = () => {
 </motion.section>
 
       {/* VII. Testimonials */}
-      <section ref={sectionRefs.testimonials} className="py-16 md:py-24 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
-        <div className="container mx-auto px-6 md:px-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-12">What Our Students Are Saying</h2>
+      <section ref={sectionRefs.testimonials} className="relative py-12 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden">
+        <div className="animated-testimonials-bg" aria-hidden="true" />
+        <div className="relative z-10 container mx-auto px-6 md:px-12">
+          <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-10">What Our Students Are Saying</h2>
           
-          <div className="flex flex-col md:flex-row gap-8 overflow-x-auto carousel-snap pb-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-gray-900 p-8 rounded-2xl border border-gray-800 text-left transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
-                <p className="italic text-gray-300 mb-4">"{testimonial.quote}"</p>
-                <div className="flex items-center">
-                  <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4" />
-                  <div>
-                    <p className="font-semibold text-white">{testimonial.name}</p>
-                    <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
-                  </div>
+          <div className="relative flex flex-col items-center justify-center min-h-[400px]">
+            <AnimatePresence>
+              {testimonials.map((testimonial, index) => {
+                const position = index - testimonialIndex;
+                const isVisible = Math.abs(position) < 3;
+
+                if (!isVisible) return null;
+
+                return (
+                  <motion.div
+                    key={index}
+                    className="bg-gray-900 p-8 rounded-2xl border border-gray-800 absolute w-[90%] md:w-[60%] lg:w-[45%]"
+                    initial={{
+                      scale: 1 - Math.abs(position) * 0.1,
+                      y: position * 20,
+                      zIndex: testimonials.length - Math.abs(position),
+                      opacity: 1,
+                    }}
+                    animate={{
+                      scale: 1 - Math.abs(position) * 0.05,
+                      y: position * 15,
+                      zIndex: testimonials.length - Math.abs(position),
+                      opacity: 1,
+                    }}
+                    exit={{
+                      x: 300,
+                      opacity: 0,
+                      scale: 0.9,
+                      transition: { duration: 0.3 }
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    style={{
+                      transformOrigin: 'bottom center',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    <p className="italic text-gray-300 mb-4 text-sm md:text-base">"{testimonial.quote}"</p>
+                    <div className="flex items-center">
+                      <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12 md:h-14 md:w-14" />
+                      <div>
+                        <p className="font-semibold text-white">{testimonial.name}</p>
+                        <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+
+             {/* Navigation Buttons */}
+             <div className="absolute bottom-[-30px] flex items-center justify-center w-full z-40">
+                <button onClick={handlePrevTestimonial} className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
+                    <Icon name="arrow-left" size={20}/>
+                </button>
+                <div className="text-gray-400 text-sm font-semibold px-4 py-2 bg-gray-900/50 rounded-full backdrop-blur-sm">
+                  {testimonialIndex + 1} / {testimonials.length}
                 </div>
-              </div>
-            ))}
+                <button onClick={handleNextTestimonial} className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
+                    <Icon name="arrow-right" size={20}/>
+                </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* VIII. FAQ Section */}
-      <section className="py-16 md:py-24 bg-gray-950">
+      <section className="py-12 md:py-20 bg-gray-950">
         <div className="container mx-auto px-6 md:px-12 text-center max-w-4xl">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Got Questions?</h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-16">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Quick answers to your AI automation questions.
           </p>
           <div className="text-left space-y-4 overflow-y-auto max-h-96 pr-4 custom-scrollbar">
@@ -982,7 +1102,7 @@ const App = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-purple-900 to-gray-900 text-center">
+      <section className="py-12 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center">
         <div className="container mx-auto px-6 md:px-12">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Stop Being the Report Generator. Start Being the ROI Generator.</h2>
           <p className="text-lg text-gray-200 max-w-3xl mx-auto mb-8">
@@ -1003,6 +1123,10 @@ const App = () => {
       <style>
         {`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        html, body { 
+          -webkit-font-smoothing: antialiased; 
+          -moz-osx-font-smoothing: grayscale; 
+        }
         body {
           font-family: 'Inter', sans-serif;
         }
@@ -1086,11 +1210,41 @@ const App = () => {
             background: #4A0E70;
             border-radius: 10px;
         }
+        .animated-underline{position:relative;display:inline-block;padding-bottom:18px}
+        .animated-underline::after{
+          content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+          background:linear-gradient(90deg,#7c3aed,#22d3ee,#7c3aed);
+          background-size:200% 100%;animation:gradient-x 6s ease-in-out infinite;border-radius:9999px;opacity:.9
+        }
+        @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+        .floaty{animation:floaty 7s ease-in-out infinite}
+
+        @media (prefers-reduced-motion: reduce){
+          .animated-underline::after{animation:none}
+          .floaty{animation:none}
+        }
+        
+        .animated-testimonials-bg {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 150%;
+          padding-top: 150%; /* Maintain aspect ratio */
+          background-image: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 50%);
+          animation: rotate-background 30s linear infinite;
+          z-index: 0;
+        }
+
+        @keyframes rotate-background {
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
         `}
       </style>
 
       {/* Navigation Header */}
-      <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
+      <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between">
           <div className="flex-shrink-0">
             <a href="#" onClick={() => setShowCoursesPage(false)} className="text-xl font-bold text-white rounded-lg hover:text-purple-400 transition-colors">The AI Way</a>
@@ -1146,14 +1300,14 @@ const App = () => {
       </header>
       
       {/* Main Content Area */}
-      <main className="pt-24 md:pt-32">
+      <main className="pt-20 md:pt-28">
         {currentPageComponent}
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-950 py-12 border-t border-gray-800">
+      <footer className="bg-gray-950 py-10 border-t border-gray-800">
         <div className="container mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
             <div className="mb-6 md:mb-0">
               <h4 className="text-xl font-bold text-white">The AI Way</h4>
             </div>
@@ -1176,3 +1330,4 @@ const App = () => {
 };
 
 export default App;
+
