@@ -152,6 +152,7 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
 // Payment and community links
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
 const SUPERSTAR_ACCELERATOR_URL = 'https://rzp.io/rzp/ubyT3MWl';
+const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
 
 // Utility function to get the next upcoming day of the week (0 for Sunday, 1 for Monday, etc.)
 const getNextDayOfWeek = (dayIndices) => {
@@ -390,18 +391,15 @@ const CoursesPage = ({ onBack }) => {
             {renderCourseCard(courseData.accelerator, true)}
           </div>
         </div>
-
-        {/* Detailed Modules Section */}
+        
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Sneak Peek: What You'll Learn</h2>
-          
           <div className="bg-gray-900 rounded-3xl p-8 border border-gray-800 mb-12">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center">
               <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 3-Hour Champion Sprint
             </h3>
             {renderModules(courseData.sprint.modules)}
           </div>
-          
           <div className="bg-gray-900 rounded-3xl p-8 border border-purple-700">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center">
               <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 16-Hour Superstar Accelerator
@@ -587,8 +585,6 @@ const App = () => {
     setIsMenuOpen(false);
   };
 
-  const whatsappLink = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
-
   const sections = [
     { name: 'Courses', ref: 'courses' },
     { name: 'Mentors', ref: 'mentors' },
@@ -730,7 +726,7 @@ const App = () => {
             <button onClick={handleExploreCourses} className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
               Explore All Courses
             </button>
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="py-3 px-8 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-all transform hover:scale-105">
+            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="py-3 px-8 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-all transform hover:scale-105">
               Join Community
             </a>
           </div>
@@ -790,9 +786,9 @@ const App = () => {
             {/* Champion Sprint Card */}
             <div className="bg-gray-900 rounded-3xl p-8 border border-gray-800 flex flex-col justify-between animate-fade-in">
               <div>
-                <h3 className="text-2xl font-bold text-white mb-2">3-Hour Champion Sprint</h3>
-                <p className="text-lg text-gray-400 mb-4">Ship Your First Automation in Just 3 Hours</p>
-                <p className="text-gray-300 mb-6">You spend hours every week refreshing the same reports. This sprint helps you break free by shipping your first live automation that does the grunt work for you.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
+                <p className="text-lg text-gray-400 mb-4">{courseData.sprint.subtitle}</p>
+                <p className="text-gray-300 mb-6">{courseData.sprint.description}</p>
                 
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
@@ -813,7 +809,7 @@ const App = () => {
                     <span>Package your win into an Impact Memo.</span>
                   </li>
                 </ul>
-                <p className="text-white font-bold text-2xl mb-6">₹349</p>
+                <p className="text-white font-bold text-2xl mb-6">{courseData.sprint.price}</p>
               </div>
               <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
                 Enroll Now
@@ -826,9 +822,9 @@ const App = () => {
                 Popular
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white mb-2">16-Hour Superstar Accelerator</h3>
-                <p className="text-lg text-gray-300 mb-4">Go Beyond Dashboards. Build AI Agents That Deliver Insights.</p>
-                <p className="text-gray-200 mb-6">Most "AI for Business" courses give fluff without real outcomes. This accelerator is different. It gives you the skills and confidence to design and deploy agentic AI systems.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{courseData.accelerator.title}</h3>
+                <p className="text-lg text-gray-300 mb-4">{courseData.accelerator.subtitle}</p>
+                <p className="text-gray-200 mb-6">{courseData.accelerator.description}</p>
                 
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
@@ -849,7 +845,7 @@ const App = () => {
                     <span>Build a portfolio case study that proves ROI.</span>
                   </li>
                 </ul>
-                <p className="text-white font-bold text-2xl mb-6">₹4,999</p>
+                <p className="text-white font-bold text-2xl mb-6">{courseData.accelerator.price}</p>
               </div>
               <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold hover:bg-gray-200 transition-all">
                 Enroll Now
@@ -1059,13 +1055,13 @@ const App = () => {
 
              {/* Navigation Buttons */}
              <div className="absolute bottom-[-30px] flex items-center justify-center w-full z-40">
-                <button onClick={handlePrevTestimonial} className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
+                <button onClick={handlePrevTestimonial} aria-label="Previous testimonial" className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
                     <Icon name="arrow-left" size={20}/>
                 </button>
                 <div className="text-gray-400 text-sm font-semibold px-4 py-2 bg-gray-900/50 rounded-full backdrop-blur-sm">
                   {testimonialIndex + 1} / {testimonials.length}
                 </div>
-                <button onClick={handleNextTestimonial} className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
+                <button onClick={handleNextTestimonial} aria-label="Next testimonial" className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm">
                     <Icon name="arrow-right" size={20}/>
                 </button>
             </div>
@@ -1080,21 +1076,32 @@ const App = () => {
           <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Quick answers to your AI automation questions.
           </p>
-          <div className="text-left space-y-4 overflow-y-auto max-h-96 pr-4 custom-scrollbar">
+          <div className="text-left space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="rounded-2xl border border-gray-800 bg-gray-950 p-6">
-                <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleFaq(index)}>
-                  <h3 className="text-lg font-semibold text-white">{faq.q}</h3>
-                  <Icon name="arrow-right" size={24} className={`text-purple-500 transform transition-transform duration-300 ${openFaq === index ? 'rotate-90' : ''}`} />
-                </div>
-                <div
-                  className={`grid transition-all duration-300 ease-in-out ${openFaq === index ? 'grid-rows-[1fr] opacity-100 mt-4' : 'grid-rows-[0fr] opacity-0'
-                    }`}
+              <div key={index} className="rounded-2xl border border-gray-800 bg-gray-950 overflow-hidden">
+                <button 
+                  className="w-full flex items-center justify-between p-6 text-left"
+                  onClick={() => toggleFaq(openFaq === index ? null : index)}
+                  aria-expanded={openFaq === index}
                 >
-                  <div className="overflow-hidden">
-                    <p className="text-gray-400 pt-2">{faq.a}</p>
-                  </div>
-                </div>
+                  <h3 className="text-lg font-semibold text-white">{faq.q}</h3>
+                  <motion.div animate={{ rotate: openFaq === index ? 90 : 0 }}>
+                    <Icon name="arrow-right" size={24} className="text-purple-500"/>
+                  </motion.div>
+                </button>
+                <AnimatePresence>
+                  {openFaq === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="text-gray-400 px-6 pb-6">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
@@ -1118,6 +1125,8 @@ const App = () => {
     </>
   );
 
+  const menuButtonRef = useRef(null);
+
   return (
     <div className="bg-gray-950 text-gray-200 font-sans leading-relaxed tracking-wide antialiased overflow-x-hidden">
       <style>
@@ -1140,19 +1149,6 @@ const App = () => {
           animation: fadeIn 1s ease-out;
         }
 
-        @keyframes pulse-slow {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 10s ease-in-out infinite;
-        }
-
-        .animate-pulse-slow-reverse {
-          animation: pulse-slow 10s ease-in-out infinite reverse;
-        }
-
         @keyframes float {
           0% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
@@ -1163,53 +1159,6 @@ const App = () => {
           animation: float 4s ease-in-out infinite;
         }
         
-        /* Custom scrollbar for testimonial carousel */
-        .carousel-snap::-webkit-scrollbar {
-          height: 8px;
-        }
-
-        .carousel-snap::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-        }
-
-        .carousel-snap::-webkit-scrollbar-thumb {
-          background: #4A0E70; /* A darker purple */
-          border-radius: 10px;
-        }
-
-        .carousel-snap {
-          scroll-snap-type: x mandatory;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .carousel-snap > * {
-          scroll-snap-align: center;
-          flex-shrink: 0;
-          width: 85%; /* Adjust width for mobile */
-        }
-
-        @media (min-width: 768px) {
-          .carousel-snap > * {
-            width: 30%; /* Adjust width for desktop */
-          }
-        }
-        
-        /* Custom scrollbar for FAQ section */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #111;
-            border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #4A0E70;
-            border-radius: 10px;
-        }
         .animated-underline{position:relative;display:inline-block;padding-bottom:18px}
         .animated-underline::after{
           content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
@@ -1253,14 +1202,7 @@ const App = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {sections.map(section => (
-              <button key={section.ref} onClick={() => {
-                if (showCoursesPage) {
-                  setShowCoursesPage(false);
-                  setTimeout(() => scrollToSection(section.ref), 0);
-                } else {
-                  scrollToSection(section.ref);
-                }
-              }} className="text-sm font-semibold hover:text-purple-400 transition-colors rounded-lg px-2 py-1">
+              <button key={section.ref} onClick={() => scrollToSection(section.ref)} className="text-sm font-semibold hover:text-purple-400 transition-colors rounded-lg px-2 py-1">
                 {section.name}
               </button>
             ))}
@@ -1268,35 +1210,41 @@ const App = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+             <button 
+                ref={menuButtonRef}
+                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
+              >
               <Icon name={isMenuOpen ? 'x' : 'menu'} size={28} className="text-white" />
             </button>
           </div>
         </nav>
 
         {/* Mobile Menu Overlay */}
+        <AnimatePresence>
         {isMenuOpen && (
-          <div className="md:hidden fixed inset-0 z-30 bg-gray-950/90 backdrop-blur-lg flex flex-col items-center justify-center space-y-6 pt-16 rounded-b-lg">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 z-30 bg-gray-950/90 backdrop-blur-lg flex flex-col items-center justify-center space-y-6 pt-16 rounded-b-lg"
+           >
             {sections.map(section => (
-              <button key={section.ref} onClick={() => {
-                if (showCoursesPage) {
-                  setShowCoursesPage(false);
-                  setTimeout(() => scrollToSection(section.ref), 0);
-                } else {
-                  scrollToSection(section.ref);
-                }
-              }} className="text-2xl font-semibold text-white hover:text-purple-400 transition-colors">
+              <button key={section.ref} onClick={() => { scrollToSection(section.ref); setIsMenuOpen(false); }} className="text-2xl font-semibold text-white hover:text-purple-400 transition-colors">
                 {section.name}
               </button>
             ))}
-            <button onClick={handleExploreCourses} className="mt-8 w-64 py-3 px-6 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors">
+            <button onClick={() => { handleExploreCourses(); setIsMenuOpen(false); }} className="mt-8 w-64 py-3 px-6 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors">
               Explore All Courses
             </button>
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-64 text-center py-3 px-6 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors">
+            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="w-64 text-center py-3 px-6 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors">
                 Join Community
               </a>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </header>
       
       {/* Main Content Area */}
@@ -1312,10 +1260,10 @@ const App = () => {
               <h4 className="text-xl font-bold text-white">The AI Way</h4>
             </div>
             <div className="flex space-x-6">
-              <a href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2">
+              <a href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2">
                 <Icon name="linkedin" size={24} />
               </a>
-              <a href="https://www.instagram.com/theaiway.official/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2">
+              <a href="https://www.instagram.com/theaiway.official/" aria-label="Instagram Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2">
                 <Icon name="instagram" size={24} />
               </a>
             </div>
