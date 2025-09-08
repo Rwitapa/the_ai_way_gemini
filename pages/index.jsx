@@ -1226,7 +1226,7 @@ const App = () => {
       </style>
 
       {/* Navigation Header */}
-      <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
+      <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between">
           <div className="flex-shrink-0">
             <a href="#" onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }} className="text-xl font-bold text-white rounded-lg hover:text-purple-400 transition-colors">The AI Way</a>
@@ -1253,26 +1253,34 @@ const App = () => {
           <div className="md:hidden">
              <button 
                 ref={menuButtonRef}
-                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                onClick={() => setIsMenuOpen(true)} 
                 className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-label="Open menu"
                 aria-expanded={isMenuOpen}
               >
-              <Icon name={isMenuOpen ? 'x' : 'menu'} size={28} className="text-white" />
+              <Icon name={'menu'} size={28} className="text-white" />
             </button>
           </div>
         </nav>
-
-        {/* Mobile Menu Overlay - Full screen - FIXED */}
-        <AnimatePresence>
+      </header>
+        
+      {/* Mobile Menu Overlay - Full screen - FIXED */}
+      <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden fixed inset-0 z-30 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6"
           >
+            <button 
+              onClick={() => setIsMenuOpen(false)} 
+              className="absolute top-4 right-4 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              aria-label="Close menu"
+            >
+              <Icon name="x" size={32} className="text-white" />
+            </button>
             {/* Unified Navigation Links */}
             <div className="flex flex-col items-center space-y-8 text-center">
               {sections.map(section => (
@@ -1296,8 +1304,7 @@ const App = () => {
             </div>
           </motion.div>
         )}
-        </AnimatePresence>
-      </header>
+      </AnimatePresence>
       
       {/* Main Content Area */}
       <main className="pt-16 md:pt-20">
