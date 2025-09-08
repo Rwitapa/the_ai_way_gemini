@@ -358,11 +358,11 @@ const CoursesPage = ({ onBack }) => {
 
         <div className="space-y-4">
           {course.title === '3-Hour Champion Sprint' ? (
-            <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
+            <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
               Enroll Now
             </a>
           ) : (
-            <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
+            <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
               Enroll Now
             </a>
           )}
@@ -377,15 +377,15 @@ const CoursesPage = ({ onBack }) => {
         <button onClick={onBack} className="flex items-center text-purple-400 hover:text-purple-300 transition-colors mb-8">
           <Icon name="arrow-left" size={20} className="mr-2" /> Back to Home
         </button>
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Courses</h1>
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             Discover a learning path that turns you into a high-impact, AI-driven business analyst.
           </p>
         </div>
 
-        {/* Courses Overview */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-12 mb-20">
+        {/* Courses Overview - Updated for mobile-first stacking */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
           {renderCourseCard(courseData.sprint)}
           <div className="relative">
             {renderCourseCard(courseData.accelerator, true)}
@@ -394,13 +394,13 @@ const CoursesPage = ({ onBack }) => {
         
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Sneak Peek: What You'll Learn</h2>
-          <div className="bg-gray-900 rounded-3xl p-8 border border-gray-800 mb-12">
+          <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 mb-12">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center">
               <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 3-Hour Champion Sprint
             </h3>
             {renderModules(courseData.sprint.modules)}
           </div>
-          <div className="bg-gray-900 rounded-3xl p-8 border border-purple-700">
+          <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center">
               <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 16-Hour Superstar Accelerator
             </h3>
@@ -449,7 +449,7 @@ const App = () => {
     script.async = true;
     
     const init = () => {
-        if(isInitialized) return;
+        if(isInitialized || showCoursesPage) return; // Don't run animation on courses page
         const container = heroAnimationRef.current;
         if (!container || typeof THREE === 'undefined') return;
         
@@ -556,7 +556,7 @@ const App = () => {
             document.body.removeChild(script);
         }
     };
-  }, []);
+  }, [showCoursesPage]); // Re-run effect when page changes
 
   const handleEnrollNow = (url) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -564,18 +564,20 @@ const App = () => {
 
   const handleExploreCourses = () => {
     setShowCoursesPage(true);
+    window.scrollTo(0, 0);
   };
   
   // Smooth scroll function
   const scrollToSection = (sectionName) => {
     if (showCoursesPage) {
       setShowCoursesPage(false);
+      // Use a timeout to ensure the DOM is updated before scrolling
       setTimeout(() => {
         const sectionRef = sectionRefs[sectionName];
         if (sectionRef && sectionRef.current) {
           sectionRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 0);
+      }, 100);
     } else {
       const sectionRef = sectionRefs[sectionName];
       if (sectionRef && sectionRef.current) {
@@ -731,25 +733,25 @@ const App = () => {
   ) : (
     <>
       {/* I. Hero Section */}
-      <section className="relative overflow-hidden min-h-screen py-12 md:py-20 flex items-center bg-gray-950">
+      <section className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950">
         <div ref={heroAnimationRef} className="absolute inset-0 w-full h-full object-cover z-0" />
         <div className="absolute inset-0 z-10 bg-gray-950/70"></div>
 
-        <div className="relative z-20 container mx-auto px-6 md:px-12 text-center max-w-5xl animate-fade-in">
-          <div className="mb-6 md:mb-8">
+        <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
+          <div className="mb-6">
             <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">Gen AI for Business Analysts</span>
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4 md:mb-6">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
             Still stuck fixing reports? <span className="text-purple-400">Let AI make you your team's hero.</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 mb-8 md:mb-10 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
             Most analysts waste hours on manual dashboards and tool-hopping, only to stay invisible. The AI Way shows you how to use AI-code or no-code-to automate your work, prove ROI, and become the analyst your team can't live without.
           </p>
-          <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6">
-            <button onClick={handleExploreCourses} className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
+          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
               Explore All Courses
             </button>
-            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="py-3 px-8 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-all transform hover:scale-105">
+            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-all transform hover:scale-105">
               Join Community
             </a>
           </div>
@@ -757,10 +759,10 @@ const App = () => {
       </section>
 
       {/* II. Who This Is For (Who is it for?) */}
-       <section className="py-12 md:py-20 bg-gray-950">
-        <div className="container mx-auto px-6 md:px-12 text-center">
+       <section className="py-16 md:py-20 bg-gray-950">
+        <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+            <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
                 You're ambitious, practical, and tired of being seen as a "report generator." You want clarity, speed, and visibility.
             </p>
 
@@ -789,7 +791,7 @@ const App = () => {
                         transition={{ type: 'spring', stiffness: 400, damping: 15 }}
                     >
                         <Icon name={persona.icon} size={28} className="text-purple-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                        <p className="text-gray-300 font-medium">{persona.text}</p>
+                        <p className="text-gray-300 font-medium text-base">{persona.text}</p>
                     </motion.div>
                 ))}
             </motion.div>
@@ -797,28 +799,29 @@ const App = () => {
       </section>
       
       {/* III. Courses / Pricing */}
-      <section ref={sectionRefs.courses} className="py-12 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
-        <div className="container mx-auto px-6 md:px-12">
+      <section ref={sectionRefs.courses} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto">
               Stop being the report generator. Start being the ROI generator.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Mobile-First Grid: Stacks on mobile, grid on medium screens and up */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Champion Sprint Card */}
-            <div className="bg-gray-900 rounded-3xl p-8 border border-gray-800 flex flex-col justify-between animate-fade-in">
+            <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between animate-fade-in">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
                 <p className="text-lg text-gray-400 mb-4">{courseData.sprint.subtitle}</p>
-                <p className="text-gray-300 mb-6">{courseData.sprint.description}</p>
+                <p className="text-gray-300 mb-6 text-base">{courseData.sprint.description}</p>
                 
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
                   <p className="text-white text-base">{getNextDayOfWeek([1, 3, 5])}, 7-10 PM IST</p>
                 </div>
 
-                <ul className="text-gray-400 space-y-2 mb-6">
+                <ul className="text-gray-400 space-y-2 mb-6 text-sm">
                   <li className="flex items-start">
                     <Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" />
                     <span>Learn to spot repetitive reports that eat your time.</span>
@@ -834,27 +837,27 @@ const App = () => {
                 </ul>
                 <p className="text-white font-bold text-2xl mb-6">{courseData.sprint.price}</p>
               </div>
-              <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
+              <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
                 Enroll Now
               </a>
             </div>
 
             {/* Superstar Accelerator Card */}
-            <div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-3xl p-8 border border-purple-700 flex flex-col justify-between relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">
                 Popular
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2">{courseData.accelerator.title}</h3>
                 <p className="text-lg text-gray-300 mb-4">{courseData.accelerator.subtitle}</p>
-                <p className="text-gray-200 mb-6">{courseData.accelerator.description}</p>
+                <p className="text-gray-200 mb-6 text-base">{courseData.accelerator.description}</p>
                 
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
                   <p className="text-white text-base">{getNextAlternateWeekend()}, 10 AM - 7 PM IST</p>
                 </div>
 
-                <ul className="text-gray-200 space-y-2 mb-6">
+                <ul className="text-gray-200 space-y-2 mb-6 text-sm">
                   <li className="flex items-start">
                     <Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" />
                     <span>Master fundamentals without the fluff.</span>
@@ -870,7 +873,7 @@ const App = () => {
                 </ul>
                 <p className="text-white font-bold text-2xl mb-6">{courseData.accelerator.price}</p>
               </div>
-              <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold hover:bg-gray-200 transition-all">
+              <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold hover:bg-gray-200 transition-all">
                 Enroll Now
               </a>
             </div>
@@ -886,12 +889,12 @@ const App = () => {
 {/* V. Meet The Mentor */}
 <motion.section
   ref={sectionRefs?.mentors}
-  className="py-12 md:py-20 bg-gray-950"
+  className="py-16 md:py-20 bg-gray-950"
   initial="hidden"
   whileInView="show"
   viewport={{ once: true, amount: 0.24 }}
 >
-  <div className="container mx-auto px-6 md:px-12">
+  <div className="container mx-auto px-6">
     {/* Heading */}
     <motion.div
       variants={{ hidden:{opacity:0,y:18}, show:{opacity:1,y:0,transition:{duration:.6}} }}
@@ -905,7 +908,7 @@ const App = () => {
       </p>
     </motion.div>
 
-    {/* Two columns */}
+    {/* Two columns - stacks on mobile */}
     <motion.div
       className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
       variants={{ hidden:{opacity:0}, show:{opacity:1,transition:{staggerChildren:.08}} }}
@@ -923,7 +926,7 @@ const App = () => {
             {/* gradient ring */}
             <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-purple-500 via-fuchsia-400 to-cyan-400">
               <img
-                src="nano-banana-no-bg-2025-08-30T05-10-02.jpg"
+                src="https://placehold.co/144x144/1a1a2e/ffffff?text=RM"
                 alt="Rwitapa Mitra"
                 className="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover ring-1 ring-white/10 bg-gray-900"
                 loading="lazy"
@@ -933,7 +936,7 @@ const App = () => {
         </div>
 
         <h3 className="text-xl md:text-2xl font-semibold text-white">Rwitapa Mitra</h3>
-        <p className="text-gray-300 text-base md:text-lg mt-3 max-w-xl">
+        <p className="text-gray-300 text-base mt-3 max-w-xl">
           Former Director of Analytics at Pilgrim with prior roles at PharmEasy, Flipkart, and Mu Sigma.
           Builds analytics systems that move KPIs across growth, retention, supply chain, experimentation,
           and practical GenAI automation.
@@ -941,7 +944,7 @@ const App = () => {
 
         <motion.button
           onClick={handleExploreCourses}
-          className="mt-7 inline-flex items-center justify-center px-6 md:px-8 py-3 text-base md:text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-transform duration-200 shadow-xl shadow-purple-600/20 ring-1 ring-white/10"
+          className="mt-7 inline-flex items-center justify-center px-6 md:px-8 py-3 text-base font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-transform duration-200 shadow-xl shadow-purple-600/20 ring-1 ring-white/10"
           whileHover={{ y: -2, scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -960,7 +963,7 @@ const App = () => {
           className="hidden md:block absolute left-0 top-0 h-full w-px animated-divider rounded-full"
         />
         <motion.ul
-          className="text-gray-300 text-base md:text-lg space-y-3"
+          className="text-gray-300 text-base space-y-3"
           variants={{ hidden:{opacity:1}, show:{opacity:1,transition:{staggerChildren:.06}} }}
         >
           {[
@@ -987,9 +990,9 @@ const App = () => {
 </motion.section>
 
       {/* VI. Testimonials */}
-      <section ref={sectionRefs.testimonials} className="relative py-12 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden">
+      <section ref={sectionRefs.testimonials} className="relative py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden">
         <div className="animated-testimonials-bg" aria-hidden="true" />
-        <div className="relative z-10 container mx-auto px-6 md:px-12">
+        <div className="relative z-10 container mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-10">What Our Students Are Saying</h2>
           
           <div className="relative flex flex-col items-center justify-center min-h-[400px]">
@@ -1028,9 +1031,9 @@ const App = () => {
                       boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                     }}
                   >
-                    <p className="italic text-gray-300 mb-4 text-sm md:text-base">"{testimonial.quote}"</p>
+                    <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
                     <div className="flex items-center">
-                      <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12 md:h-14 md:w-14" />
+                      <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12" />
                       <div>
                         <p className="font-semibold text-white">{testimonial.name}</p>
                         <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
@@ -1058,16 +1061,16 @@ const App = () => {
       </section>
 
        {/* VII. What You'll Learn */}
-      <section ref={sectionRefs.whatYouGet} className="py-12 md:py-20 bg-gray-950">
-        <div className="container mx-auto px-6 md:px-12 text-center">
-          <h2 className="text-lg md:text-xl font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
+      <section ref={sectionRefs.whatYouGet} className="py-16 md:py-20 bg-gray-950">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-base md:text-lg font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
           <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+          <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Learn how to free yourself from manual tasks and build credibility fast.
           </p>
 
           <motion.div 
-            className="flex flex-nowrap overflow-x-auto gap-6 pb-6"
+            className="flex flex-nowrap overflow-x-auto gap-6 pb-6 -mx-6 px-6"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -1099,10 +1102,10 @@ const App = () => {
       </section>
 
       {/* VIII. FAQ Section */}
-      <section className="py-12 md:py-20 bg-gray-950">
-        <div className="container mx-auto px-6 md:px-12 text-center max-w-4xl">
+      <section className="py-16 md:py-20 bg-gray-950">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Got Questions?</h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+          <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Quick answers to your AI automation questions.
           </p>
           <div className="text-left space-y-4">
@@ -1138,14 +1141,14 @@ const App = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-12 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center">
-        <div className="container mx-auto px-6 md:px-12">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center">
+        <div className="container mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Stop Being the Report Generator. Start Being the ROI Generator.</h2>
-          <p className="text-lg text-gray-200 max-w-3xl mx-auto mb-8">
+          <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">
             AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.
           </p>
-          <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
-            <button onClick={() => scrollToSection('courses')} className="py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950 hover:bg-gray-200 transition-colors transform hover:scale-105">
+          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950 hover:bg-gray-200 transition-colors transform hover:scale-105">
               View all our courses
             </button>
           </div>
@@ -1160,7 +1163,7 @@ const App = () => {
     <div className="bg-gray-950 text-gray-200 font-sans leading-relaxed tracking-wide antialiased overflow-x-hidden">
       <style>
         {`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         html, body { 
           -webkit-font-smoothing: antialiased; 
           -moz-osx-font-smoothing: grayscale; 
@@ -1225,7 +1228,7 @@ const App = () => {
       <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between">
           <div className="flex-shrink-0">
-            <a href="#" onClick={() => setShowCoursesPage(false)} className="text-xl font-bold text-white rounded-lg hover:text-purple-400 transition-colors">The AI Way</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }} className="text-xl font-bold text-white rounded-lg hover:text-purple-400 transition-colors">The AI Way</a>
           </div>
 
           {/* Desktop Navigation */}
@@ -1237,7 +1240,7 @@ const App = () => {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - hamburger icon */}
           <div className="md:hidden">
              <button 
                 ref={menuButtonRef}
@@ -1251,17 +1254,17 @@ const App = () => {
           </div>
         </nav>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Menu Overlay - Full screen */}
         <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-30 bg-gray-950/90 backdrop-blur-lg flex flex-col items-center justify-center space-y-6 pt-16 rounded-b-lg"
+            className="md:hidden fixed inset-0 z-30 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center space-y-6"
            >
             {sections.map(section => (
-              <button key={section.ref} onClick={() => { scrollToSection(section.ref); setIsMenuOpen(false); }} className="text-2xl font-semibold text-white hover:text-purple-400 transition-colors">
+              <button key={section.ref} onClick={() => { scrollToSection(section.ref); }} className="text-2xl font-semibold text-white hover:text-purple-400 transition-colors">
                 {section.name}
               </button>
             ))}
@@ -1277,15 +1280,15 @@ const App = () => {
       </header>
       
       {/* Main Content Area */}
-      <main className="pt-20 md:pt-28">
+      <main className="pt-16 md:pt-20">
         {currentPageComponent}
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-950 py-10 border-t border-gray-800">
-        <div className="container mx-auto px-6 md:px-12">
+        <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-            <div className="mb-6 md:mb-0">
+            <div className="mb-6 md:mb-0 text-center md:text-left">
               <h4 className="text-xl font-bold text-white">The AI Way</h4>
             </div>
             <div className="flex space-x-6">
