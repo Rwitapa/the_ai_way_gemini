@@ -581,7 +581,7 @@ export const CompaniesBelt = () => {
     { name: 'Ola',       src: '/brand/ola.png'       },
     { name: 'Flipkart',  src: '/brand/flipkart_logo_256x96.png'  },
     { name: 'Razorpay',  src: '/brand/razorpay.png'  },
-    { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
+    { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
 
   const track = [...LOGOS, ...LOGOS]; // seamless loop
