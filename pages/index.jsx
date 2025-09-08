@@ -460,39 +460,26 @@ const HeroSection = ({ handleExploreCourses }) => {
     const s = sectionRef.current;
     if (!v || !s) return;
 
-    // mobile autoplay requirements
+    // Mobile autoplay requirements
     v.muted = true;
     v.playsInline = true;
 
-    const setSrcOnce = () => {
-      if (!v.dataset.loaded) {
-        // file must be in /public
-        v.src = '/animation.mp4';
-        v.load();
-        v.dataset.loaded = '1';
-      }
-    };
-
     const tryPlay = () => v.play().catch(() => {});
 
-    // play only when in view
+    // Play when visible, pause when not (saves CPU/battery)
     const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setSrcOnce();
-        tryPlay();
-      } else {
-        v.pause();
-      }
+      if (entry.isIntersecting) tryPlay();
+      else v.pause();
     }, { threshold: 0.15, rootMargin: '150px 0px' });
 
     obs.observe(s);
 
-    // unlock autoplay on first user interaction if needed
-    const unlock = () => { setSrcOnce(); tryPlay(); };
+    // Fallback: if autoplay blocked on iOS, unlock on first interaction
+    const unlock = () => { tryPlay(); };
     window.addEventListener('touchstart', unlock, { once: true });
     window.addEventListener('click', unlock, { once: true });
 
-    // pause when tab hidden
+    // Pause when tab hidden
     const onVis = () => (document.hidden ? v.pause() : tryPlay());
     document.addEventListener('visibilitychange', onVis);
 
@@ -507,21 +494,25 @@ const HeroSection = ({ handleExploreCourses }) => {
       ref={sectionRef}
       className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950"
     >
-      {/* Full-bleed background video */}
+      {/* Full-bleed, semi-transparent background video */}
       <video
         ref={videoRef}
-        className="pointer-events-none absolute inset-0 w-full h-full object-cover z-0 opacity-60"
+        className="pointer-events-none absolute inset-0 w-full h-full object-cover z-0 opacity-25" /* made more transparent */
         autoPlay
         muted
         loop
         playsInline
         preload="none"
-        poster="/hero_poster.jpg"   /* optional: put a lightweight poster in /public */
+        poster="/hero_poster.jpg" /* optional lightweight poster in /public */
         aria-hidden="true"
-      />
+      >
+        {/* Put these files in /public; webm optional if you have it */}
+        <source src="/animation.webm" type="video/webm" />
+        <source src="/animation.mp4" type="video/mp4" />
+      </video>
 
-      {/* Subtle dark tint for readability (adjust as needed) */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/35" />
+      {/* Slight dark tint for text contrast (adjust if needed) */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/45" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
@@ -565,6 +556,7 @@ const HeroSection = ({ handleExploreCourses }) => {
     </section>
   );
 };
+
 
 
 const PersonasSection = () => (
