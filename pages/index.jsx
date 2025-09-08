@@ -742,7 +742,8 @@ const App = () => {
             <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">Gen AI for Business Analysts</span>
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-            Still stuck fixing reports? <span className="text-purple-400">Let AI make you your team's hero.</span>
+            Still stuck fixing reports?
+            <span className="block text-purple-400 mt-2">Be your team’s hero with AI</span>
           </h1>
           <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
             Most analysts waste hours on manual dashboards and tool-hopping, only to stay invisible. The AI Way shows you how to use AI-code or no-code-to automate your work, prove ROI, and become the analyst your team can't live without.
@@ -1254,26 +1255,45 @@ const App = () => {
           </div>
         </nav>
 
-        {/* Mobile Menu Overlay - Full screen */}
+        {/* Mobile Menu Overlay - Full screen - FIXED */}
         <AnimatePresence>
         {isMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-30 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center space-y-6"
-           >
-            {sections.map(section => (
-              <button key={section.ref} onClick={() => { scrollToSection(section.ref); }} className="text-2xl font-semibold text-white hover:text-purple-400 transition-colors">
-                {section.name}
+            className="md:hidden fixed inset-0 z-30 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6"
+          >
+            {/* Navigation Links Group */}
+            <div className="flex flex-col items-center space-y-8">
+              {sections.map(section => (
+                <button 
+                  key={section.ref} 
+                  onClick={() => scrollToSection(section.ref)} 
+                  className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors"
+                >
+                  {section.name}
+                </button>
+              ))}
+            </div>
+
+            {/* CTA Buttons Group */}
+            <div className="mt-16 flex flex-col items-center space-y-4 w-full max-w-xs">
+              <button 
+                onClick={() => { handleExploreCourses(); setIsMenuOpen(false); }} 
+                className="w-full py-3 px-6 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+              >
+                Explore All Courses
               </button>
-            ))}
-            <button onClick={() => { handleExploreCourses(); setIsMenuOpen(false); }} className="mt-8 w-64 py-3 px-6 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors">
-              Explore All Courses
-            </button>
-            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="w-64 text-center py-3 px-6 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors">
+              <a 
+                href={WHATSAPP_COMMUNITY_URL} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-full text-center py-3 px-6 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors"
+              >
                 Join Community
               </a>
+            </div>
           </motion.div>
         )}
         </AnimatePresence>
@@ -1310,4 +1330,7 @@ const App = () => {
 };
 
 export default App;
+
+
+
 
