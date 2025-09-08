@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import Image from 'next/image';
 
 // Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
