@@ -513,7 +513,7 @@ const CompaniesBelt = () => {
   const LOGOS = [
     { name: 'Flipkart',  src: '/Flipkart_logo.png',            width: 120 },
     { name: 'Swiggy',    src: '/Swiggy_logo.png',              width: 110 },
-    { name: 'Zomato',    src: '/Zomato_logo.png',              width: 130 },
+    { name: 'Zomato',    src: '/Zomato_logo.jpg',              width: 130 },
     { name: 'Razorpay',  src: '/Razorpay_logo.png',            width: 140 },
     { name: 'PharmEasy', src: '/Pharmeasy_logo.png',            width: 140 },
     { name: 'Ola',       src: '/Ola_logo.png',                 width: 120 },
