@@ -542,7 +542,7 @@ const HeroSection = ({ handleExploreCourses }) => {
       ref={sectionRef}
       className="
         relative overflow-hidden
-        min-h-[78vh] md:min-h-[82vh]
+        min-h-[78vh] md:min-h-screen
         pt-[7.25rem] md:pt-44 pb-8 md:pb-10
         flex items-start
         bg-gray-950
@@ -871,7 +871,7 @@ const WhatYouLearnSection = ({ sectionRef }) => (
 const FAQSection = () => {
     const [openFaq, setOpenFaq] = useState(null);
     return (
-        <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll">
+        <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll md:hidden">
             <div className="container mx-auto px-6 text-center max-w-4xl">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Got Questions?</h2>
                 <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Quick answers to your AI automation questions.</p>
