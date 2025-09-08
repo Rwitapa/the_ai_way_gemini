@@ -543,7 +543,7 @@ const HeroSection = ({ handleExploreCourses }) => {
       className="
         relative overflow-hidden
         min-h-[78vh] md:min-h-[82vh]
-        pt-24 md:pt-28 pb-8 md:pb-12
+        pt-36 md:pt-44 pb-8 md:pb-12
         flex items-start
         bg-gray-950
       "
