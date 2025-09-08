@@ -504,15 +504,9 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
-/* 1) Add this lightweight belt */
-/* ============================
-   Rotating Companies Belt
-   ============================ */
-// ===============================
-// CompaniesStripSection (next fold)
-// Light strip + rotating companies belt (local PNGs only)
-// ===============================
-const CompaniesStripSection = () => {
+
+const CompaniesBelt = () => {
+  // Make sure these exist under /public/brand (exact lowercase file names)
   const LOGOS = [
     { name: 'Flipkart',  src: '/brand/flipkart.png'  },
     { name: 'Ola',       src: '/brand/ola.png'       },
@@ -524,16 +518,18 @@ const CompaniesStripSection = () => {
     { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
   ];
 
-  const track = [...LOGOS, ...LOGOS]; // duplicate for seamless loop
+  const track = [...LOGOS, ...LOGOS]; // duplicate once for seamless loop
 
   return (
-    <section id="companies" className="relative bg-gray-950">
-      {/* next fold spacing (separate from hero) */}
+    <section id="companies" aria-label="Companies belt" className="relative bg-gray-950">
+      {/* next fold spacing so it lives below the hero */}
       <div className="container mx-auto px-6 pt-16 md:pt-24 pb-14 md:pb-20">
         <div className="mx-auto max-w-6xl">
-          {/* light colored strip in brand hues */}
-          <div className="relative overflow-hidden rounded-3xl ring-1 ring-white/10 p-5 md:p-8
-                          bg-[linear-gradient(90deg,rgba(168,85,247,0.12),rgba(99,102,241,0.10),rgba(16,185,129,0.10))]">
+          {/* light, brand-tinted strip */}
+          <div className="
+            relative overflow-hidden rounded-3xl ring-1 ring-white/10 p-5 md:p-8
+            bg-[linear-gradient(90deg,rgba(168,85,247,0.12),rgba(99,102,241,0.10),rgba(16,185,129,0.10))]
+          ">
             <p className="text-center text-gray-900/85 dark:text-gray-100/90 text-sm md:text-base font-semibold mb-5">
               Our graduates work at leading tech companies
             </p>
@@ -575,7 +571,7 @@ const CompaniesStripSection = () => {
         </div>
       </div>
 
-      {/* local CSS for smooth, infinite scroll */}
+      {/* local CSS for infinite marquee */}
       <style>{`
         @keyframes scroll-x {
           from { transform: translateX(0); }
@@ -595,120 +591,6 @@ const CompaniesStripSection = () => {
 };
 
 
-/* ============================
-   Hero Section (video bg)
-   ============================ */
-const HeroSection = ({ handleExploreCourses }) => {
-  const videoRef = React.useRef(null);
-  const sectionRef = React.useRef(null);
-
-  React.useEffect(() => {
-    const v = videoRef.current;
-    const s = sectionRef.current;
-    if (!v || !s) return;
-
-    v.muted = true;
-    v.playsInline = true;
-    const tryPlay = () => v.play().catch(() => {});
-    const obs = new IntersectionObserver(
-      ([entry]) => (entry.isIntersecting ? tryPlay() : v.pause()),
-      { threshold: 0.12, rootMargin: '120px 0px' }
-    );
-    obs.observe(s);
-
-    const unlock = () => tryPlay();
-    window.addEventListener('touchstart', unlock, { once: true });
-    window.addEventListener('click', unlock, { once: true });
-
-    const onVis = () => (document.hidden ? v.pause() : tryPlay());
-    document.addEventListener('visibilitychange', onVis);
-
-    return () => {
-      obs.disconnect();
-      document.removeEventListener('visibilitychange', onVis);
-    };
-  }, []);
-
-  return (
-    <section
-      ref={sectionRef}
-      className="
-        relative overflow-hidden
-        min-h-[78vh] md:min-h-screen
-        pt-[7rem] md:pt-44 pb-8 md:pb-10   /* tweak here if you need tiny shifts */
-        flex items-start
-        bg-gray-950
-      "
-    >
-      {/* Background video */}
-      <video
-        ref={videoRef}
-        className="
-          pointer-events-none absolute inset-0 w-full h-full z-0
-          object-cover object-[50%_40%] sm:object-center
-          opacity-75 filter brightness-110 contrast-105
-          transition-opacity
-        "
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster="/hero_poster.jpg"
-        aria-hidden="true"
-      >
-        <source src="/animation_1.mp4" type="video/mp4" />
-      </video>
-
-      {/* Tint + edge fades */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/16" />
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_4%,rgba(11,18,32,0)_96%,rgba(11,18,32,1)_100%)]" />
-
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-        <div className="mb-2 md:mb-4">
-          <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
-            Gen AI for Business Analysts
-          </span>
-        </div>
-
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-3">
-          Still stuck fixing reports?
-          <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
-        </h1>
-
-        <p className="text-base md:text-xl text-gray-200 mb-6 max-w-3xl mx-auto">
-          Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
-        </p>
-
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <motion.button
-            onClick={handleExploreCourses}
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Explore All Courses
-          </motion.button>
-
-          <motion.a
-            href={WHATSAPP_COMMUNITY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Join Community
-          </motion.a>
-        </div>
-
-        {/* Rotating belt */}
-        <CompaniesBelt />
-      </div>
-    </section>
-  );
-};
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
