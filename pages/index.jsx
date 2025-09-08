@@ -696,7 +696,7 @@ const MentorSection = ({ sectionRef }) => (
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
                             <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
-                                <img src="/2.png" alt="Rwitapa Mitra" width={300} height={300} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
+                                <img src="/2.png" alt="Rwitapa Mitra" width={160} height={150} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
                             </div>
                         </div>
                     </div>
