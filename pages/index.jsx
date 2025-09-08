@@ -621,6 +621,7 @@ const HeroSection = ({ handleExploreCourses }) => {
 };
 
 
+
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
