@@ -579,7 +579,7 @@ export const CompaniesBelt = () => {
     { name: "Zomato",    src: "/brand/zomato.png" },
     { name: "Zoho",      src: "/brand/zoho.png" },
     { name: "Paytm",     src: "/brand/paytm.png" },
-    { name: "Ola",       src: "/brand/ola" },
+    { name: "Ola",       src: "/brand/ola.png" },
     { name: "Flipkart",  src: "/brand/flipkart.png" },
     { name: "Razorpay",  src: "/brand/razorpay.png" },
     { name: "PharmEasy", src: "/brand/pharmeasy.png" },
