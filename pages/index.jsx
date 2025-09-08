@@ -293,83 +293,101 @@ const courseData = {
   },
 };
 
-// Component for the dedicated courses page
+// Component for the dedicated courses page - REDESIGNED
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
 
-  const toggleModule = (moduleTitle) => {
-    setOpenModule(openModule === moduleTitle ? null : moduleTitle);
+  const toggleModule = (courseTitle, moduleTitle) => {
+    const identifier = `${courseTitle}-${moduleTitle}`;
+    setOpenModule(openModule === identifier ? null : identifier);
   };
-
-  const renderModules = (modules) => {
-    return modules.map((module, index) => (
-      <div key={index} className="border-b border-gray-700 py-4">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleModule(module.title)}
-        >
-          <h4 className="text-lg font-semibold text-white">{module.title}</h4>
-          <Icon
-            name="arrow-left"
-            size={24}
-            className={`text-purple-500 transform transition-transform duration-300 ${openModule === module.title ? '-rotate-90' : 'rotate-180'
-              }`}
-            strokeWidth={1.5}
-          />
-        </div>
-        {openModule === module.title && (
-          <p className="mt-2 text-gray-400">{module.summary}</p>
-        )}
-      </div>
-    ));
-  };
-
-  const renderCourseCard = (course, isPopular = false) => (
-    <div className={`bg-gray-900 rounded-3xl p-8 border border-gray-800 flex flex-col justify-between ${isPopular ? 'border-purple-700 bg-gradient-to-br from-purple-900 to-gray-900' : ''}`}>
-      {isPopular && (
-        <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">
-          Popular
-        </div>
-      )}
-      <div>
-        <h3 className="text-2xl font-bold text-white mb-2">{course.title}</h3>
-        <p className="text-lg text-gray-400 mb-4">{course.subtitle}</p>
-        <p className="text-gray-300 mb-6">{course.description}</p>
-        
-        {/* Next Cohort Dates */}
-        <div className="mb-6">
-          <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
-          {course.title === '3-Hour Champion Sprint' ? (
-            <p className="text-white text-base">{getNextDayOfWeek([1, 3, 5])}, 7-10 PM IST</p>
-          ) : (
-            <p className="text-white text-base">{getNextAlternateWeekend()}, 10 AM - 7 PM IST</p>
+  
+  const CourseSection = ({ course, isPopular = false, paymentUrl }) => (
+    <motion.div 
+      className={`bg-gray-900 rounded-3xl p-6 md:p-8 border ${isPopular ? 'border-purple-700' : 'border-gray-800'} mb-12`}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Left Side: Details */}
+        <div className="md:col-span-1">
+          <h2 className="text-3xl font-bold text-white mb-2">{course.title}</h2>
+          {isPopular && (
+            <span className="inline-block bg-yellow-500 text-black font-bold text-xs px-3 py-1 rounded-full mb-4">
+              Popular
+            </span>
           )}
+          <p className="text-lg text-gray-400 mb-4">{course.subtitle}</p>
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-1">Price</h4>
+              <p className="text-white text-2xl font-bold">{course.price}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-1">Next Cohort</h4>
+              <p className="text-white text-base">
+                {course.title === '3-Hour Champion Sprint' ? `${getNextDayOfWeek([1, 3, 5])}, 7-10 PM IST` : `${getNextAlternateWeekend()}, 10 AM - 7 PM IST`}
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Tools Covered</h4>
+              <div className="flex flex-wrap gap-2">
+                {course.tools.map((tool, index) => (
+                  <span key={index} className="bg-gray-800 text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">{tool}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <motion.a 
+            href={paymentUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="mt-8 w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Enroll Now
+          </motion.a>
         </div>
 
-        <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Tools Covered</h4>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {course.tools.map((tool, index) => (
-            <span key={index} className="bg-gray-800 text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">{tool}</span>
-          ))}
-        </div>
-
-        <div className="text-white font-bold text-2xl mb-8">
-          {course.price}
-        </div>
-
-        <div className="space-y-4">
-          {course.title === '3-Hour Champion Sprint' ? (
-            <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
-              Enroll Now
-            </a>
-          ) : (
-            <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
-              Enroll Now
-            </a>
-          )}
+        {/* Right Side: Modules */}
+        <div className="md:col-span-2">
+          <p className="text-gray-300 mb-6">{course.description}</p>
+          <h3 className="text-xl font-bold text-white mb-2">Course Modules</h3>
+          <div className="border-t border-gray-700">
+            {course.modules.map((module, index) => (
+              <div key={index} className="border-b border-gray-700 py-4">
+                <div
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleModule(course.title, module.title)}
+                >
+                  <h4 className="text-lg font-semibold text-white">{module.title}</h4>
+                  <Icon
+                    name="arrow-left"
+                    size={24}
+                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? '-rotate-90' : 'rotate-180'}`}
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <AnimatePresence>
+                  {openModule === `${course.title}-${module.title}` && (
+                    <motion.p 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-2 text-gray-400 overflow-hidden"
+                    >
+                      {module.summary}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -385,33 +403,14 @@ const CoursesPage = ({ onBack }) => {
           </p>
         </div>
 
-        {/* Courses Overview - Updated for mobile-first stacking */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
-          {renderCourseCard(courseData.sprint)}
-          <div className="relative">
-            {renderCourseCard(courseData.accelerator, true)}
-          </div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Sneak Peek: What You'll Learn</h2>
-          <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-              <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 3-Hour Champion Sprint
-            </h3>
-            {renderModules(courseData.sprint.modules)}
-          </div>
-          <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-              <Icon name="play-circle" size={24} className="mr-2 text-purple-400" /> 16-Hour Superstar Accelerator
-            </h3>
-            {renderModules(courseData.accelerator.modules)}
-          </div>
-        </div>
+        <CourseSection course={courseData.sprint} paymentUrl={RAZORPAY_PAYMENT_URL} />
+        <CourseSection course={courseData.accelerator} isPopular={true} paymentUrl={SUPERSTAR_ACCELERATOR_URL} />
+
       </div>
     </div>
   );
 };
+
 
 // This is the main App component that contains the entire website.
 const App = () => {
