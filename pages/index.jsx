@@ -453,92 +453,121 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 
 const HeroSection = ({ handleExploreCourses }) => {
   const videoRef = useRef(null);
-  const containerRef = useRef(null);
+  const bubbleRef = useRef(null);
 
   useEffect(() => {
-    const video = videoRef.current;
-    const container = containerRef.current;
-    if (!video || !container) return;
+    const v = videoRef.current;
+    const el = bubbleRef.current;
+    if (!v || !el) return;
 
-    // Respect reduced-motion and only load/play when on screen
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Mobile/safari-friendly defaults
+    v.muted = true;
+    v.playsInline = true;
 
-    const onIntersect = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !prefersReducedMotion) {
-          if (!video.src) {
-            // file lives in /public so it’s served at the root path
-            video.src = '/animation.mp4';
-          }
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
+    const tryPlay = () => {
+      v.play().catch(() => {});
     };
 
-    const observer = new IntersectionObserver(onIntersect, { threshold: 0.2 });
-    observer.observe(container);
-    return () => observer.disconnect();
+    // Play when visible, pause when not
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) tryPlay();
+      else v.pause();
+    }, { threshold: 0.2, rootMargin: '100px 0px' });
+
+    obs.observe(el);
+
+    // Fallback: if a browser still blocks autoplay, unlock on first interaction
+    const unlock = () => { tryPlay(); window.removeEventListener('touchstart', unlock); window.removeEventListener('click', unlock); };
+    window.addEventListener('touchstart', unlock, { once: true });
+    window.addEventListener('click', unlock, { once: true });
+
+    // Pause when tab hidden
+    const onVis = () => { document.hidden ? v.pause() : tryPlay(); };
+    document.addEventListener('visibilitychange', onVis);
+
+    return () => {
+      obs.disconnect();
+      document.removeEventListener('visibilitychange', onVis);
+    };
   }, []);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950"
-    >
-      {/* Transparent video background */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover z-0 opacity-40"
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-      />
+    <section className="relative overflow-hidden min-h-[80vh] md:min-h-screen py-20 bg-gray-950 flex items-center">
+      {/* subtle page glow */}
+      <div className="pointer-events-none absolute -top-24 -right-24 w-[40rem] h-[40rem] rounded-full bg-purple-700/10 blur-[100px]" />
 
-      {/* Dark tint for readability */}
-      <div className="absolute inset-0 z-10 bg-gray-950/60" />
+      <div className="relative z-10 container mx-auto px-6 max-w-6xl">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Text / CTAs */}
+          <div className="order-2 md:order-1 text-center md:text-left">
+            <div className="mb-6">
+              <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
+                Gen AI for Business Analysts
+              </span>
+            </div>
 
-      {/* Content */}
-      <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-        <div className="mb-6">
-          <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
-            Gen AI for Business Analysts
-          </span>
-        </div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
+              Still stuck fixing reports?
+              <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
+            </h1>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-          Still stuck fixing reports?
-          <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
-        </h1>
+            <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl md:max-w-none mx-auto md:mx-0">
+              Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps
+              to Slack or email.
+            </p>
 
-        <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-          If manual reporting eats your day, fix it. Launch an AI KPI agent that keeps data fresh, flags
-          anomalies, and sends insights with next steps to Slack or email.
-        </p>
+            <div className="flex flex-col sm:flex-row sm:justify-start justify-center items-center gap-4">
+              <motion.button
+                onClick={handleExploreCourses}
+                className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Explore All Courses
+              </motion.button>
 
-        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <motion.button
-            onClick={handleExploreCourses}
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Explore All Courses
-          </motion.button>
+              <motion.a
+                href={WHATSAPP_COMMUNITY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Join Community
+              </motion.a>
+            </div>
+          </div>
 
-          <motion.a
-            href={WHATSAPP_COMMUNITY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Join Community
-          </motion.a>
+          {/* Circular video bubble */}
+          <div className="order-1 md:order-2 flex justify-center">
+            <div ref={bubbleRef} className="relative">
+              {/* Gradient ring */}
+              <div className="p-[6px] rounded-full bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]">
+                {/* Circle mask */}
+                <div className="relative rounded-full overflow-hidden bg-[#0b1220] w-64 h-64 sm:w-72 sm:h-72 md:w-[26rem] md:h-[26rem] lg:w-[30rem] lg:h-[30rem]">
+                  <video
+                    ref={videoRef}
+                    className="absolute inset-0 w-full h-full object-cover opacity-90" /* make it clearly video */
+                    muted
+                    playsInline
+                    loop
+                    autoPlay
+                    preload="none"
+                    poster="/hero_poster.jpg" /* optional: lightweight poster in /public */
+                    controls={false}
+                    disablePictureInPicture
+                    controlsList="nodownload noplaybackrate nofullscreen noremoteplayback"
+                  >
+                    {/* Put the video files in /public */}
+                    <source src="/animation.webm" type="video/webm" />
+                    <source src="animation.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* /bubble */}
         </div>
       </div>
     </section>
