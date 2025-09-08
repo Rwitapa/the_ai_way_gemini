@@ -504,7 +504,62 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
+const HeroSection = ({ handleExploreCourses }) => {
+  return (
+    <section id="hero" className="relative isolate bg-gray-950">
+      {/* Background video */}
+      <div className="absolute inset-0 -z-10 overflow-hidden rounded-b-[40px] md:rounded-b-[80px]">
+        <video
+          src="/animation_1.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Soften/readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-gray-950/40 to-gray-950/90" />
+      </div>
 
+      {/* Content */}
+      <div className="container mx-auto px-6 pt-28 md:pt-36 pb-16 md:pb-24 min-h-[78vh] md:min-h-screen flex flex-col justify-center">
+        <div className="mx-auto max-w-4xl text-center">
+          <span className="inline-block rounded-full bg-purple-700/60 text-white text-sm md:text-base px-4 py-2 font-semibold shadow-lg">
+            Gen AI for Business Analysts
+          </span>
+
+          <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white">
+            Still stuck fixing reports?
+            <span className="block text-purple-300">Be your team’s hero with AI.</span>
+          </h1>
+
+          <p className="mt-6 text-base md:text-lg text-gray-300">
+            Launch an AI KPI agent that keeps data fresh, flags anomalies, and pushes insights to Slack or email.
+          </p>
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="#courses"
+              onClick={(e) => { e.preventDefault(); handleExploreCourses(); }}
+              className="rounded-full bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3"
+            >
+              Explore All Courses
+            </a>
+            <a
+              href={WHATSAPP_COMMUNITY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3"
+            >
+              Join Community
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 const CompaniesBelt = () => {
   // Make sure these exist under /public/brand (exact lowercase file names)
   const LOGOS = [
@@ -589,7 +644,6 @@ const CompaniesBelt = () => {
     </section>
   );
 };
-
 
 
 const PersonasSection = () => (
@@ -1102,6 +1156,7 @@ const App = () => {
     const mainPageComponent = (
         <>
             <HeroSection handleExploreCourses={handleExploreCourses} />
+            <CompaniesBelt />
             <PersonasSection />
             <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
             <MentorSection sectionRef={sectionRefs.mentors} />
