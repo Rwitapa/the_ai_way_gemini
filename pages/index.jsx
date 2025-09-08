@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import Head from 'next/head';
 
 // --- CONSTANTS & UTILS ---
 
@@ -460,13 +461,13 @@ const HeroSection = ({ handleExploreCourses }) => {
     const s = sectionRef.current;
     if (!v || !s) return;
 
-    // Mobile autoplay requirements
+    // mobile autoplay requirements
     v.muted = true;
     v.playsInline = true;
 
     const tryPlay = () => v.play().catch(() => {});
 
-    // Play when visible, pause when not
+    // play when visible, pause when not
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) tryPlay();
       else v.pause();
@@ -474,12 +475,12 @@ const HeroSection = ({ handleExploreCourses }) => {
 
     obs.observe(s);
 
-    // Fallback: unlock autoplay on first interaction if a browser blocks it
+    // fallback: if a browser blocks autoplay, unlock on first interaction
     const unlock = () => { tryPlay(); };
     window.addEventListener('touchstart', unlock, { once: true });
     window.addEventListener('click', unlock, { once: true });
 
-    // Pause on tab hide
+    // pause on tab hide
     const onVis = () => (document.hidden ? v.pause() : tryPlay());
     document.addEventListener('visibilitychange', onVis);
 
@@ -490,80 +491,89 @@ const HeroSection = ({ handleExploreCourses }) => {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950"
-    >
-      {/* Backfill color for letterboxing on mobile with object-contain */}
-      <div className="absolute inset-0 z-0 bg-gray-950" />
+    <>
+      {/* Preload the video so it’s ready as the hero mounts */}
+      <Head>
+        <link rel="preload" as="video" href="/animation_1.mp4" type="video/mp4" />
+      </Head>
 
-      {/* Full-bleed background video */}
-      <video
-        ref={videoRef}
-        className="
-          pointer-events-none absolute inset-0 w-full h-full z-0
-          object-contain sm:object-cover
-          object-[50%_35%] sm:object-center        /* shift focal point up a bit on mobile */
-          opacity-55 sm:opacity-60                 /* visibility (tweak here) */
-          transition-opacity
-        "
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="none"
-        poster="/hero_poster.jpg"
-        aria-hidden="true"
+      <section
+        ref={sectionRef}
+        className="relative overflow-hidden min-h-screen pt-28 md:pt-32 pb-16 flex items-center bg-gray-950"
       >
-        <source src="/animation_1.webm" type="video/webm" />
-        <source src="/animation_1.mp4" type="video/mp4" />
-      </video>
+        {/* Full-bleed background video */}
+        <video
+          ref={videoRef}
+          className="
+            pointer-events-none absolute inset-0 w-full h-full z-0
+            object-cover
+            object-[50%_40%] sm:object-center
+            opacity-75
+            filter brightness-110 contrast-105
+            transition-opacity
+          "
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/hero_poster.jpg"   /* optional poster in /public */
+          aria-hidden="true"
+        >
+          <source src="/animation_1.mp4" type="video/mp4" />
+        </video>
 
-      {/* Light overlay for text contrast (lighter on mobile so the video is visible) */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/28 sm:bg-gray-950/22" />
+        {/* Tint + soft top/bottom fade so it blends cleanly */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/18" />
+        <div
+          className="pointer-events-none absolute inset-0 z-0
+                     bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_16%,rgba(11,18,32,0)_84%,rgba(11,18,32,1)_100%)]"
+        />
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-        <div className="mb-6">
-          <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
-            Gen AI for Business Analysts
-          </span>
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
+          <div className="mb-6">
+            <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
+              Gen AI for Business Analysts
+            </span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
+            Still stuck fixing reports?
+            <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
+          </h1>
+
+          <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+            Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <motion.button
+              onClick={handleExploreCourses}
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Explore All Courses
+            </motion.button>
+
+            <motion.a
+              href={WHATSAPP_COMMUNITY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Join Community
+            </motion.a>
+          </div>
         </div>
-
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-          Still stuck fixing reports?
-          <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
-        </h1>
-
-        <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
-          Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
-        </p>
-
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <motion.button
-            onClick={handleExploreCourses}
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Explore All Courses
-          </motion.button>
-
-          <motion.a
-            href={WHATSAPP_COMMUNITY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Join Community
-          </motion.a>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
+
 
 
 const PersonasSection = () => (
