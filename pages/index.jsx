@@ -571,75 +571,120 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-function CompaniesBelt() {
-  // Tailwind violet-400 (same hue as the "Be your team’s hero with AI." line)
-  const HERO_PURPLE_RGB = '167, 139, 250';
-  const LOGOS = [
-    { name: 'Swiggy',    src: '/brand/swiggy.png'    },
-    { name: 'Zoho',      src: '/brand/zoho.png'      },
-    { name: 'Zomato',    src: '/brand/zomato.png'    },
-    { name: 'Paytm',     src: '/brand/paytm.png'     },
-    { name: 'Ola',       src: '/brand/ola.png'       },
-    { name: 'Flipkart',  src: '/brand/flipkart_logo_256x96.png'  },
-    { name: 'Razorpay',  src: '/brand/razorpay.png'  },
-    { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
-  ];
- const track = [...LOGOS, ...LOGOS]; // seamless loop
 
+const LOGOS = [
+  { name: 'Swiggy',    src: '/brand/swiggy.png'    },
+  { name: 'Zoho',      src: '/brand/zoho.png'      },
+  { name: 'Zomato',    src: '/brand/zomato.png'    },
+  { name: 'Paytm',     src: '/brand/paytm.png'     },
+  { name: 'Ola',       src: '/brand/ola.png'       },
+  { name: 'Flipkart',  src: '/brand/flipkart_logo_256x96.png'  },
+  { name: 'Razorpay',  src: '/brand/razorpay.png'  },
+  { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
+];
+
+function LogoCard({ src, alt }) {
   return (
-    <section id="companies" className="relative bg-transparent py-8 md:py-10">
-      {/* GREY OVERLAY — sits above everything; tweak opacity here */}
-      <div className="pointer-events-none absolute inset-0 z-30 bg-black/10 md:bg-black/10" />
+    <div
+      className="
+        shrink-0 rounded-2xl
+        bg-neutral-100/90 dark:bg-neutral-100/90
+        ring-1 ring-black/5
+        h-16 md:h-18
+        w-[168px] md:w-[188px]
+        flex items-center justify-center
+        px-4
+      "
+    >
+      {/* keep images a bit smaller inside the card */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className="h-8 md:h-9 w-auto object-contain"
+      />
+    </div>
+  );
+}
 
-      {/* Content layer */}
-      <div className="relative z-20 container mx-auto px-6">
-        <h3 className="text-center text-slate-200/90 font-semibold tracking-tight text-[15px] md:text-base mb-5 md:mb-6">
-          Our graduates work at leading tech companies
-        </h3>
-      </div>
+export function CompaniesBelt() {
+  return (
+    <section
+      id="companies"
+      className="
+        relative
+        pt-10 md:pt-12
+        pb-14 md:pb-16
+      "
+    >
+      {/* title - outside the belt */}
+      <h3 className="text-center text-white/80 font-semibold text-lg md:text-xl mb-5 md:mb-6">
+        Our graduates work at leading tech companies
+      </h3>
 
-      <div className="relative z-20 overflow-hidden">
-        <div className="relative h-16 md:h-20">
-          {/* Track 1 */}
-          <ul
-            className="flex w-max gap-6 md:gap-8 animate-marquee"
-            style={{ animationDuration: '60s' }} // adjust speed here
-          >
-            {track.map((logo, i) => (
-              <li key={i} className="shrink-0">
-                <div className="flex items-center justify-center h-14 md:h-16 w-28 md:w-32 rounded-xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset]">
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    loading="lazy"
-                    className="max-h-8 md:max-h-9 w-auto object-contain"
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+      {/* belt container */}
+      <div
+        className="
+          relative overflow-hidden
+          rounded-3xl
+          px-2 md:px-4
+        "
+        style={{ '--marquee-duration': '48s' }} /* slow, tweak if needed */
+      >
+        {/* subtle grey overlay to dim the whole belt area just a bit */}
+        <div className="pointer-events-none absolute inset-0 bg-black/5" />
 
-          {/* Track 2 — starts right after track 1 */}
-          <ul
-            aria-hidden="true"
-            className="flex w-max gap-6 md:gap-8 animate-marquee absolute top-0 left-full"
-            style={{ animationDuration: '60s' }}
-          >
-            {track.map((logo, i) => (
-              <li key={`dup-${i}`} className="shrink-0">
-                <div className="flex items-center justify-center h-14 md:h-16 w-28 md:w-32 rounded-xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset]">
-                  <img
-                    src={logo.src}
-                    alt={`${logo.name} duplicate`}
-                    loading="lazy"
-                    className="max-h-8 md:max-h-9 w-auto object-contain"
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+        {/* the moving rail */}
+        <div className="relative">
+          {/* 200% wide rail with two tracks side-by-side */}
+          <div className="flex w-[200%] animate-marquee [animation-duration:var(--marquee-duration)]">
+            {/* Track A */}
+            <ul className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12">
+              {LOGOS.map((l) => (
+                <li key={`a-${l.name}`} className="shrink-0">
+                  <LogoCard src={l.src} alt={l.name} />
+                </li>
+              ))}
+            </ul>
+
+            {/* Track B (duplicate) */}
+            <ul
+              className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12"
+              aria-hidden="true"
+            >
+              {LOGOS.map((l) => (
+                <li key={`b-${l.name}`} className="shrink-0">
+                  <LogoCard src={l.src} alt="" />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
+
+      {/* give some breathing room below the belt before the next section */}
+      <div className="h-10 md:h-12" />
+
+      {/* keyframes (scoped) */}
+      <style jsx global>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-marquee {
+          animation-name: marquee;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+        /* pause on hover if you ever want to inspect logos */
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 }
