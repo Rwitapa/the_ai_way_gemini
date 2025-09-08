@@ -517,7 +517,7 @@ const CompaniesBelt = () => {
     { name: 'Razorpay',  src: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Razorpay_logo.svg',            width: 140 },
     { name: 'PharmEasy', src: 'https://www.svgrepo.com/download/518538/pharmeasy.svg',                             width: 140 },
     { name: 'Ola',       src: '/Ola_logo.png',            width: 120 },
-    { name: 'Paytm',     src: 'Paytm_logo.png',               width: 120 },
+    { name: 'Paytm',     src: '/Paytm_logo.png',               width: 120 },
     { name: 'Zoho',      src: '/Zoho_logo.png,     width: 140 },
   ];
 
