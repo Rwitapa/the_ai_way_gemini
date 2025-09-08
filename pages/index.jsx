@@ -523,7 +523,7 @@ const HeroSection = ({ handleExploreCourses }) => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-6 pt-28 md:pt-36 pb-16 md:pb-24 min-h-[78vh] md:min-h-screen flex flex-col justify-center">
+      <div className="container mx-auto px-6 pt-28 md:pt-36 pb-10 md:pb-14 min-h-[78vh] md:min-h-[88vh] flex flex-col justify-center">
         <div className="mx-auto max-w-4xl text-center">
           <span className="inline-block rounded-full bg-purple-700/60 text-white text-sm md:text-base px-4 py-2 font-semibold shadow-lg">
             Gen AI for Business Analysts
@@ -560,90 +560,71 @@ const HeroSection = ({ handleExploreCourses }) => {
     </section>
   );
 };
-const CompaniesBelt = () => {
-  // Make sure these exist under /public/brand (exact lowercase file names)
-  const LOGOS = [
-    { name: 'Flipkart',  src: '/brand/flipkart.png'  },
-    { name: 'Ola',       src: '/brand/ola.png'       },
-    { name: 'Paytm',     src: '/brand/paytm.png'     },
-    { name: 'Razorpay',  src: '/brand/razorpay.png'  },
-    { name: 'Swiggy',    src: '/brand/swiggy.png'    },
-    { name: 'Zomato',    src: '/brand/zomato.png'    },
-    { name: 'Zoho',      src: '/brand/zoho.png'      },
-    { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
-  ];
 
-  const track = [...LOGOS, ...LOGOS]; // duplicate once for seamless loop
+const LOGOS = [
+  { name: 'Swiggy',   src: '/brand/swiggy.png',    width: 120 },
+  { name: 'Zomato',   src: '/brand/zomato.png',    width: 140 },
+  { name: 'Flipkart', src: '/brand/flipkart.png',  width: 150 },
+  { name: 'Ola',      src: '/brand/ola.png',       width: 120 },
+  { name: 'Paytm',    src: '/brand/paytm.png',     width: 120 },
+  { name: 'Zoho',     src: '/brand/zoho.png',      width: 140 },
+  { name: 'Razorpay', src: '/brand/razorpay.png',  width: 140 },
+  { name: 'PharmEasy',src: '/brand/pharmeasy.png', width: 150 },
+];
+
+const CompaniesBelt = () => {
+  const track = [...LOGOS, ...LOGOS]; // seamless loop
 
   return (
-    <section id="companies" aria-label="Companies belt" className="relative bg-gray-950">
-      {/* next fold spacing so it lives below the hero */}
-      <div className="container mx-auto px-6 pt-16 md:pt-24 pb-14 md:pb-20">
-        <div className="mx-auto max-w-6xl">
-          {/* light, brand-tinted strip */}
-          <div className="
-            relative overflow-hidden rounded-3xl ring-1 ring-white/10 p-5 md:p-8
-            bg-[linear-gradient(90deg,rgba(168,85,247,0.12),rgba(99,102,241,0.10),rgba(16,185,129,0.10))]
-          ">
-            <p className="text-center text-gray-900/85 dark:text-gray-100/90 text-sm md:text-base font-semibold mb-5">
-              Our graduates work at leading tech companies
-            </p>
+    <section aria-label="Companies" className="relative bg-transparent pt-2 md:pt-4">
+      {/* Heading outside the belt */}
+      <div className="container mx-auto px-6">
+        <h3 className="text-slate-200 font-bold text-lg md:text-xl text-center">
+          Our graduates work at leading tech companies
+        </h3>
+      </div>
 
-            <div className="relative overflow-hidden">
-              {/* soft fades at edges */}
-              <div
-                className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-24 z-10"
-                style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.35), rgba(255,255,255,0))' }}
-              />
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-24 z-10"
-                style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.35), rgba(255,255,255,0))' }}
-              />
-
-              <ul
-                className="flex items-center gap-12 md:gap-20 animate-scroll-x"
-                style={{ '--speed': '32s' }}
-              >
-                {track.map((logo, i) => (
-                  <li
-                    key={`${logo.name}-${i}`}
-                    className="shrink-0 w-[150px] md:w-[220px] flex items-center justify-center"
-                    title={logo.name}
-                  >
-                    <img
-                      src={logo.src}
-                      alt={`${logo.name} logo`}
-                      className="h-10 md:h-12 w-auto object-contain select-none"
-                      loading="eager"
-                      decoding="async"
-                      onError={(e) => (e.currentTarget.style.display = 'none')}
-                    />
-                  </li>
-                ))}
-              </ul>
+      {/* Full-bleed belt */}
+      <div className="w-full mt-4">
+        <div className="w-full bg-white/10 backdrop-blur-sm">
+          {/* marquee viewport */}
+          <div className="relative overflow-hidden">
+            {/* animated track */}
+            <div className="marquee flex items-center gap-16 md:gap-24 py-6 md:py-7">
+              {track.map((logo, i) => (
+                <div
+                  key={`${logo.name}-${i}`}
+                  className="flex-none flex items-center justify-center px-4"
+                  style={{ width: logo.width + 80 }}
+                >
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    className="h-8 md:h-10 w-auto opacity-95"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* local CSS for infinite marquee */}
-      <style>{`
-        @keyframes scroll-x {
+      {/* marquee keyframes (scoped) */}
+      <style jsx>{`
+        .marquee {
+          width: max-content;
+          animation: belt-scroll 28s linear infinite;
+        }
+        @keyframes belt-scroll {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
-        }
-        .animate-scroll-x {
-          animation: scroll-x var(--speed, 40s) linear infinite;
-          width: max-content;
-          will-change: transform;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-scroll-x { animation: none; }
         }
       `}</style>
     </section>
   );
 };
+
 
 
 const PersonasSection = () => (
@@ -1154,17 +1135,17 @@ const App = () => {
     };
 
     const mainPageComponent = (
-        <>
-            <HeroSection handleExploreCourses={handleExploreCourses} />
-            <CompaniesBelt />
-            <PersonasSection />
-            <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
-            <MentorSection sectionRef={sectionRefs.mentors} />
-            <TestimonialCarousel sectionRef={sectionRefs.testimonials} />
-            <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
-            <FAQSection />
-            <FinalCTASection scrollToSection={scrollToSection} />
-        </>
+      <>
+        <HeroSection handleExploreCourses={handleExploreCourses} />
+        <CompaniesBelt />   {/* second fold, tight to hero */}
+        <PersonasSection />
+        <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
+        <MentorSection sectionRef={sectionRefs.mentors} />
+        <TestimonialCarousel sectionRef={sectionRefs.testimonials} />
+        <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
+        <FAQSection />
+        <FinalCTASection scrollToSection={scrollToSection} />
+      </>
     );
 
     return (
