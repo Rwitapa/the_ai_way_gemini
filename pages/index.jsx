@@ -518,7 +518,7 @@ const CompaniesBelt = () => {
     { name: 'PharmEasy', src: '/Pharmeasy_logo.png',            width: 140 },
     { name: 'Ola',       src: '/Ola_logo.png',                 width: 120 },
     { name: 'Paytm',     src: '/Paytm_logo.png',               width: 120 },
-    { name: 'Zoho',      src: '/Zoho_logo.png,                 width: 140 },
+    { name: 'Zoho',      src: '/Zoho_logo.png',                 width: 140 },
   ];
 
   // Duplicate for a seamless loop
