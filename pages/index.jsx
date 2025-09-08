@@ -515,8 +515,8 @@ const HeroSection = ({ handleExploreCourses }) => {
         poster="/hero_poster.jpg"
         aria-hidden="true"
       >
-        <source src="/animation.webm" type="video/webm" />
-        <source src="/animation.mp4" type="video/mp4" />
+        <source src="/animation_1.webm" type="video/webm" />
+        <source src="/animation_1.mp4" type="video/mp4" />
       </video>
 
       {/* Light overlay for text contrast (lighter on mobile so the video is visible) */}
