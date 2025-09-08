@@ -400,8 +400,8 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
   return (
-    <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-2 md:py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
-      <nav className="flex items-center justify-between h-14 md:h-16">
+    <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
+      <nav className="flex items-center justify-between h-16 md:h-20">
         {/* Brand */}
         <a
           href="#"
@@ -411,22 +411,44 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
             setShowCoursesPage(false);
             window.scrollTo(0, 0);
           }}
-          className="group flex items-center gap-3"
+          className="group flex items-center gap-3 md:gap-4"
         >
-          {/* Mark (transparent PNG/SVG) */}
-          <span className="relative block h-8 w-8 md:h-9 md:w-9">
+          {/* --- Option A (recommended): transparent PNG/SVG mark --- */}
+          <span className="relative block h-10 w-10 md:h-12 md:w-12">
             <Image
-              src="/brand/aiway-mark.png"   /* <-- use the removebg transparent mark here */
+              src="/brand/aiway-mark.png"   // make sure this one is truly transparent
               alt="The AI Way logo"
               fill
-              sizes="(max-width: 768px) 32px, 36px"
+              sizes="(max-width: 768px) 40px, 48px"
               priority
               className="object-contain"
             />
           </span>
 
-          {/* Wordmark as text on md+ (no risky image with hidden white box) */}
-          <span className="hidden md:inline-block text-lg font-extrabold tracking-tight bg-gradient-to-r from-purple-300 via-purple-400 to-sky-300 bg-clip-text text-transparent">
+          {/* --- Option B: force the mark to WHITE even if it’s purple ---
+               Use this instead of Option A if you want a white mark without editing the file.
+               Comment Option A out and uncomment this block. 
+          */}
+          {/*
+          <span
+            className="block h-10 w-10 md:h-12 md:w-12"
+            style={{
+              WebkitMaskImage: "url(/brand/aiway-mark.png)",
+              maskImage: "url(/brand/aiway-mark.png)",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+              backgroundColor: "#ffffff", // <- this sets the mark color to white
+            }}
+            aria-hidden="true"
+          />
+          */}
+
+          {/* Wordmark (white only, bigger) */}
+          <span className="hidden md:inline-block text-2xl md:text-3xl font-extrabold tracking-tight text-white">
             The AI Way
           </span>
         </a>
@@ -467,6 +489,8 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
     </header>
   );
 };
+
+
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   <AnimatePresence>
     {isMenuOpen && (
