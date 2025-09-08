@@ -695,9 +695,13 @@ const MentorSection = ({ sectionRef }) => (
                     <div className="md:col-span-1 flex justify-center">
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
-                            <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
-                                <img src="/Rwitapa.png" alt="Rwitapa Mitra" width={160} height={150} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
-                            </div>
+                              <div className="w-40 h-40 rounded-full overflow-hidden ring-2 ring-gray-900 bg-gray-800">
+                                <img
+                                  src="/Rwitapa.png"
+                                  alt="Rwitapa Mitra"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                         </div>
                     </div>
                     <div className="md:col-span-2 text-center md:text-left">
