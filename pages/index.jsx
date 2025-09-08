@@ -401,7 +401,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
 
   return (
     <>
-      {/* Free, Alkaline-adjacent font */}
+      {/* font load (keep only one copy in your app) */}
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
@@ -420,7 +420,6 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
             onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }}
             className="group flex items-center gap-3 md:gap-4"
           >
-            {/* Same transparent mark on all breakpoints */}
             <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
               <Image
                 src="/brand/aiway-mark.png"
@@ -432,8 +431,8 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
               />
             </span>
 
-            {/* Wordmark: now visible on mobile and slightly larger than nav */}
-            <span className="inline-block font-poppins-medium text-white leading-none tracking-tight text-[17px] md:text-[19px]">
+            {/* The AI Way — slightly larger now */}
+            <span className="inline-block font-poppins-medium text-white leading-none tracking-tight text-[18px] md:text-[21px] lg:text-[22px]">
               The AI Way
             </span>
           </a>
@@ -475,8 +474,6 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
     </>
   );
 };
-
-
 
 
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
