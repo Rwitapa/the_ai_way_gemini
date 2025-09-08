@@ -603,7 +603,7 @@ function LogoCard({ src, alt }) {
   );
 }
 
-function CompaniesBelt() (
+function CompaniesBelt() {
   // Tweak this to make the belt slower/faster (higher = slower)
   const duration = "48s"; // previously faster; reduced speed as requested
 
