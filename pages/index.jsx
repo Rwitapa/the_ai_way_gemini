@@ -401,38 +401,26 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
 
   return (
     <>
-      {/* load a free medium-weight font similar to Alkaline */}
+      {/* Free, Alkaline-adjacent font */}
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap"
-          rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
       </Head>
-
-      {/* global helper for Poppins Medium */}
       <style jsx global>{`
-        .font-poppins-medium {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-        }
+        .font-poppins-medium { font-family: 'Poppins', sans-serif; font-weight: 500; }
       `}</style>
 
       <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between h-16 md:h-20">
-          {/* brand */}
+          {/* Brand */}
           <a
             href="#"
             aria-label="The AI Way — Home"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowCoursesPage(false);
-              window.scrollTo(0, 0);
-            }}
+            onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }}
             className="group flex items-center gap-3 md:gap-4"
           >
-            {/* enlarged mark with transparent background */}
+            {/* Same transparent mark on all breakpoints */}
             <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
               <Image
                 src="/brand/aiway-mark.png"
@@ -444,19 +432,19 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
               />
             </span>
 
-            {/* wordmark—same size as nav items, Poppins medium, white */}
-            <span className="hidden md:inline-block font-poppins-medium text-white leading-none tracking-tight text-[15px] md:text-[17px]">
+            {/* Wordmark: now visible on mobile and slightly larger than nav */}
+            <span className="inline-block font-poppins-medium text-white leading-none tracking-tight text-[17px] md:text-[19px]">
               The AI Way
             </span>
           </a>
 
-          {/* desktop navigation */}
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-8">
             {sections.map((section) => (
               <button
                 key={section.ref}
                 onClick={() => scrollToSection(section.ref)}
-                className="text-[15px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
+                className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
               >
                 {section.name}
               </button>
@@ -465,13 +453,13 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
               href={WHATSAPP_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[15px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
+              className="text-[16px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
             >
               Join Community
             </a>
           </div>
 
-          {/* mobile menu button */}
+          {/* Mobile menu */}
           <div className="md:hidden">
             <button
               ref={menuButtonRef}
@@ -487,6 +475,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
     </>
   );
 };
+
 
 
 
@@ -927,21 +916,55 @@ const FinalCTASection = ({ scrollToSection }) => (
 );
 
 const Footer = () => (
-    <footer className="bg-gray-950 py-10 border-t border-gray-800">
-        <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-                <div className="mb-6 md:mb-0 text-center md:text-left">
-                    <h4 className="text-xl font-bold text-white">The AI Way</h4>
-                </div>
-                <div className="flex space-x-6">
-                    <a href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"><Icon name="linkedin" size={24} /></a>
-                    <a href="https://www.instagram.com/theaiway.official/" aria-label="Instagram Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"><Icon name="instagram" size={24} /></a>
-                </div>
-            </div>
-            <div className="text-center text-gray-500 text-sm">&copy; 2025 The AI Way. All Rights Reserved.</div>
+  <footer className="bg-gray-950 py-10 border-t border-gray-800">
+    <div className="container mx-auto px-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+        {/* Brand (logo + name) */}
+        <div className="mb-6 md:mb-0 flex items-center gap-3 md:gap-4">
+          <span className="relative block h-10 w-10 md:h-12 md:w-12">
+            <Image
+              src="/brand/aiway-mark.png"
+              alt="The AI Way logo"
+              fill
+              sizes="(max-width: 768px) 40px, 48px"
+              className="object-contain"
+            />
+          </span>
+          <span className="font-poppins-medium text-white text-xl md:text-2xl leading-none">
+            The AI Way
+          </span>
         </div>
-    </footer>
+
+        {/* Socials */}
+        <div className="flex space-x-6">
+          <a
+            href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true"
+            aria-label="LinkedIn Profile"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"
+          >
+            <Icon name="linkedin" size={24} />
+          </a>
+          <a
+            href="https://www.instagram.com/theaiway.official/"
+            aria-label="Instagram Profile"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"
+          >
+            <Icon name="instagram" size={24} />
+          </a>
+        </div>
+      </div>
+
+      <div className="text-center text-gray-500 text-sm">
+        &copy; 2025 The AI Way. All Rights Reserved.
+      </div>
+    </div>
+  </footer>
 );
+
 
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
