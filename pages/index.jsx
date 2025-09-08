@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
 // Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
@@ -764,18 +765,39 @@ const App = () => {
           </p>
           {/* UPDATED: CTA buttons stack on mobile */}
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
+            <motion.button 
+              onClick={handleExploreCourses} 
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Explore All Courses
-            </button>
-            <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-all transform hover:scale-105">
+            </motion.button>
+            <motion.a 
+              href={WHATSAPP_COMMUNITY_URL} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Join Community
-            </a>
+            </motion.a>
           </div>
         </div>
       </section>
 
       {/* II. Who This Is For (Who is it for?) */}
-       <section className="py-16 md:py-20 bg-gray-950">
+       <motion.section 
+        className="py-16 md:py-20 bg-gray-950"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+       >
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
@@ -812,10 +834,20 @@ const App = () => {
                 ))}
             </motion.div>
         </div>
-      </section>
+      </motion.section>
       
       {/* III. Courses / Pricing */}
-      <section ref={sectionRefs.courses} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl">
+      <motion.section 
+        ref={sectionRefs.courses} 
+        className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+      >
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
@@ -826,7 +858,11 @@ const App = () => {
           {/* Mobile-First Grid: Stacks on mobile, grid on medium screens and up */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Champion Sprint Card */}
-            <div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between animate-fade-in">
+            <motion.div 
+              className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between"
+              whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)'}}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
                 <p className="text-lg text-gray-400 mb-4">{courseData.sprint.subtitle}</p>
@@ -853,13 +889,24 @@ const App = () => {
                 </ul>
                 <p className="text-white font-bold text-2xl mb-6">{courseData.sprint.price}</p>
               </div>
-              <a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transition-colors">
+              <motion.a 
+                href={RAZORPAY_PAYMENT_URL} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 Enroll Now
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
 
             {/* Superstar Accelerator Card */}
-            <div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <motion.div 
+              className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative"
+              whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)'}}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
               <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">
                 Popular
               </div>
@@ -889,18 +936,30 @@ const App = () => {
                 </ul>
                 <p className="text-white font-bold text-2xl mb-6">{courseData.accelerator.price}</p>
               </div>
-              <a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold hover:bg-gray-200 transition-all">
+              <motion.a 
+                href={SUPERSTAR_ACCELERATOR_URL} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 Enroll Now
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
           </div>
           <div className="text-center mt-12">
-            <button onClick={handleExploreCourses} className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
+            <motion.button 
+              onClick={handleExploreCourses} 
+              className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Explore All Courses
-            </button>
+            </motion.button>
           </div>
         </div>
-      </section>
+      </motion.section>
     
 {/* V. Meet The Mentor */}
 <motion.section
@@ -961,7 +1020,7 @@ const App = () => {
 
         <motion.button
           onClick={handleExploreCourses}
-          className="mt-7 inline-flex items-center justify-center px-6 md:px-8 py-3 text-base font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-transform duration-200 shadow-xl shadow-purple-600/20 ring-1 ring-white/10"
+          className="mt-7 inline-flex items-center justify-center px-6 md:px-8 py-3 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl shadow-purple-600/20 ring-1 ring-white/10"
           whileHover={{ y: -2, scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -1007,7 +1066,17 @@ const App = () => {
 </motion.section>
 
       {/* VI. Testimonials */}
-      <section ref={sectionRefs.testimonials} className="relative py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden">
+      <motion.section 
+        ref={sectionRefs.testimonials} 
+        className="relative py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+      >
         <div className="animated-testimonials-bg" aria-hidden="true" />
         <div className="relative z-10 container mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-10">What Our Students Are Saying</h2>
@@ -1075,10 +1144,20 @@ const App = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
        {/* VII. What You'll Learn */}
-      <section ref={sectionRefs.whatYouGet} className="py-16 md:py-20 bg-gray-950">
+      <motion.section 
+        ref={sectionRefs.whatYouGet} 
+        className="py-16 md:py-20 bg-gray-950"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+      >
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-base md:text-lg font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
           <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
@@ -1116,10 +1195,19 @@ const App = () => {
             ))}
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* VIII. FAQ Section */}
-      <section className="py-16 md:py-20 bg-gray-950">
+      <motion.section 
+        className="py-16 md:py-20 bg-gray-950"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+      >
         <div className="container mx-auto px-6 text-center max-w-4xl">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Got Questions?</h2>
           <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
@@ -1155,22 +1243,36 @@ const App = () => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Final CTA */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center">
+      <motion.section 
+        className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{
+          hidden: { opacity: 0, y: 50 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+        }}
+      >
         <div className="container mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Stop Being the Report Generator. Start Being the ROI Generator.</h2>
           <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">
             AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950 hover:bg-gray-200 transition-colors transform hover:scale-105">
+            <motion.button 
+              onClick={() => scrollToSection('courses')} 
+              className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               View all our courses
-            </button>
+            </motion.button>
           </div>
         </div>
-      </section>
+      </motion.section>
     </>
   );
 
