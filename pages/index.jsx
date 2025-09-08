@@ -571,7 +571,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-import React from "react";
+
 const LOGOS = [
   { name: 'Swiggy',    src: '/brand/swiggy.png'    },
   { name: 'Zoho',      src: '/brand/zoho.png'      },
@@ -602,7 +602,7 @@ function LogoCard({ src, alt }) {
   );
 }
 
-export default function CompaniesBelt() {
+function CompaniesBelt() {
   // Tweak this to make the belt slower/faster (higher = slower)
   const duration = "48s"; // previously faster; reduced speed as requested
 
