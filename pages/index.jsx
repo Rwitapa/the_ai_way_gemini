@@ -506,11 +506,6 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
-
-import { motion } from "framer-motion";
-
-const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
-
 export const HeroSection = ({ handleExploreCourses }) => {
   return (
     <section className="relative overflow-hidden flex items-center bg-gray-950">
