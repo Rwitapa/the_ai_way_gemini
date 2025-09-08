@@ -1210,7 +1210,7 @@ const App = () => {
         className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll"
       >
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Stop Being the Report Generator. Start Being the ROI Generator.</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator</h2>
           <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">
             AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.
           </p>
