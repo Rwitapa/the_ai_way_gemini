@@ -757,10 +757,10 @@ const App = () => {
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
             Still stuck fixing reports?
-            <span className="block text-purple-400 mt-2">Let AI make you the team’s hero</span>
+            <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
           </h1>
           <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-            If manual reporting eats your day, fix it. Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
+            If manual reporting eats your day, fix it.</n>Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
           </p>
           {/* UPDATED: CTA buttons stack on mobile */}
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
