@@ -508,86 +508,81 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 /* ============================
    Rotating Companies Belt
    ============================ */
+// =====================
+// CompaniesBelt (full color, uniform size, rotating)
+// =====================
 const CompaniesBelt = () => {
-  // Reliable public logo files (SVG/PNG)
+  // Put these files in /public/brand/ with the exact lowercase names
   const LOGOS = [
-    { name: 'Flipkart',  src: '/brand/flipkart.png',  width: 140 },
-    { name: 'Ola',       src: '/brand/ola.png',       width: 120 },
-    { name: 'Paytm',     src: '/brand/paytm.png',     width: 140 },
-    { name: 'Razorpay',  src: '/brand/razorpay.png',  width: 160 },
-    { name: 'Swiggy',    src: '/brand/swiggy.png',    width: 140 },
-    { name: 'Zomato',    src: '/brand/zomato.png',    width: 160 },
-    { name: 'Zoho',      src: '/brand/zoho.png',      width: 150 },
-    { name: 'PharmEasy', src: '/brand/pharmeasy.png', width: 160 },
+    { name: 'Flipkart',  src: '/brand/flipkart.png'  },
+    { name: 'Ola',       src: '/brand/ola.png'       },
+    { name: 'Paytm',     src: '/brand/paytm.png'     },
+    { name: 'Razorpay',  src: '/brand/razorpay.png'  },
+    { name: 'Swiggy',    src: '/brand/swiggy.png'    },
+    { name: 'Zomato',    src: '/brand/zomato.png'    },
+    { name: 'Zoho',      src: '/brand/zoho.png'      },
+    { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
   ];
 
-  // Duplicate for a seamless loop
+  // duplicate once for seamless loop
   const track = [...LOGOS, ...LOGOS];
 
   return (
-    <div className="mt-16 md:mt-24"> {/* push belt further down below the CTAs */}
-      <p className="text-xs md:text-sm font-semibold tracking-wide text-gray-200/85 text-center mb-5">
-        Our graduates work at leading tech companies
-      </p>
+    <section className="relative z-10 pt-8 md:pt-12 pb-6 md:pb-8 bg-transparent">
+      <div className="container mx-auto px-6">
+        <p className="text-center text-gray-200/90 text-sm md:text-base mb-4 md:mb-6">
+          Our graduates work at leading tech companies
+        </p>
 
-      <div className="relative overflow-hidden">
-        {/* Edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-gray-950/95 to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-gray-950/95 to-transparent z-10" />
+        {/* marquee */}
+        <div className="relative overflow-hidden">
+          {/* soft fades at edges */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-24 bg-gradient-to-r from-gray-950 to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-24 bg-gradient-to-l from-gray-950 to-transparent z-10" />
 
-        <div className="belt-viewport">
-          <div className="belt-track">
-            {track.map((c, i) => (
-              <div key={`${c.name}-${i}`} className="px-2" title={c.name} aria-label={c.name}>
+          <ul
+            className="flex items-center gap-12 md:gap-20 animate-scroll-x"
+            style={{ '--speed': '32s' }}
+          >
+            {track.map((logo, i) => (
+              <li
+                key={`${logo.name}-${i}`}
+                className="shrink-0 w-[150px] md:w-[220px] flex items-center justify-center"
+                title={logo.name}
+              >
                 <img
-                  src={c.src}
-                  alt={`${c.name} logo`}
-                  width={c.width}
-                  height={32}
-                  loading="lazy"
-                  className="h-6 md:h-8 w-auto belt-logo"
+                  src={logo.src}
+                  alt={`${logo.name} logo`}
+                  className="h-10 md:h-12 w-auto object-contain select-none"
+                  loading="eager"
+                  decoding="async"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
 
-      {/* Styles for the marquee */}
-      <style jsx global>{`
-        .belt-viewport {
-          overflow: hidden;
-          padding: 0 0.25rem;
+      {/* Local CSS for smooth, infinite scroll */}
+      <style>{`
+        @keyframes scroll-x {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); } /* works because we duplicated the list */
         }
-        .belt-track {
-          display: inline-flex;
-          align-items: center;
-          gap: 5rem;              /* spacing between logos (mobile) */
+        .animate-scroll-x {
+          animation: scroll-x var(--speed, 40s) linear infinite;
           width: max-content;
-          animation: belt-scroll 38s linear infinite;
-        }
-        @media (min-width: 768px) {
-          .belt-track { gap: 7rem; } /* wider spacing on desktop */
+          will-change: transform;
         }
         @media (prefers-reduced-motion: reduce) {
-          .belt-track { animation: none; }
-        }
-        .belt-logo {
-          filter: grayscale(1) brightness(1.12) contrast(1.06);
-          opacity: 0.85;
-          transition: opacity .2s ease;
-        }
-        .belt-logo:hover { opacity: 1; }
-
-        /* Duplicate content -> shift by 50% for seamless loop */
-        @keyframes belt-scroll {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
+          .animate-scroll-x { animation: none; }
         }
       `}</style>
-    </div>
+    </section>
   );
 };
+
 
 /* ============================
    Hero Section (video bg)
