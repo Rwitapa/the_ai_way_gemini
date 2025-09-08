@@ -504,6 +504,7 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
+
 const HeroSection = ({ handleExploreCourses }) => {
   return (
     <section id="hero" className="relative isolate bg-gray-950">
@@ -518,7 +519,6 @@ const HeroSection = ({ handleExploreCourses }) => {
           preload="auto"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Soften/readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-gray-950/40 to-gray-950/90" />
       </div>
 
@@ -560,48 +560,68 @@ const HeroSection = ({ handleExploreCourses }) => {
     </section>
   );
 };
-
+// Colored logo files in /public/brand/*.png
 const LOGOS = [
-  { name: 'Swiggy',   src: '/brand/swiggy.png',    width: 120 },
-  { name: 'Zomato',   src: '/brand/zomato.png',    width: 140 },
-  { name: 'Flipkart', src: '/brand/flipkart.png',  width: 150 },
-  { name: 'Ola',      src: '/brand/ola.png',       width: 120 },
-  { name: 'Paytm',    src: '/brand/paytm.png',     width: 120 },
-  { name: 'Zoho',     src: '/brand/zoho.png',      width: 140 },
-  { name: 'Razorpay', src: '/brand/razorpay.png',  width: 140 },
-  { name: 'PharmEasy',src: '/brand/pharmeasy.png', width: 150 },
+  { name: 'Swiggy',    src: '/brand/swiggy.png',    width: 120 },
+  { name: 'Zomato',    src: '/brand/zomato.png',    width: 150 },
+  { name: 'Flipkart',  src: '/brand/flipkart.png',  width: 160 },
+  { name: 'Ola',       src: '/brand/ola.png',       width: 130 },
+  { name: 'Paytm',     src: '/brand/paytm.png',     width: 140 },
+  { name: 'Zoho',      src: '/brand/zoho.png',      width: 150 },
+  { name: 'Razorpay',  src: '/brand/razorpay.png',  width: 160 },
+  { name: 'PharmEasy', src: '/brand/pharmeasy.png', width: 160 },
 ];
 
 const CompaniesBelt = () => {
   const track = [...LOGOS, ...LOGOS]; // seamless loop
 
   return (
-    <section aria-label="Companies" className="relative bg-transparent pt-2 md:pt-4">
+    <section
+      aria-label="Companies"
+      // push the whole block down so it starts comfortably in fold two
+      className="relative bg-transparent mt-10 md:mt-16 lg:mt-24"
+    >
       {/* Heading outside the belt */}
       <div className="container mx-auto px-6">
-        <h3 className="text-slate-200 font-bold text-lg md:text-xl text-center">
+        <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center tracking-tight">
           Our graduates work at leading tech companies
         </h3>
       </div>
 
-      {/* Full-bleed belt */}
+      {/* Full-bleed thin purple belt */}
       <div className="w-full mt-4">
-        <div className="w-full bg-white/10 backdrop-blur-sm">
-          {/* marquee viewport */}
-          <div className="relative overflow-hidden">
-            {/* animated track */}
-            <div className="marquee flex items-center gap-16 md:gap-24 py-6 md:py-7">
+        <div
+          className="relative w-full overflow-hidden"
+          style={{
+            // light purple that echoes your headline purple (Tailwind purple-400) at ~12% opacity
+            background: 'rgba(192, 132, 252, 0.12)',
+          }}
+        >
+          {/* a subtle inner ring + rounded corners to feel refined */}
+          <div className="pointer-events-none absolute inset-0 ring-1 ring-purple-300/20 rounded-none" />
+          {/* side fades to avoid hard crop of logos */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24"
+               style={{ background: 'linear-gradient(90deg, rgba(192,132,252,0.18) 0%, rgba(192,132,252,0) 100%)' }} />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24"
+               style={{ background: 'linear-gradient(270deg, rgba(192,132,252,0.18) 0%, rgba(192,132,252,0) 100%)' }} />
+
+          {/* marquee track */}
+          <div className="relative">
+            <div className="marquee flex items-center gap-16 md:gap-24 py-3 md:py-4">
               {track.map((logo, i) => (
                 <div
                   key={`${logo.name}-${i}`}
                   className="flex-none flex items-center justify-center px-4"
                   style={{ width: logo.width + 80 }}
+                  aria-label={logo.name}
+                  title={logo.name}
                 >
                   <img
                     src={logo.src}
                     alt={logo.name}
-                    className="h-8 md:h-10 w-auto opacity-95"
+                    className="h-7 md:h-8 w-auto"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               ))}
@@ -610,11 +630,11 @@ const CompaniesBelt = () => {
         </div>
       </div>
 
-      {/* marquee keyframes (scoped) */}
+      {/* animation (scoped) */}
       <style jsx>{`
         .marquee {
           width: max-content;
-          animation: belt-scroll 28s linear infinite;
+          animation: belt-scroll 26s linear infinite;
         }
         @keyframes belt-scroll {
           from { transform: translateX(0); }
@@ -624,7 +644,6 @@ const CompaniesBelt = () => {
     </section>
   );
 };
-
 
 
 const PersonasSection = () => (
