@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
 // Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
@@ -558,6 +559,20 @@ const App = () => {
     };
   }, [showCoursesPage]); // Re-run effect when page changes
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
+
   const handleEnrollNow = (url) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -748,6 +763,7 @@ const App = () => {
           <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
             Most analysts waste hours on manual dashboards and tool-hopping, only to stay invisible. The AI Way shows you how to use AI-code or no-code-to automate your work, prove ROI, and become the analyst your team can't live without.
           </p>
+          {/* UPDATED: CTA buttons stack on mobile */}
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-all transform hover:scale-105 shadow-xl">
               Explore All Courses
@@ -929,8 +945,9 @@ const App = () => {
               <img
                 src="https://placehold.co/144x144/1a1a2e/ffffff?text=RM"
                 alt="Rwitapa Mitra"
-                className="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover ring-1 ring-white/10 bg-gray-900"
-                loading="lazy"
+                width={144}
+                height={144}
+                className="rounded-full object-cover ring-1 ring-white/10 bg-gray-900 h-28 w-28 md:h-36 md:w-36"
               />
             </div>
           </div>
@@ -1109,7 +1126,7 @@ const App = () => {
           <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
             Quick answers to your AI automation questions.
           </p>
-          <div className="text-left space-y-4">
+          <div className="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
             {faqs.map((faq, index) => (
               <div key={index} className="rounded-2xl border border-gray-800 bg-gray-950 overflow-hidden">
                 <button 
@@ -1221,6 +1238,21 @@ const App = () => {
         @keyframes rotate-background {
           from { transform: translate(-50%, -50%) rotate(0deg); }
           to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #4a0e70;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #5e118f;
         }
         `}
       </style>
