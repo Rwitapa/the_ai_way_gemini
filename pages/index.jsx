@@ -397,10 +397,6 @@ const sections = [
 // --- REFACTORED COMPONENTS ---
 
 // --- HEADER (Navbar) ---
-// add at the top if not already present
-import Head from "next/head";
-import Image from "next/image";
-
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
