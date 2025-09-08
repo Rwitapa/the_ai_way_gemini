@@ -461,13 +461,10 @@ const HeroSection = ({ handleExploreCourses }) => {
     const s = sectionRef.current;
     if (!v || !s) return;
 
-    // mobile autoplay requirements
     v.muted = true;
     v.playsInline = true;
-
     const tryPlay = () => v.play().catch(() => {});
 
-    // play when visible, pause when not
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) tryPlay();
       else v.pause();
@@ -475,12 +472,10 @@ const HeroSection = ({ handleExploreCourses }) => {
 
     obs.observe(s);
 
-    // fallback: if a browser blocks autoplay, unlock on first interaction
     const unlock = () => { tryPlay(); };
     window.addEventListener('touchstart', unlock, { once: true });
     window.addEventListener('click', unlock, { once: true });
 
-    // pause on tab hide
     const onVis = () => (document.hidden ? v.pause() : tryPlay());
     document.addEventListener('visibilitychange', onVis);
 
@@ -499,7 +494,7 @@ const HeroSection = ({ handleExploreCourses }) => {
 
       <section
         ref={sectionRef}
-        className="relative overflow-hidden min-h-screen pt-28 md:pt-32 pb-16 flex items-center bg-gray-950"
+        className="relative overflow-hidden min-h-screen pt-16 md:pt-24 pb-10 md:pb-16 flex items-center bg-gray-950"
       >
         {/* Full-bleed background video */}
         <video
@@ -517,22 +512,22 @@ const HeroSection = ({ handleExploreCourses }) => {
           loop
           playsInline
           preload="auto"
-          poster="/hero_poster.jpg"   /* optional poster in /public */
+          poster="/hero_poster.jpg"
           aria-hidden="true"
         >
           <source src="/animation_1.mp4" type="video/mp4" />
         </video>
 
-        {/* Tint + soft top/bottom fade so it blends cleanly */}
+        {/* Tint + tighter top/bottom fade so it doesn’t feel like empty space */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/18" />
         <div
           className="pointer-events-none absolute inset-0 z-0
-                     bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_16%,rgba(11,18,32,0)_84%,rgba(11,18,32,1)_100%)]"
+                     bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_8%,rgba(11,18,32,0)_92%,rgba(11,18,32,1)_100%)]"
         />
 
         {/* Content */}
         <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-          <div className="mb-6">
+          <div className="mb-3 md:mb-6">
             <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
               Gen AI for Business Analysts
             </span>
@@ -577,7 +572,7 @@ const HeroSection = ({ handleExploreCourses }) => {
 
 
 const PersonasSection = () => (
-    <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll">
+    <section className="pt-10 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
