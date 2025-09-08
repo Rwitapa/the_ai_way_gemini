@@ -505,49 +505,93 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 );
 
 /* 1) Add this lightweight belt */
+/* ============================
+   Rotating Companies Belt
+   ============================ */
 const CompaniesBelt = () => {
-  const companies = [
-    { abbr: 'FK', name: 'Flipkart' },
-    { abbr: 'SW', name: 'Swiggy' },
-    { abbr: 'ZO', name: 'Zomato' },
-    { abbr: 'RZ', name: 'Razorpay' },
-    { abbr: 'PE', name: 'PharmEasy' },
-    { abbr: 'OL', name: 'Ola' },
+  // Reliable public logo files (SVG/PNG)
+  const LOGOS = [
+    { name: 'Flipkart',  src: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Flipkart_logo.png',            width: 120 },
+    { name: 'Swiggy',    src: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Swiggy_logo.svg',              width: 110 },
+    { name: 'Zomato',    src: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_Logo.svg',              width: 130 },
+    { name: 'Razorpay',  src: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Razorpay_logo.svg',            width: 140 },
+    { name: 'PharmEasy', src: 'https://www.svgrepo.com/download/518538/pharmeasy.svg',                             width: 140 },
+    { name: 'Ola',       src: 'https://upload.wikimedia.org/wikipedia/commons/5/5d/Ola_Cabs_logo.svg',            width: 120 },
+    { name: 'Paytm',     src: 'https://upload.wikimedia.org/wikipedia/commons/5/55/Paytm_logo.png',               width: 120 },
+    { name: 'Zoho',      src: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/ZohoCorporation_Logo.svg',     width: 140 },
   ];
 
+  // Duplicate for a seamless loop
+  const track = [...LOGOS, ...LOGOS];
+
   return (
-    <div className="mt-8 md:mt-10">
-      <p className="text-xs md:text-sm font-semibold tracking-wide text-gray-200/80 text-center mb-4">
+    <div className="mt-16 md:mt-24"> {/* push belt further down below the CTAs */}
+      <p className="text-xs md:text-sm font-semibold tracking-wide text-gray-200/85 text-center mb-5">
         Our graduates work at leading tech companies
       </p>
 
-      <div className="relative">
-        {/* fade edges so it feels like a belt */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-gray-950/90 to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-gray-950/90 to-transparent" />
+      <div className="relative overflow-hidden">
+        {/* Edge fades */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-gray-950/95 to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-gray-950/95 to-transparent z-10" />
 
-        <div className="flex flex-wrap justify-center gap-x-10 gap-y-6 px-6">
-          {companies.map((c) => (
-            <div
-              key={c.name}
-              className="flex items-center gap-3 opacity-80 hover:opacity-100 transition"
-              aria-label={c.name}
-              title={c.name}
-            >
-              {/* mono “logo” chip (fast + brand-safe) */}
-              <span className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-white/10 ring-1 ring-white/15 flex items-center justify-center text-[10px] md:text-xs font-extrabold text-white/85">
-                {c.abbr}
-              </span>
-              <span className="text-sm md:text-base font-semibold text-white/85">{c.name}</span>
-            </div>
-          ))}
+        <div className="belt-viewport">
+          <div className="belt-track">
+            {track.map((c, i) => (
+              <div key={`${c.name}-${i}`} className="px-2" title={c.name} aria-label={c.name}>
+                <img
+                  src={c.src}
+                  alt={`${c.name} logo`}
+                  width={c.width}
+                  height={32}
+                  loading="lazy"
+                  className="h-6 md:h-8 w-auto belt-logo"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Styles for the marquee */}
+      <style jsx global>{`
+        .belt-viewport {
+          overflow: hidden;
+          padding: 0 0.25rem;
+        }
+        .belt-track {
+          display: inline-flex;
+          align-items: center;
+          gap: 5rem;              /* spacing between logos (mobile) */
+          width: max-content;
+          animation: belt-scroll 38s linear infinite;
+        }
+        @media (min-width: 768px) {
+          .belt-track { gap: 7rem; } /* wider spacing on desktop */
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .belt-track { animation: none; }
+        }
+        .belt-logo {
+          filter: grayscale(1) brightness(1.12) contrast(1.06);
+          opacity: 0.85;
+          transition: opacity .2s ease;
+        }
+        .belt-logo:hover { opacity: 1; }
+
+        /* Duplicate content -> shift by 50% for seamless loop */
+        @keyframes belt-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 };
 
-/* 2) Replace your HeroSection with this version (only change is <CompaniesBelt /> after the CTAs) */
+/* ============================
+   Hero Section (video bg)
+   ============================ */
 const HeroSection = ({ handleExploreCourses }) => {
   const videoRef = React.useRef(null);
   const sectionRef = React.useRef(null);
@@ -585,7 +629,7 @@ const HeroSection = ({ handleExploreCourses }) => {
       className="
         relative overflow-hidden
         min-h-[78vh] md:min-h-screen
-        pt-[7.25rem] md:pt-44 pb-8 md:pb-10
+        pt-[7rem] md:pt-44 pb-8 md:pb-10   /* tweak here if you need tiny shifts */
         flex items-start
         bg-gray-950
       "
@@ -642,7 +686,7 @@ const HeroSection = ({ handleExploreCourses }) => {
           </motion.button>
 
           <motion.a
-            href="https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5"
+            href={WHATSAPP_COMMUNITY_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
@@ -653,14 +697,12 @@ const HeroSection = ({ handleExploreCourses }) => {
           </motion.a>
         </div>
 
-        {/* 👇 New belt */}
+        {/* Rotating belt */}
         <CompaniesBelt />
       </div>
     </section>
   );
-}
-
-
+};
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
