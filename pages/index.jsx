@@ -538,89 +538,87 @@ const HeroSection = ({ handleExploreCourses }) => {
   }, []);
 
   return (
-    <>
-      {/* Preload the video so it’s ready as the hero mounts */}
-      <Head>
-        <link rel="preload" as="video" href="/animation_1.mp4" type="video/mp4" />
-      </Head>
-
-      <section
-        ref={sectionRef}
-        className="relative overflow-hidden min-h-screen pt-14 md:pt-24 pb-10 md:pb-16 flex items-center bg-gray-950"
+    <section
+      ref={sectionRef}
+      className="
+        relative overflow-hidden
+        min-h-[78vh] md:min-h-[82vh]
+        pt-14 md:pt-16 pb-8 md:pb-12
+        flex items-start
+        bg-gray-950
+      "
+    >
+      {/* Background video */}
+      <video
+        ref={videoRef}
+        className="
+          pointer-events-none absolute inset-0 w-full h-full z-0
+          object-cover
+          object-[50%_40%] sm:object-center
+          opacity-75
+          filter brightness-110 contrast-105
+          transition-opacity
+        "
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/hero_poster.jpg"
+        aria-hidden="true"
       >
-        {/* Full-bleed background video */}
-        <video
-          ref={videoRef}
-          className="
-            pointer-events-none absolute inset-0 w-full h-full z-0
-            object-cover
-            object-[50%_40%] sm:object-center
-            opacity-75
-            filter brightness-110 contrast-105
-            transition-opacity
-          "
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/hero_poster.jpg"
-          aria-hidden="true"
-        >
-          <source src="/animation_1.mp4" type="video/mp4" />
-        </video>
+        <source src="/animation_1.mp4" type="video/mp4" />
+      </video>
 
-        {/* Tint + tighter top/bottom fade so it doesn’t feel like empty space */}
-        <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/18" />
-        <div
-          className="pointer-events-none absolute inset-0 z-0
-                     bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_8%,rgba(11,18,32,0)_92%,rgba(11,18,32,1)_100%)]"
-        />
+      {/* Tint + tighter edge fades so the top doesn’t look like empty space */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/16" />
+      <div
+        className="pointer-events-none absolute inset-0 z-0
+                   bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_4%,rgba(11,18,32,0)_96%,rgba(11,18,32,1)_100%)]"
+      />
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-          <div className="mb-3 md:mb-6">
-            <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
-              Gen AI for Business Analysts
-            </span>
-          </div>
-
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-            Still stuck fixing reports?
-            <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
-          </h1>
-
-          <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
-            Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <motion.button
-              onClick={handleExploreCourses}
-              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Explore All Courses
-            </motion.button>
-
-            <motion.a
-              href={WHATSAPP_COMMUNITY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Join Community
-            </motion.a>
-          </div>
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
+        <div className="mb-2 md:mb-4">
+          <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
+            Gen AI for Business Analysts
+          </span>
         </div>
-      </section>
-    </>
+
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-3">
+          Still stuck fixing reports?
+          <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
+        </h1>
+
+        <p className="text-base md:text-xl text-gray-200 mb-6 max-w-3xl mx-auto">
+          Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
+        </p>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <motion.button
+            onClick={handleExploreCourses}
+            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Explore All Courses
+          </motion.button>
+
+          <motion.a
+            href={WHATSAPP_COMMUNITY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Join Community
+          </motion.a>
+        </div>
+      </div>
+    </section>
   );
 };
-
 
 
 const PersonasSection = () => (
