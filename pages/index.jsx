@@ -1007,8 +1007,8 @@ const App = () => {
         {/* LEFT: Photo */}
         <div className="md:col-span-1 flex justify-center">
           <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 blur-xl opacity-50" />
-            <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
+            <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
               <img
                 src="https://placehold.co/160x160/1a1a2e/ffffff?text=RM"
                 alt="Rwitapa Mitra"
@@ -1435,3 +1435,4 @@ const App = () => {
 };
 
 export default App;
+
