@@ -707,9 +707,9 @@ const MentorSection = ({ sectionRef }) => (
         </h2>
       </motion.div>
 
-      {/* Card */}
+      {/* Full-width card like other sections */}
       <motion.div
-        className="mx-auto max-w-6xl bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
+        className="w-full bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } },
@@ -721,14 +721,14 @@ const MentorSection = ({ sectionRef }) => (
           {/* Avatar column */}
           <div className="md:col-span-1 flex justify-center">
             <div className="relative">
-              {/* Gradient ring wrapper */}
-              <div className="p-[5px] rounded-full bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]">
-                {/* Solid inner circle to avoid leaks; keep square to maintain perfect circle */}
-                <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 md:w-72 md:h-72 aspect-square">
+              {/* Gradient ring */}
+              <div className="p-[6px] rounded-full bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]">
+                {/* Solid inner circle; keep square to maintain perfect circle */}
+                <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 aspect-square">
                   <img
                     src="/Rwitapa.png"
                     alt="Rwitapa Mitra"
-                    className="block w-full h-full object-cover"
+                    className="block w-full h-full object-cover object-center scale-[1.04]"
                   />
                 </div>
               </div>
@@ -740,10 +740,10 @@ const MentorSection = ({ sectionRef }) => (
             <h3 className="text-2xl md:text-3xl font-bold text-white">Rwitapa Mitra</h3>
             <p className="text-purple-300 font-medium mt-2">
               <span className="block">Director - Analytics</span>
-              <span className="block text-sm">9+ years at Flipkart, PharmEasy, Mu Sigma & Pilgrim</span>
+              <span className="block text-sm">9+ years at Flipkart, PharmEasy, Mu Sigma &amp; Pilgrim</span>
             </p>
 
-            {/* Badges */}
+            {/* Badges (wrap on mobile, align left on desktop) */}
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4 mb-5">
               <span className="text-xs font-bold uppercase tracking-wider bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full">
                 Director-Level Experience
@@ -753,7 +753,6 @@ const MentorSection = ({ sectionRef }) => (
               </span>
             </div>
 
-            {/* Bio */}
             <p className="text-gray-400 text-base">
               Your instructor has walked the path you're on. Rwitapa transformed from a curious analyst to
               Director of Analytics at India's top companies. She has scaled high-growth startups by turning
@@ -783,6 +782,7 @@ const MentorSection = ({ sectionRef }) => (
     </div>
   </motion.section>
 );
+
 
 const TestimonialCarousel = ({ sectionRef }) => {
     const [testimonialIndex, setTestimonialIndex] = useState(0);
