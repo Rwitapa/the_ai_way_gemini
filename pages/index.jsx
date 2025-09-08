@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
 // --- CONSTANTS & UTILS ---
 
@@ -61,11 +62,6 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
         <path d="m12 19-7-7 7-7" />
       </svg>
     ),
-    'chevron-down': (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="m6 9 6 6 6-6" />
-      </svg>
-    ),
     'play-circle': (
       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
         <circle cx="12" cy="12" r="10" />
@@ -701,7 +697,7 @@ const MentorSection = ({ sectionRef }) => (
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
                             <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
-                                <img src="/Mentor.jpg" alt="Rwitapa Mitra" width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
+                                <img src="/Mentor.jpg" alt="Rwitapa Mitra" width={160} height={160} width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
                             </div>
                         </div>
                     </div>
@@ -920,9 +916,9 @@ const CoursesPage = ({ onBack }) => {
                 >
                   <h4 className="text-lg font-semibold text-white">{module.title}</h4>
                   <Icon
-                    name="chevron-down"
+                    name="arrow-left"
                     size={24}
-                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? 'rotate-180' : ''}`}
+                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? '-rotate-90' : 'rotate-180'}`}
                     strokeWidth={1.5}
                   />
                 </div>
