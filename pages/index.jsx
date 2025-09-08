@@ -416,7 +416,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
           {/* Mark (always visible) */}
           <span className="relative block h-8 w-8 md:h-9 md:w-9">
             <Image
-              src="/brand/aiway-mark.png"
+              src="/brand/aiway-lockup.png"
               alt="The AI Way logo"
               fill
               sizes="(max-width: 768px) 32px, 36px"
