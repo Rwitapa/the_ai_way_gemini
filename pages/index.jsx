@@ -571,7 +571,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-import React from "react";
+
 const LOGOS = [
   { name: 'Swiggy',    src: '/brand/swiggy.png'    },
   { name: 'Zoho',      src: '/brand/zoho.png'      },
