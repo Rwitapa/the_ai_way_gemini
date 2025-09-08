@@ -596,93 +596,63 @@ function LogoCard({ src, alt }) {
         px-4
       "
     >
-      {/* keep images a bit smaller inside the card */}
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        className="h-8 md:h-9 w-auto object-contain"
-      />
+      <img src={src} alt={alt} loading="lazy" className="h-8 md:h-9 w-auto object-contain" />
     </div>
   );
 }
 
 export function CompaniesBelt() {
   return (
-    <section
-      id="companies"
-      className="
-        relative
-        pt-10 md:pt-12
-        pb-14 md:pb-16
-      "
-    >
-      {/* title - outside the belt */}
+    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16">
       <h3 className="text-center text-white/80 font-semibold text-lg md:text-xl mb-5 md:mb-6">
         Our graduates work at leading tech companies
       </h3>
 
-      {/* belt container */}
       <div
-        className="
-          relative overflow-hidden
-          rounded-3xl
-          px-2 md:px-4
-        "
-        style={{ '--marquee-duration': '48s' }} /* slow, tweak if needed */
+        className="relative overflow-hidden rounded-3xl px-2 md:px-4"
+        style={{ ['--marquee-duration']: '48s' }} // adjust speed here (e.g., '60s')
       >
-        {/* subtle grey overlay to dim the whole belt area just a bit */}
+        {/* mild dim overlay */}
         <div className="pointer-events-none absolute inset-0 bg-black/5" />
 
-        {/* the moving rail */}
-        <div className="relative">
-          {/* 200% wide rail with two tracks side-by-side */}
-          <div className="flex w-[200%] animate-marquee [animation-duration:var(--marquee-duration)]">
-            {/* Track A */}
-            <ul className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12">
-              {LOGOS.map((l) => (
-                <li key={`a-${l.name}`} className="shrink-0">
-                  <LogoCard src={l.src} alt={l.name} />
-                </li>
-              ))}
-            </ul>
+        {/* MOVING RAIL — animation is inline to guarantee it runs */}
+        <div
+          className="flex w-[200%]"
+          style={{
+            animation: 'marquee var(--marquee-duration) linear infinite',
+            willChange: 'transform',
+          }}
+        >
+          {/* Track A */}
+          <ul className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12">
+            {LOGOS.map(l => (
+              <li key={`a-${l.name}`} className="shrink-0">
+                <LogoCard src={l.src} alt={l.name} />
+              </li>
+            ))}
+          </ul>
 
-            {/* Track B (duplicate) */}
-            <ul
-              className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12"
-              aria-hidden="true"
-            >
-              {LOGOS.map((l) => (
-                <li key={`b-${l.name}`} className="shrink-0">
-                  <LogoCard src={l.src} alt="" />
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Track B (duplicate) */}
+          <ul
+            className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12"
+            aria-hidden="true"
+          >
+            {LOGOS.map(l => (
+              <li key={`b-${l.name}`} className="shrink-0">
+                <LogoCard src={l.src} alt="" />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {/* give some breathing room below the belt before the next section */}
       <div className="h-10 md:h-12" />
 
-      {/* keyframes (scoped) */}
+      {/* If you're on the PAGES router, this works fine: */}
       <style jsx global>{`
         @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-marquee {
-          animation-name: marquee;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-        /* pause on hover if you ever want to inspect logos */
-        .animate-marquee:hover {
-          animation-play-state: paused;
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
     </section>
