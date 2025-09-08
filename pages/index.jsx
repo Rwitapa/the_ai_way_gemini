@@ -571,7 +571,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-export default function CompaniesBelt() {
+function CompaniesBelt() {
   // Tailwind violet-400 (same hue as the "Be your team’s hero with AI." line)
   const HERO_PURPLE_RGB = '167, 139, 250';
   const LOGOS = [
