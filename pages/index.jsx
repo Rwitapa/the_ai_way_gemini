@@ -5,6 +5,10 @@ import Image from "next/image";
 
 // --- CONSTANTS & UTILS ---
 
+const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
+const SUPERSTAR_ACCELERATOR_URL = 'https://rzp.io/rzp/ubyT3MWl';
+const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
+
 // Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   const icons = {
@@ -153,9 +157,7 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   return icons[name] || null;
 };
 
-const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
-const SUPERSTAR_ACCELERATOR_URL = 'https://rzp.io/rzp/ubyT3MWl';
-const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
+
 
 const getNextDayOfWeek = (dayIndices) => {
   const now = new Date();
@@ -505,132 +507,127 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 );
 
 
-const HeroSection = ({ handleExploreCourses }) => {
+import { motion } from "framer-motion";
+
+const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
+
+export const HeroSection = ({ handleExploreCourses }) => {
   return (
-    <section id="hero" className="relative isolate bg-gray-950">
-      {/* Background video */}
-      <div className="absolute inset-0 -z-10 overflow-hidden rounded-b-[40px] md:rounded-b-[80px]">
-        <video
-          src="/animation_1.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-gray-950/40 to-gray-950/90" />
-      </div>
+    <section className="relative overflow-hidden flex items-center bg-gray-950">
+      {/* Full-bleed video background */}
+      <video
+        className="absolute inset-0 h-full w-full object-cover opacity-55"
+        src="/animation_1.mp4"
+        playsInline
+        muted
+        autoPlay
+        loop
+        preload="auto"
+        aria-hidden="true"
+      />
+      {/* Soft dark overlay for readability */}
+      <div className="absolute inset-0 bg-gray-950/55" aria-hidden="true" />
 
       {/* Content */}
-      <div className="container mx-auto px-6 pt-28 md:pt-36 pb-10 md:pb-14 min-h-[78vh] md:min-h-[88vh] flex flex-col justify-center">
-        <div className="mx-auto max-w-4xl text-center">
-          <span className="inline-block rounded-full bg-purple-700/60 text-white text-sm md:text-base px-4 py-2 font-semibold shadow-lg">
+      <div className="relative z-10 container mx-auto px-6 w-full">
+        {/* Keep the hero tall on desktop so second fold doesn’t creep in */}
+        <div className="min-h-[86svh] md:min-h-screen pt-24 md:pt-28 pb-16 md:pb-24 flex flex-col items-center justify-center text-center">
+          <span className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm">
             Gen AI for Business Analysts
           </span>
 
-          <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white">
+          <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-white max-w-5xl">
             Still stuck fixing reports?
-            <span className="block text-purple-300">Be your team’s hero with AI.</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
+              Be your team’s hero with AI.
+            </span>
           </h1>
 
-          <p className="mt-6 text-base md:text-lg text-gray-300">
+          <p className="mt-5 max-w-3xl text-base md:text-xl text-gray-300">
             Launch an AI KPI agent that keeps data fresh, flags anomalies, and pushes insights to Slack or email.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#courses"
-              onClick={(e) => { e.preventDefault(); handleExploreCourses(); }}
-              className="rounded-full bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3"
+          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <motion.button
+              onClick={handleExploreCourses}
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Explore All Courses
-            </a>
-            <a
+            </motion.button>
+
+            <motion.a
               href={WHATSAPP_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3"
+              className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Join Community
-            </a>
+            </motion.a>
           </div>
         </div>
       </div>
     </section>
   );
 };
-// Colored logo files in /public/brand/*.png
-const LOGOS = [
-  { name: 'Swiggy',    src: '/brand/swiggy.png',    width: 120 },
-  { name: 'Zomato',    src: '/brand/zomato.png',    width: 150 },
-  { name: 'Flipkart',  src: '/brand/flipkart.png',  width: 160 },
-  { name: 'Ola',       src: '/brand/ola.png',       width: 130 },
-  { name: 'Paytm',     src: '/brand/paytm.png',     width: 140 },
-  { name: 'Zoho',      src: '/brand/zoho.png',      width: 150 },
-  { name: 'Razorpay',  src: '/brand/razorpay.png',  width: 160 },
-  { name: 'PharmEasy', src: '/brand/pharmeasy.png', width: 160 },
-];
 
-const CompaniesBelt = () => {
-  const track = [...LOGOS, ...LOGOS]; // seamless loop
+
+
+// Colored logo files in /public/brand/*.png
+export const CompaniesBelt = () => {
+  // Use your public /brand/*.png files
+  const LOGOS = [
+    { name: "Swiggy",    src: "/brand/Swiggy_logo.png" },
+    { name: "Zomato",    src: "/brand/Zomato_logo.png" },
+    { name: "Zoho",      src: "/brand/Zoho_logo.png" },
+    { name: "Paytm",     src: "/brand/Paytm_logo.png" },
+    { name: "Ola",       src: "/brand/Ola_logo.png" },
+    { name: "Flipkart",  src: "/brand/Flipkart_logo.png" },
+    { name: "Razorpay",  src: "/brand/Razorpay_logo.png" },
+    { name: "PharmEasy", src: "/brand/Pharmeasy_logo.png" },
+  ];
+  const track = [...LOGOS, ...LOGOS]; // duplicate for seamless loop
 
   return (
     <section
       aria-label="Companies"
-      // push the whole block down so it starts comfortably in fold two
-      className="relative bg-transparent mt-10 md:mt-16 lg:mt-24"
+      className="relative bg-transparent mt-10 md:mt-16 lg:mt-24 mb-10 md:mb-16 lg:mb-24"
     >
       {/* Heading outside the belt */}
       <div className="container mx-auto px-6">
-        <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center tracking-tight">
+        <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center">
           Our graduates work at leading tech companies
         </h3>
       </div>
 
-      {/* Full-bleed thin purple belt */}
-      <div className="w-full mt-4">
-        <div
-          className="relative w-full overflow-hidden"
-          style={{
-            // light purple that echoes your headline purple (Tailwind purple-400) at ~12% opacity
-            background: 'rgba(192, 132, 252, 0.12)',
-          }}
-        >
-          {/* a subtle inner ring + rounded corners to feel refined */}
-          <div className="pointer-events-none absolute inset-0 ring-1 ring-purple-300/20 rounded-none" />
-          {/* side fades to avoid hard crop of logos */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24"
-               style={{ background: 'linear-gradient(90deg, rgba(192,132,252,0.18) 0%, rgba(192,132,252,0) 100%)' }} />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24"
-               style={{ background: 'linear-gradient(270deg, rgba(192,132,252,0.18) 0%, rgba(192,132,252,0) 100%)' }} />
+      {/* Rotating belt */}
+      <div className="relative w-full mt-5 overflow-hidden">
+        {/* subtle edge fades so movement feels premium */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-gray-950 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-gray-950 to-transparent" />
 
-          {/* marquee track */}
-          <div className="relative">
-            <div className="marquee flex items-center gap-16 md:gap-24 py-3 md:py-4">
-              {track.map((logo, i) => (
-                <div
-                  key={`${logo.name}-${i}`}
-                  className="flex-none flex items-center justify-center px-4"
-                  style={{ width: logo.width + 80 }}
-                  aria-label={logo.name}
-                  title={logo.name}
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="h-7 md:h-8 w-auto"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              ))}
+        <div className="marquee flex items-center gap-8 md:gap-12 py-3 md:py-4">
+          {track.map((logo, i) => (
+            <div key={`${logo.name}-${i}`} className="flex-none">
+              {/* Only the tile behind each logo is white */}
+              <div className="bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-5 py-3 h-12 md:h-14 w-[160px] md:w-[180px] flex items-center justify-center">
+                <img
+                  src={logo.src}
+                  alt={logo.name}
+                  className="max-h-8 md:max-h-10 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* animation (scoped) */}
+      {/* Local styles for the marquee */}
       <style jsx>{`
         .marquee {
           width: max-content;
@@ -644,7 +641,6 @@ const CompaniesBelt = () => {
     </section>
   );
 };
-
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
