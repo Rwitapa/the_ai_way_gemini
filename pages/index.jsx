@@ -452,156 +452,97 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 );
 
 const HeroSection = ({ handleExploreCourses }) => {
-    const heroAnimationRef = useRef(null);
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
 
-    useEffect(() => {
-        let animationFrameId;
-        let renderer;
-        let scene;
-        let camera;
-        let particles;
-        let lines;
-        let points = [];
-        let isInitialized = false;
+  useEffect(() => {
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
 
-        const script = document.createElement('script');
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-        script.async = true;
-        
-        script.onerror = () => {
-            console.error("Failed to load the three.js script. Hero animation will not run.");
-        };
-        
-        const init = () => {
-            if (isInitialized) return;
-            const container = heroAnimationRef.current;
-            if (!container || typeof THREE === 'undefined') return;
-            
-            isInitialized = true;
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 4000);
-            camera.position.z = 1000;
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-            
-            points = [];
-            for (let i = 0; i < 150; i++) {
-                const point = new THREE.Vector3(
-                    (Math.random() - 0.5) * 2000,
-                    (Math.random() - 0.5) * 2000,
-                    (Math.random() - 0.5) * 2000
-                );
-                point.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.5,
-                    (Math.random() - 0.5) * 0.5,
-                    (Math.random() - 0.5) * 0.5
-                );
-                points.push(point);
-            }
+    // Respect reduced-motion and only load/play when on screen
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-            const material = new THREE.PointsMaterial({ color: 0x8A2BE2, size: 4, transparent: true, opacity: 0.7 });
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+    const onIntersect = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !prefersReducedMotion) {
+          if (!video.src) {
+            // file lives in /public so it’s served at the root path
+            video.src = '/animation.mp4';
+          }
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    };
 
-            const lineGeometry = new THREE.BufferGeometry();
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.1 });
-            lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-            scene.add(lines);
+    const observer = new IntersectionObserver(onIntersect, { threshold: 0.2 });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
-            window.addEventListener('resize', onWindowResize);
-            animate();
-        };
+  return (
+    <section
+      ref={containerRef}
+      className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950"
+    >
+      {/* Transparent video background */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover z-0 opacity-40"
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      />
 
-        const animate = () => {
-            animationFrameId = requestAnimationFrame(animate);
-            try {
-                if (!particles || !lines || !renderer || !scene || !camera) return;
-                const positions = particles.geometry.attributes.position.array;
-                const linePositions = [];
-                for (let i = 0; i < points.length; i++) {
-                    const p = points[i];
-                    p.add(p.velocity);
-                    if (p.x < -1000 || p.x > 1000) p.velocity.x *= -1;
-                    if (p.y < -1000 || p.y > 1000) p.velocity.y *= -1;
-                    if (p.z < -1000 || p.z > 1000) p.velocity.z *= -1;
-                    positions[i * 3] = p.x;
-                    positions[i * 3 + 1] = p.y;
-                    positions[i * 3 + 2] = p.z;
-                }
-                for (let i = 0; i < points.length; i++) {
-                    for (let j = i + 1; j < points.length; j++) {
-                        const p1 = points[i];
-                        const p2 = points[j];
-                        const dist = p1.distanceTo(p2);
-                        if (dist < 150) {
-                            linePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-                        }
-                    }
-                }
-                lines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-                particles.geometry.attributes.position.needsUpdate = true;
-                renderer.render(scene, camera);
-            } catch (error) {
-                console.error("Error in hero animation loop:", error);
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                }
-            }
-        };
+      {/* Dark tint for readability */}
+      <div className="absolute inset-0 z-10 bg-gray-950/60" />
 
-        const onWindowResize = () => {
-            const container = heroAnimationRef.current;
-            if (!camera || !renderer || !container) return;
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        };
-        
-        script.onload = init;
-        document.body.appendChild(script);
+      {/* Content */}
+      <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
+        <div className="mb-6">
+          <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">
+            Gen AI for Business Analysts
+          </span>
+        </div>
 
-        return () => {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            window.removeEventListener('resize', onWindowResize);
-            const container = heroAnimationRef.current;
-            if (container && renderer && renderer.domElement && container.contains(renderer.domElement)) {
-                container.removeChild(renderer.domElement);
-            }
-            if (document.body.contains(script)) {
-                document.body.removeChild(script);
-            }
-        };
-    }, []);
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
+          Still stuck fixing reports?
+          <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
+        </h1>
 
-    return (
-        <section className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950">
-            <div ref={heroAnimationRef} className="absolute inset-0 w-full h-full object-cover z-0" />
-            <div className="absolute inset-0 z-10 bg-gray-950/70"></div>
-            <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
-                <div className="mb-6">
-                    <span className="inline-block py-1 px-4 rounded-full text-sm font-semibold text-purple-200 bg-purple-900/60 backdrop-blur-sm">Gen AI for Business Analysts</span>
-                </div>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
-                    Still stuck fixing reports?
-                    <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
-                </h1>
-                <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-                    If manual reporting eats your day, fix it. Launch an AI KPI agent that keeps data fresh, flags anomalies, and sends insights with next steps to Slack or email.
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                    <motion.button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        Explore All Courses
-                    </motion.button>
-                    <motion.a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        Join Community
-                    </motion.a>
-                </div>
-            </div>
-        </section>
-    );
+        <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
+          If manual reporting eats your day, fix it. Launch an AI KPI agent that keeps data fresh, flags
+          anomalies, and sends insights with next steps to Slack or email.
+        </p>
+
+        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+          <motion.button
+            onClick={handleExploreCourses}
+            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Explore All Courses
+          </motion.button>
+
+          <motion.a
+            href={WHATSAPP_COMMUNITY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Join Community
+          </motion.a>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 const PersonasSection = () => (
