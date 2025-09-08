@@ -859,7 +859,7 @@ const App = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto">
-              Stop being the report generator. Start being the ROI generator.
+              Report generator → ROI generator
             </p>
           </div>
           {/* Mobile-First Grid: Stacks on mobile, grid on medium screens and up */}
