@@ -508,11 +508,11 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 /* ============================
    Rotating Companies Belt
    ============================ */
-// =====================
-// CompaniesBelt (full color, uniform size, rotating)
-// =====================
-const CompaniesBelt = () => {
-  // Put these files in /public/brand/ with the exact lowercase names
+// ===============================
+// CompaniesStripSection (next fold)
+// Light strip + rotating companies belt (local PNGs only)
+// ===============================
+const CompaniesStripSection = () => {
   const LOGOS = [
     { name: 'Flipkart',  src: '/brand/flipkart.png'  },
     { name: 'Ola',       src: '/brand/ola.png'       },
@@ -524,51 +524,62 @@ const CompaniesBelt = () => {
     { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
   ];
 
-  // duplicate once for seamless loop
-  const track = [...LOGOS, ...LOGOS];
+  const track = [...LOGOS, ...LOGOS]; // duplicate for seamless loop
 
   return (
-    <section className="relative z-10 pt-8 md:pt-12 pb-6 md:pb-8 bg-transparent">
-      <div className="container mx-auto px-6">
-        <p className="text-center text-gray-200/90 text-sm md:text-base mb-4 md:mb-6">
-          Our graduates work at leading tech companies
-        </p>
+    <section id="companies" className="relative bg-gray-950">
+      {/* next fold spacing (separate from hero) */}
+      <div className="container mx-auto px-6 pt-16 md:pt-24 pb-14 md:pb-20">
+        <div className="mx-auto max-w-6xl">
+          {/* light colored strip in brand hues */}
+          <div className="relative overflow-hidden rounded-3xl ring-1 ring-white/10 p-5 md:p-8
+                          bg-[linear-gradient(90deg,rgba(168,85,247,0.12),rgba(99,102,241,0.10),rgba(16,185,129,0.10))]">
+            <p className="text-center text-gray-900/85 dark:text-gray-100/90 text-sm md:text-base font-semibold mb-5">
+              Our graduates work at leading tech companies
+            </p>
 
-        {/* marquee */}
-        <div className="relative overflow-hidden">
-          {/* soft fades at edges */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-24 bg-gradient-to-r from-gray-950 to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-24 bg-gradient-to-l from-gray-950 to-transparent z-10" />
+            <div className="relative overflow-hidden">
+              {/* soft fades at edges */}
+              <div
+                className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-24 z-10"
+                style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.35), rgba(255,255,255,0))' }}
+              />
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-24 z-10"
+                style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.35), rgba(255,255,255,0))' }}
+              />
 
-          <ul
-            className="flex items-center gap-12 md:gap-20 animate-scroll-x"
-            style={{ '--speed': '32s' }}
-          >
-            {track.map((logo, i) => (
-              <li
-                key={`${logo.name}-${i}`}
-                className="shrink-0 w-[150px] md:w-[220px] flex items-center justify-center"
-                title={logo.name}
+              <ul
+                className="flex items-center gap-12 md:gap-20 animate-scroll-x"
+                style={{ '--speed': '32s' }}
               >
-                <img
-                  src={logo.src}
-                  alt={`${logo.name} logo`}
-                  className="h-10 md:h-12 w-auto object-contain select-none"
-                  loading="eager"
-                  decoding="async"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-              </li>
-            ))}
-          </ul>
+                {track.map((logo, i) => (
+                  <li
+                    key={`${logo.name}-${i}`}
+                    className="shrink-0 w-[150px] md:w-[220px] flex items-center justify-center"
+                    title={logo.name}
+                  >
+                    <img
+                      src={logo.src}
+                      alt={`${logo.name} logo`}
+                      className="h-10 md:h-12 w-auto object-contain select-none"
+                      loading="eager"
+                      decoding="async"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Local CSS for smooth, infinite scroll */}
+      {/* local CSS for smooth, infinite scroll */}
       <style>{`
         @keyframes scroll-x {
           from { transform: translateX(0); }
-          to   { transform: translateX(-50%); } /* works because we duplicated the list */
+          to   { transform: translateX(-50%); }
         }
         .animate-scroll-x {
           animation: scroll-x var(--speed, 40s) linear infinite;
