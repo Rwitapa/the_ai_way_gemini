@@ -396,97 +396,106 @@ const sections = [
 
 // --- REFACTORED COMPONENTS ---
 
+// --- HEADER (Navbar) ---
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
   return (
-    <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
-      <nav className="flex items-center justify-between h-16 md:h-20">
-        {/* Brand */}
-        <a
-          href="#"
-          aria-label="The AI Way — Home"
-          onClick={(e) => {
-            e.preventDefault();
-            setShowCoursesPage(false);
-            window.scrollTo(0, 0);
-          }}
-          className="group flex items-center gap-3 md:gap-4"
-        >
-          {/* --- Option A (recommended): transparent PNG/SVG mark --- */}
-          <span className="relative block h-10 w-10 md:h-12 md:w-12">
-            <Image
-              src="/brand/aiway-mark.png"   // make sure this one is truly transparent
-              alt="The AI Way logo"
-              fill
-              sizes="(max-width: 768px) 40px, 48px"
-              priority
-              className="object-contain"
-            />
-          </span>
+    <>
+      {/* OPTIONAL: Adobe Fonts (Alkaline). Replace TYPEKIT_KIT_ID with your kit id. */}
+      <Head>
+        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
+        <link rel="stylesheet" href="https://use.typekit.net/TYPEKIT_KIT_ID.css" />
+      </Head>
+      <style jsx global>{`
+        /* If your kit exposes a different postscript name, change "alkaline". */
+        .font-alkaline { font-family: "alkaline", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+      `}</style>
 
-          {/* --- Option B: force the mark to WHITE even if it’s purple ---
-               Use this instead of Option A if you want a white mark without editing the file.
-               Comment Option A out and uncomment this block. 
-          */}
-          {/*
-          <span
-            className="block h-10 w-10 md:h-12 md:w-12"
-            style={{
-              WebkitMaskImage: "url(/brand/aiway-mark.png)",
-              maskImage: "url(/brand/aiway-mark.png)",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-              backgroundColor: "#ffffff", // <- this sets the mark color to white
-            }}
-            aria-hidden="true"
-          />
-          */}
-
-          {/* Wordmark (white only, bigger) */}
-          <span className="hidden md:inline-block text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-            The AI Way
-          </span>
-        </a>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center space-x-8">
-          {sections.map((section) => (
-            <button
-              key={section.ref}
-              onClick={() => scrollToSection(section.ref)}
-              className="text-sm font-semibold hover:text-purple-400 transition-colors rounded-lg px-2 py-1"
-            >
-              {section.name}
-            </button>
-          ))}
+      <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
+        <nav className="flex items-center justify-between h-16 md:h-20">
+          {/* Brand */}
           <a
-            href={WHATSAPP_COMMUNITY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-4 py-2 rounded-full"
+            href="#"
+            aria-label="The AI Way — Home"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowCoursesPage(false);
+              window.scrollTo(0, 0);
+            }}
+            className="group flex items-center gap-3 md:gap-4"
           >
-            Join Community
-          </a>
-        </div>
+            {/* Logo mark — bigger */}
+            <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
+              <Image
+                src="/brand/aiway-mark.png"       /* transparent PNG/SVG */
+                alt="The AI Way logo"
+                fill
+                sizes="(max-width: 768px) 48px, (max-width: 1280px) 56px, 64px"
+                priority
+                className="object-contain"
+              />
+            </span>
 
-        {/* Mobile menu button */}
-        <div className="md:hidden">
-          <button
-            ref={menuButtonRef}
-            onClick={() => setIsMenuOpen(true)}
-            className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            aria-label="Open menu"
-          >
-            <Icon name="menu" size={28} className="text-white" />
-          </button>
-        </div>
-      </nav>
-    </header>
+            {/* If you ever need the mark in pure white, swap the block above for this masked version */}
+            {/*
+            <span
+              className="hidden" // turn to "block" and remove the Image above to enable
+              style={{
+                display: 'block',
+                width: '4rem', height: '4rem',
+                WebkitMaskImage: "url(/brand/aiway-mark.png)",
+                maskImage: "url(/brand/aiway-mark.png)",
+                WebkitMaskSize: "contain", maskSize: "contain",
+                WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center", maskPosition: "center",
+                backgroundColor: "#ffffff",
+              }}
+              aria-hidden="true"
+            />
+            */}
+
+            {/* Wordmark — white only, larger, Alkaline if available */}
+            <span className="hidden sm:inline-block text-white font-extrabold leading-none tracking-tight font-alkaline text-3xl md:text-4xl lg:text-5xl">
+              The AI Way
+            </span>
+          </a>
+
+          {/* Desktop nav — slightly larger */}
+          <div className="hidden md:flex items-center space-x-10">
+            {sections.map((section) => (
+              <button
+                key={section.ref}
+                onClick={() => scrollToSection(section.ref)}
+                className="text-base lg:text-lg font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
+              >
+                {section.name}
+              </button>
+            ))}
+            <a
+              href={WHATSAPP_COMMUNITY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-base lg:text-lg font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
+            >
+              Join Community
+            </a>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              ref={menuButtonRef}
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              aria-label="Open menu"
+            >
+              <Icon name="menu" size={30} className="text-white" />
+            </button>
+          </div>
+        </nav>
+      </header>
+    </>
   );
 };
 
