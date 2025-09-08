@@ -570,17 +570,18 @@ export const HeroSection = ({ handleExploreCourses }) => {
   );
 };
 
+// --- COMPANIES BELT (smaller logos, very light grey tiles) ---
 export const CompaniesBelt = () => {
-  // use your /public/brand/*.png assets
+  // Use your /public/brand assets (keep names as you have them)
   const LOGOS = [
-    { name: 'Swiggy',    src: '/brand/Swiggy_logo.png'    },
-    { name: 'Zomato',    src: '/brand/Zomato_logo.png'    },
-    { name: 'Zoho',      src: '/brand/Zoho_logo.png'      },
-    { name: 'Paytm',     src: '/brand/Paytm_logo.png'     },
-    { name: 'Ola',       src: '/brand/Ola_logo.png'       },
-    { name: 'Flipkart',  src: '/brand/Flipkart_logo.png'  },
-    { name: 'Razorpay',  src: '/brand/Razorpay_logo.png'  },
-    { name: 'PharmEasy', src: '/brand/Pharmeasy_logo.png' },
+    { name: 'Swiggy',    src: '/brand/swiggy.png'    },
+    { name: 'Zoho',      src: '/brand/zoho.png'      },
+    { name: 'Zomato',    src: '/brand/zomato.png'    },
+    { name: 'Paytm',     src: '/brand/paytm.png'     },
+    { name: 'Ola',       src: '/brand/ola.png'       },
+    { name: 'Flipkart',  src: '/brand/flipkart.png'  },
+    { name: 'Razorpay',  src: '/brand/razorpay.png'  },
+    { name: 'PharmEasy', src: '/brand/pharmeasy.png' },
   ];
 
   const track = [...LOGOS, ...LOGOS]; // seamless loop
@@ -588,32 +589,30 @@ export const CompaniesBelt = () => {
   return (
     <section
       aria-label="Companies"
-      // top & bottom margins are equal so the gap AFTER the belt
-      // matches the gap BEFORE the belt (under the hero CTAs)
       className="relative bg-transparent mt-10 md:mt-16 mb-10 md:mb-16"
     >
-      {/* Heading sits outside the belt */}
+      {/* Heading outside the belt */}
       <div className="container mx-auto px-6">
         <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center">
           Our graduates work at leading tech companies
         </h3>
       </div>
 
-      {/* Belt (edge-to-edge) */}
+      {/* Rotating belt */}
       <div className="relative w-full mt-5 overflow-hidden">
         {/* subtle edge fades */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-gray-950 to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-gray-950 to-transparent" />
 
-        <div className="marquee flex items-center gap-8 md:gap-12 py-3 md:py-4">
+        <div className="marquee flex items-center gap-7 md:gap-10 py-2.5 md:py-3">
           {track.map((logo, i) => (
             <div key={`${logo.name}-${i}`} className="flex-none">
-              {/* White background only around each logo (not the entire belt) */}
-              <div className="bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-5 py-3 h-12 md:h-14 w-[168px] md:w-[188px] flex items-center justify-center">
+              {/* very light grey tile behind each logo */}
+              <div className="bg-gray-100 rounded-xl shadow-sm ring-1 ring-black/5 px-4 py-2.5 h-11 md:h-12 w-[150px] md:w-[170px] flex items-center justify-center">
                 <img
                   src={logo.src}
                   alt={logo.name}
-                  className="max-h-8 md:max-h-10 w-auto object-contain"
+                  className="max-h-7 md:max-h-9 w-auto object-contain"
                   loading="lazy"
                   decoding="async"
                 />
@@ -623,7 +622,7 @@ export const CompaniesBelt = () => {
         </div>
       </div>
 
-      {/* local styles */}
+      {/* animation */}
       <style jsx>{`
         .marquee {
           width: max-content;
@@ -640,6 +639,7 @@ export const CompaniesBelt = () => {
     </section>
   );
 };
+
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
