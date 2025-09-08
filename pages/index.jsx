@@ -504,11 +504,55 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
-const HeroSection = ({ handleExploreCourses }) => {
-  const videoRef = useRef(null);
-  const sectionRef = useRef(null);
+/* 1) Add this lightweight belt */
+const CompaniesBelt = () => {
+  const companies = [
+    { abbr: 'FK', name: 'Flipkart' },
+    { abbr: 'SW', name: 'Swiggy' },
+    { abbr: 'ZO', name: 'Zomato' },
+    { abbr: 'RZ', name: 'Razorpay' },
+    { abbr: 'PE', name: 'PharmEasy' },
+    { abbr: 'OL', name: 'Ola' },
+  ];
 
-  useEffect(() => {
+  return (
+    <div className="mt-8 md:mt-10">
+      <p className="text-xs md:text-sm font-semibold tracking-wide text-gray-200/80 text-center mb-4">
+        Our graduates work at leading tech companies
+      </p>
+
+      <div className="relative">
+        {/* fade edges so it feels like a belt */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-16 bg-gradient-to-r from-gray-950/90 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-16 bg-gradient-to-l from-gray-950/90 to-transparent" />
+
+        <div className="flex flex-wrap justify-center gap-x-10 gap-y-6 px-6">
+          {companies.map((c) => (
+            <div
+              key={c.name}
+              className="flex items-center gap-3 opacity-80 hover:opacity-100 transition"
+              aria-label={c.name}
+              title={c.name}
+            >
+              {/* mono “logo” chip (fast + brand-safe) */}
+              <span className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-white/10 ring-1 ring-white/15 flex items-center justify-center text-[10px] md:text-xs font-extrabold text-white/85">
+                {c.abbr}
+              </span>
+              <span className="text-sm md:text-base font-semibold text-white/85">{c.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* 2) Replace your HeroSection with this version (only change is <CompaniesBelt /> after the CTAs) */
+const HeroSection = ({ handleExploreCourses }) => {
+  const videoRef = React.useRef(null);
+  const sectionRef = React.useRef(null);
+
+  React.useEffect(() => {
     const v = videoRef.current;
     const s = sectionRef.current;
     if (!v || !s) return;
@@ -516,15 +560,13 @@ const HeroSection = ({ handleExploreCourses }) => {
     v.muted = true;
     v.playsInline = true;
     const tryPlay = () => v.play().catch(() => {});
-
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) tryPlay();
-      else v.pause();
-    }, { threshold: 0.12, rootMargin: '120px 0px' });
-
+    const obs = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? tryPlay() : v.pause()),
+      { threshold: 0.12, rootMargin: '120px 0px' }
+    );
     obs.observe(s);
 
-    const unlock = () => { tryPlay(); };
+    const unlock = () => tryPlay();
     window.addEventListener('touchstart', unlock, { once: true });
     window.addEventListener('click', unlock, { once: true });
 
@@ -553,10 +595,8 @@ const HeroSection = ({ handleExploreCourses }) => {
         ref={videoRef}
         className="
           pointer-events-none absolute inset-0 w-full h-full z-0
-          object-cover
-          object-[50%_40%] sm:object-center
-          opacity-75
-          filter brightness-110 contrast-105
+          object-cover object-[50%_40%] sm:object-center
+          opacity-75 filter brightness-110 contrast-105
           transition-opacity
         "
         autoPlay
@@ -570,12 +610,9 @@ const HeroSection = ({ handleExploreCourses }) => {
         <source src="/animation_1.mp4" type="video/mp4" />
       </video>
 
-      {/* Tint + tight edge fades */}
+      {/* Tint + edge fades */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/16" />
-      <div
-        className="pointer-events-none absolute inset-0 z-0
-                   bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_4%,rgba(11,18,32,0)_96%,rgba(11,18,32,1)_100%)]"
-      />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(to_bottom,rgba(11,18,32,1)_0%,rgba(11,18,32,0)_4%,rgba(11,18,32,0)_96%,rgba(11,18,32,1)_100%)]" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
@@ -605,7 +642,7 @@ const HeroSection = ({ handleExploreCourses }) => {
           </motion.button>
 
           <motion.a
-            href={WHATSAPP_COMMUNITY_URL}
+            href="https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
@@ -615,10 +652,13 @@ const HeroSection = ({ handleExploreCourses }) => {
             Join Community
           </motion.a>
         </div>
+
+        {/* 👇 New belt */}
+        <CompaniesBelt />
       </div>
     </section>
   );
-};
+}
 
 
 
