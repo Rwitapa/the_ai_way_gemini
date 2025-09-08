@@ -571,7 +571,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-
+import React from "react";
 const LOGOS = [
   { name: 'Swiggy',    src: '/brand/swiggy.png'    },
   { name: 'Zoho',      src: '/brand/zoho.png'      },
@@ -582,47 +582,68 @@ const LOGOS = [
   { name: 'Razorpay',  src: '/brand/razorpay.png'  },
   { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
 ];
-
 function LogoCard({ src, alt }) {
   return (
     <div
       className="
-        shrink-0 rounded-2xl ring-1 ring-black/5
-        bg-neutral-100/90 dark:bg-neutral-100/90
-        h-16 md:h-18 w-[160px] md:w-[180px]
-        flex items-center justify-center px-4
+        flex items-center justify-center
+        rounded-2xl ring-1 ring-white/10 shadow-sm
+        bg-[#F3F4F6]   /* very light grey */
+        w-[168px] h-[76px] md:w-[184px] md:h-[82px] lg:w-[200px] lg:h-[88px]
       "
     >
-      <img src={src} alt={alt} loading="lazy" className="h-8 md:h-9 w-auto object-contain" />
+      <img
+        src={src}
+        alt={`${alt} logo`}
+        loading="lazy"
+        className="max-h-9 md:max-h-10 lg:max-h-11 w-auto object-contain"
+      />
     </div>
   );
 }
 
-export function CompaniesBelt() {
-  // Adjust speed globally here
-  const speed = '48s'; // slower -> '60s', faster -> '30s'
+export default function CompaniesBelt() {
+  // Tweak this to make the belt slower/faster (higher = slower)
+  const duration = "48s"; // previously faster; reduced speed as requested
 
-  // Build a duplicated array inside a single track
-  const track = [...LOGOS, ...LOGOS];
+  // Two identical tracks for a seamless loop
+  const items = [...LOGOS, ...LOGOS];
 
   return (
-    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16">
-      <h3 className="text-center text-white/85 font-semibold text-lg md:text-xl mb-5 md:mb-6">
+    // Extra bottom margin pushes the next section (“This Is For You If…”) down
+    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16 mb-24 md:mb-28 lg:mb-32">
+      <h3 className="text-center text-white/90 font-semibold text-lg md:text-xl mb-7 md:mb-8">
         Our graduates work at leading tech companies
       </h3>
 
-      <div className="relative overflow-hidden rounded-3xl">
-        {/* subtle dim overlay so this band doesn’t pop too bright */}
+      <div className="relative overflow-hidden">
+        {/* subtle grey overlay to soft-tone the zone */}
         <div className="pointer-events-none absolute inset-0 bg-black/5" />
-        {/* viewport */}
+
         <div className="marquee">
-          {/* single moving track that contains two identical sequences */}
           <ul
             className="track"
-            style={{ ['--marquee-duration']: speed }}
+            style={{
+              ["--marquee-duration"]: duration,
+            }}
           >
-            {track.map((l, i) => (
-              <li key={`${l.name}-${i}`} className="shrink-0">
+            {items.map((l, i) => (
+              <li key={`${l.name}-a-${i}`} className="shrink-0">
+                <LogoCard src={l.src} alt={l.name} />
+              </li>
+            ))}
+          </ul>
+
+          {/* second track starts just outside the right edge */}
+          <ul
+            className="track track--2"
+            aria-hidden="true"
+            style={{
+              ["--marquee-duration"]: duration,
+            }}
+          >
+            {items.map((l, i) => (
+              <li key={`${l.name}-b-${i}`} className="shrink-0">
                 <LogoCard src={l.src} alt={l.name} />
               </li>
             ))}
@@ -630,35 +651,66 @@ export function CompaniesBelt() {
         </div>
       </div>
 
+      {/* marquee + spacing styles */}
       <style jsx global>{`
         .marquee {
+          --gap: 2.75rem; /* spacing between logo cards */
           position: relative;
           overflow: hidden;
-          width: 100%;
-          /* fade edges (optional) */
-          -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-                  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          padding: 0.25rem 0; /* tiny breathing room */
+          mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 6%,
+            black 94%,
+            transparent
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 6%,
+            black 94%,
+            transparent
+          );
         }
-        .track {
-          display: inline-flex;
-          align-items: center;
-          /* one place controls spacing, no padding that would desync halves */
-          gap: 2.5rem; /* md: gap-12 equivalent */
-          width: max-content;        /* size to content */
-          will-change: transform;
-          transform: translate3d(0,0,0);
-          animation: marquee var(--marquee-duration, 48s) linear infinite;
-          padding: 0 2.5rem;         /* safe to pad the WHOLE track */
+        @media (min-width: 768px) {
+          .marquee {
+            --gap: 3.25rem;
+          }
         }
-        /* IMPORTANT: because the track contains two identical sequences back-to-back,
-           moving by -50% (half of the track width) lands exactly at the seam. */
-        @keyframes marquee {
-          0%   { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
+        @media (min-width: 1024px) {
+          .marquee {
+            --gap: 3.75rem;
+          }
         }
 
-        @media (min-width: 768px) {
-          .track { gap: 3rem; padding: 0 3rem; }
+        .marquee .track,
+        .marquee .track--2 {
+          display: flex;
+          align-items: center;
+          gap: var(--gap);
+          min-width: max-content;
+        }
+
+        .marquee .track {
+          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
+        }
+
+        /* start the second track from the right, so the loop is seamless */
+        .marquee .track--2 {
+          position: absolute;
+          top: 0;
+          left: 100%;
+          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
+        }
+
+        @keyframes aiway-marquee {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-100%);
+          }
         }
       `}</style>
     </section>
