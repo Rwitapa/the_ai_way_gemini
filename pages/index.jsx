@@ -743,7 +743,7 @@ const App = () => {
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
             Still stuck fixing reports?
-            <span className="block text-purple-400 mt-2">Be your team’s hero with AI</span>
+            <span className="block text-purple-400 mt-2">Be your team’s hero with AI.</span>
           </h1>
           <p className="text-base md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
             Most analysts waste hours on manual dashboards and tool-hopping, only to stay invisible. The AI Way shows you how to use AI-code or no-code-to automate your work, prove ROI, and become the analyst your team can't live without.
@@ -1239,6 +1239,14 @@ const App = () => {
                 {section.name}
               </button>
             ))}
+             <a 
+                href={WHATSAPP_COMMUNITY_URL} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-4 py-2 rounded-full"
+              >
+                Join Community
+              </a>
           </div>
 
           {/* Mobile Menu Button - hamburger icon */}
@@ -1259,37 +1267,29 @@ const App = () => {
         <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: "-100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="md:hidden fixed inset-0 z-30 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6"
           >
-            {/* Navigation Links Group */}
-            <div className="flex flex-col items-center space-y-8">
+            {/* Unified Navigation Links */}
+            <div className="flex flex-col items-center space-y-8 text-center">
               {sections.map(section => (
-                <button 
-                  key={section.ref} 
-                  onClick={() => scrollToSection(section.ref)} 
+                <button
+                  key={section.ref}
+                  onClick={() => scrollToSection(section.ref)}
                   className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors"
                 >
                   {section.name}
                 </button>
               ))}
-            </div>
-
-            {/* CTA Buttons Group */}
-            <div className="mt-16 flex flex-col items-center space-y-4 w-full max-w-xs">
-              <button 
-                onClick={() => { handleExploreCourses(); setIsMenuOpen(false); }} 
-                className="w-full py-3 px-6 text-lg font-semibold rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-              >
-                Explore All Courses
-              </button>
-              <a 
-                href={WHATSAPP_COMMUNITY_URL} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-full text-center py-3 px-6 text-lg font-semibold rounded-full bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors"
+              <a
+                href={WHATSAPP_COMMUNITY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors"
               >
                 Join Community
               </a>
@@ -1330,7 +1330,4 @@ const App = () => {
 };
 
 export default App;
-
-
-
 
