@@ -584,88 +584,58 @@ function CompaniesBelt() {
     { name: 'Razorpay',  src: '/brand/razorpay.png'  },
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
- return (
-    <section
-      className="relative w-full pt-8 sm:pt-10 md:pt-12"
-      style={{ ['--hero-purple']: HERO_PURPLE_RGB }}
-    >
-      {/* Heading sits outside the belt */}
-      <p className="text-center font-semibold text-white/85 text-sm sm:text-base md:text-lg mb-3 md:mb-4">
-        Our graduates work at leading tech companies
-      </p>
+  const track = [...LOGOS, ...LOGOS];
 
-      {/* Belt */}
-      <div className="relative overflow-hidden">
+  return (
+    <section id="companies" className="relative bg-transparent py-8 md:py-10">
+      <div className="container mx-auto px-6">
+        <h3 className="text-center text-slate-200/90 font-semibold tracking-tight text-[15px] md:text-base mb-5 md:mb-6">
+          Our graduates work at leading tech companies
+        </h3>
+      </div>
+
+      {/* Scroller */}
+      <div className="overflow-hidden">
         <div
-          className="belt-track"
-          // ↓ Make it slower by increasing the seconds value
-          style={{ ['--belt-duration']: '40s' }} // was faster; now slower
+          className="relative whitespace-nowrap will-change-transform"
+          style={{ ['--speed']: '55s' }} // slower/faster: e.g. '70s' or '40s'
         >
-          <ul className="belt-list" aria-label="Companies">
-            {LOGOS.map((l) => (
-              <li key={l.name} className="tile" title={l.name}>
-                <img src={l.src} alt={l.name} loading="lazy" />
+          {/* pass 1 */}
+          <ul className="flex animate-marquee [animation-duration:var(--speed)] gap-6 md:gap-8 px-6">
+            {track.map((logo, i) => (
+              <li key={i} className="shrink-0">
+                <div className="flex items-center justify-center h-14 md:h-16 w-28 md:w-32 rounded-xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset]">
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    loading="lazy"
+                    className="max-h-8 md:max-h-9 w-auto object-contain"
+                  />
+                </div>
               </li>
             ))}
           </ul>
 
-          {/* Duplicate for seamless loop */}
-          <ul className="belt-list" aria-hidden="true">
-            {LOGOS.map((l, i) => (
-              <li key={`${l.name}-dupe-${i}`} className="tile">
-                <img src={l.src} alt="" loading="lazy" />
+          {/* pass 2 (for seamless loop) */}
+          <ul
+            aria-hidden="true"
+            className="flex animate-marquee [animation-duration:var(--speed)] gap-6 md:gap-8 absolute inset-0 translate-x-full px-6"
+          >
+            {track.map((logo, i) => (
+              <li key={`dup-${i}`} className="shrink-0">
+                <div className="flex items-center justify-center h-14 md:h-16 w-28 md:w-32 rounded-xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset]">
+                  <img
+                    src={logo.src}
+                    alt={`${logo.name} duplicate`}
+                    loading="lazy"
+                    className="max-h-8 md:max-h-9 w-auto object-contain"
+                  />
+                </div>
               </li>
             ))}
           </ul>
         </div>
       </div>
-
-      <style jsx>{`
-        .belt-track {
-          display: flex;
-          width: max-content;
-          gap: 0; /* lists sit back-to-back */
-          animation: belt-scroll var(--belt-duration) linear infinite;
-        }
-        .belt-list {
-          display: flex;
-          align-items: center;
-          gap: 28px;              /* spacing between logo chips */
-          padding: 12px 28px;     /* inner belt breathing room */
-        }
-        .tile {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 172px;
-          height: 68px;
-          border-radius: 12px;
-          /* very light purple chip, same hue as hero line */
-          background: rgba(var(--hero-purple), 0.12);
-          border: 1px solid rgba(var(--hero-purple), 0.22);
-          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-          transition: transform 200ms ease;
-        }
-        .tile:hover { transform: translateY(-2px); }
-        .tile img {
-          width: auto;
-          height: 38px;
-          object-fit: contain;
-          display: block;
-        }
-
-        @keyframes belt-scroll {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); } /* second list continues seamlessly */
-        }
-
-        /* Slightly larger on desktop */
-        @media (min-width: 1024px) {
-          .belt-list { gap: 36px; padding: 14px 36px; }
-          .tile { width: 188px; height: 72px; }
-          .tile img { height: 42px; }
-        }
-      `}</style>
     </section>
   );
 }
