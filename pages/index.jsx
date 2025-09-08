@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Head from 'next/head';
+import Image from 'next/image';
 
 // --- CONSTANTS & UTILS ---
 
@@ -399,23 +400,81 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
   return (
-    <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
-      <nav className="flex items-center justify-between">
-        <div className="flex-shrink-0">
-          <a href="#" onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }} className="text-xl font-bold text-white rounded-lg hover:text-purple-400 transition-colors">The AI Way</a>
-        </div>
+    <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-2 md:py-3 px-6 md:px-12 rounded-b-xl shadow-lg">
+      <nav className="flex items-center justify-between h-14 md:h-16">
+        {/* Brand */}
+        <a
+          href="#"
+          aria-label="The AI Way — Home"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowCoursesPage(false);
+            window.scrollTo(0, 0);
+          }}
+          className="group flex items-center gap-3"
+        >
+          {/* Mark (always visible) */}
+          <span className="relative block h-8 w-8 md:h-9 md:w-9">
+            <Image
+              src="/brand/aiway-mark.png"
+              alt="The AI Way logo"
+              fill
+              sizes="(max-width: 768px) 32px, 36px"
+              priority
+              className="object-contain drop-shadow-[0_0_8px_rgba(168,85,247,0.35)] transition-transform duration-200 group-hover:scale-105"
+            />
+          </span>
+
+          {/* Wordmark: show on md+; if you don’t have a transparent lockup yet, use the text fallback below */}
+          <span className="hidden md:block">
+            {/* Option A: image wordmark (preferred if you have transparent PNG/SVG) */}
+            <Image
+              src="/brand/aiway-lockup.png"
+              alt="The AI Way"
+              width={150}
+              height={28}
+              priority
+              className="h-7 w-auto object-contain drop-shadow-[0_0_6px_rgba(168,85,247,0.25)]"
+              onError={(e) => {
+                // Fallback to styled text if the image is missing
+                const parent = e.currentTarget.parentElement;
+                if (!parent) return;
+                parent.innerHTML =
+                  '<span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-sky-300 bg-clip-text text-transparent">The AI Way</span>';
+              }}
+            />
+          </span>
+        </a>
+
+        {/* Right side: nav links (unchanged) */}
         <div className="hidden md:flex items-center space-x-8">
-          {sections.map(section => (
-            <button key={section.ref} onClick={() => scrollToSection(section.ref)} className="text-sm font-semibold hover:text-purple-400 transition-colors rounded-lg px-2 py-1">
+          {sections.map((section) => (
+            <button
+              key={section.ref}
+              onClick={() => scrollToSection(section.ref)}
+              className="text-sm font-semibold hover:text-purple-400 transition-colors rounded-lg px-2 py-1"
+            >
               {section.name}
             </button>
           ))}
-          <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-4 py-2 rounded-full">
+          <a
+            href={WHATSAPP_COMMUNITY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-4 py-2 rounded-full"
+          >
             Join Community
           </a>
         </div>
+
+        {/* Mobile menu button (unchanged) */}
         <div className="md:hidden">
-          <button ref={menuButtonRef} onClick={() => setIsMenuOpen(true)} className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Open menu">
+          <button
+            ref={menuButtonRef}
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            aria-label="Open menu"
+          >
             <Icon name={'menu'} size={28} className="text-white" />
           </button>
         </div>
@@ -423,6 +482,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
     </header>
   );
 };
+
 
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   <AnimatePresence>
