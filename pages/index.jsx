@@ -396,29 +396,32 @@ const sections = [
 
 // --- REFACTORED COMPONENTS ---
 
-// --- HEADER (Navbar) ---
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
   return (
     <>
-      {/* Adobe Fonts: Alkaline (Medium). Replace with your kit id once. */}
+      {/* load a free medium-weight font similar to Alkaline */}
       <Head>
-        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
-        <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap"
+          rel="stylesheet"
+        />
       </Head>
 
+      {/* global helper for Poppins Medium */}
       <style jsx global>{`
-        .font-alkaline-medium {
-          font-family: "alkaline", Inter, ui-sans-serif, system-ui, -apple-system,
-            "Segoe UI", Roboto, "Helvetica Neue", Arial;
-          font-weight: 500; /* Medium */
+        .font-poppins-medium {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
         }
       `}</style>
 
       <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between h-16 md:h-20">
-          {/* Brand */}
+          {/* brand */}
           <a
             href="#"
             aria-label="The AI Way — Home"
@@ -429,7 +432,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
             }}
             className="group flex items-center gap-3 md:gap-4"
           >
-            {/* Same logo file on all breakpoints */}
+            {/* enlarged mark with transparent background */}
             <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
               <Image
                 src="/brand/aiway-mark.png"
@@ -441,19 +444,19 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
               />
             </span>
 
-            {/* Wordmark: same scale as nav items */}
-            <span className="hidden sm:inline-block font-alkaline-medium text-white leading-none tracking-tight text-[15.5px] md:text-[17px]">
+            {/* wordmark—same size as nav items, Poppins medium, white */}
+            <span className="hidden md:inline-block font-poppins-medium text-white leading-none tracking-tight text-[15px] md:text-[17px]">
               The AI Way
             </span>
           </a>
 
-          {/* Desktop nav (slightly larger than default) */}
-          <div className="hidden md:flex items-center space-x-10">
+          {/* desktop navigation */}
+          <div className="hidden md:flex items-center space-x-8">
             {sections.map((section) => (
               <button
                 key={section.ref}
                 onClick={() => scrollToSection(section.ref)}
-                className="text-[15.5px] md:text-[16px] lg:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
+                className="text-[15px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
               >
                 {section.name}
               </button>
@@ -462,13 +465,13 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
               href={WHATSAPP_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[15.5px] md:text-[16px] lg:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
+              className="text-[15px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
             >
               Join Community
             </a>
           </div>
 
-          {/* Mobile menu */}
+          {/* mobile menu button */}
           <div className="md:hidden">
             <button
               ref={menuButtonRef}
