@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import mentor from './public/Mentor.jpg'
+import Image from 'next/image';
 
 // --- CONSTANTS & UTILS ---
 
@@ -697,7 +697,7 @@ const MentorSection = ({ sectionRef }) => (
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
                             <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
-                                <img src={mentor} alt="Rwitapa Mitra" width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
+                                <img src="/Mentor.jpg" alt="Rwitapa Mitra" width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
                             </div>
                         </div>
                     </div>
