@@ -506,12 +506,13 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   </AnimatePresence>
 );
 
+
 export const HeroSection = ({ handleExploreCourses }) => {
   return (
     <section className="relative overflow-hidden flex items-center bg-gray-950">
-      {/* Full-bleed video background */}
+      {/* Background video: stronger + more vivid */}
       <video
-        className="absolute inset-0 h-full w-full object-cover opacity-55"
+        className="absolute inset-0 h-full w-full object-cover brightness-110 contrast-110 saturate-125"
         src="/animation_1.mp4"
         playsInline
         muted
@@ -520,12 +521,12 @@ export const HeroSection = ({ handleExploreCourses }) => {
         preload="auto"
         aria-hidden="true"
       />
-      {/* Soft dark overlay for readability */}
-      <div className="absolute inset-0 bg-gray-950/55" aria-hidden="true" />
+      {/* Softer overlay so video shows through more */}
+      <div className="absolute inset-0 bg-gray-950/25" aria-hidden="true" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 w-full">
-        {/* Keep the hero tall on desktop so second fold doesn’t creep in */}
+        {/* keep hero tall so belt begins in next fold */}
         <div className="min-h-[86svh] md:min-h-screen pt-24 md:pt-28 pb-16 md:pb-24 flex flex-col items-center justify-center text-center">
           <span className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm">
             Gen AI for Business Analysts
@@ -538,7 +539,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
             </span>
           </h1>
 
-          <p className="mt-5 max-w-3xl text-base md:text-xl text-gray-300">
+          <p className="mt-5 max-w-3xl text-base md:text-xl text-gray-200">
             Launch an AI KPI agent that keeps data fresh, flags anomalies, and pushes insights to Slack or email.
           </p>
 
@@ -569,46 +570,46 @@ export const HeroSection = ({ handleExploreCourses }) => {
   );
 };
 
-
-
-// Colored logo files in /public/brand/*.png
 export const CompaniesBelt = () => {
-  // Use your public /brand/*.png files
+  // use your /public/brand/*.png assets
   const LOGOS = [
-    { name: "Swiggy",    src: "/brand/swiggy.png" },
-    { name: "Zomato",    src: "/brand/zomato.png" },
-    { name: "Zoho",      src: "/brand/zoho.png" },
-    { name: "Paytm",     src: "/brand/paytm.png" },
-    { name: "Ola",       src: "/brand/ola.png" },
-    { name: "Flipkart",  src: "/brand/flipkart.png" },
-    { name: "Razorpay",  src: "/brand/razorpay.png" },
-    { name: "PharmEasy", src: "/brand/pharmeasy.png" },
+    { name: 'Swiggy',    src: '/brand/Swiggy_logo.png'    },
+    { name: 'Zomato',    src: '/brand/Zomato_logo.png'    },
+    { name: 'Zoho',      src: '/brand/Zoho_logo.png'      },
+    { name: 'Paytm',     src: '/brand/Paytm_logo.png'     },
+    { name: 'Ola',       src: '/brand/Ola_logo.png'       },
+    { name: 'Flipkart',  src: '/brand/Flipkart_logo.png'  },
+    { name: 'Razorpay',  src: '/brand/Razorpay_logo.png'  },
+    { name: 'PharmEasy', src: '/brand/Pharmeasy_logo.png' },
   ];
-  const track = [...LOGOS, ...LOGOS]; // duplicate for seamless loop
+
+  const track = [...LOGOS, ...LOGOS]; // seamless loop
 
   return (
     <section
       aria-label="Companies"
-      className="relative bg-transparent mt-10 md:mt-16 lg:mt-24 mb-10 md:mb-16 lg:mb-24"
+      // top & bottom margins are equal so the gap AFTER the belt
+      // matches the gap BEFORE the belt (under the hero CTAs)
+      className="relative bg-transparent mt-10 md:mt-16 mb-10 md:mb-16"
     >
-      {/* Heading outside the belt */}
+      {/* Heading sits outside the belt */}
       <div className="container mx-auto px-6">
         <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center">
           Our graduates work at leading tech companies
         </h3>
       </div>
 
-      {/* Rotating belt */}
+      {/* Belt (edge-to-edge) */}
       <div className="relative w-full mt-5 overflow-hidden">
-        {/* subtle edge fades so movement feels premium */}
+        {/* subtle edge fades */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-gray-950 to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-gray-950 to-transparent" />
 
         <div className="marquee flex items-center gap-8 md:gap-12 py-3 md:py-4">
           {track.map((logo, i) => (
             <div key={`${logo.name}-${i}`} className="flex-none">
-              {/* Only the tile behind each logo is white */}
-              <div className="bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-5 py-3 h-12 md:h-14 w-[160px] md:w-[180px] flex items-center justify-center">
+              {/* White background only around each logo (not the entire belt) */}
+              <div className="bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-5 py-3 h-12 md:h-14 w-[168px] md:w-[188px] flex items-center justify-center">
                 <img
                   src={logo.src}
                   alt={logo.name}
@@ -622,7 +623,7 @@ export const CompaniesBelt = () => {
         </div>
       </div>
 
-      {/* Local styles for the marquee */}
+      {/* local styles */}
       <style jsx>{`
         .marquee {
           width: max-content;
@@ -631,6 +632,9 @@ export const CompaniesBelt = () => {
         @keyframes belt-scroll {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee { animation: none; }
         }
       `}</style>
     </section>
