@@ -571,8 +571,9 @@ export const HeroSection = ({ handleExploreCourses }) => {
 };
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
-export const CompaniesBelt = () => {
-  // Use your /public/brand assets (keep names as you have them)
+export default function CompaniesBelt() {
+  // Tailwind violet-400 (same hue as the "Be your team’s hero with AI." line)
+  const HERO_PURPLE_RGB = '167, 139, 250';
   const LOGOS = [
     { name: 'Swiggy',    src: '/brand/swiggy.png'    },
     { name: 'Zoho',      src: '/brand/zoho.png'      },
@@ -583,63 +584,91 @@ export const CompaniesBelt = () => {
     { name: 'Razorpay',  src: '/brand/razorpay.png'  },
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
-
-  const track = [...LOGOS, ...LOGOS]; // seamless loop
-
-  return (
+ return (
     <section
-      aria-label="Companies"
-      className="relative bg-transparent mt-10 md:mt-16 mb-10 md:mb-16"
+      className="relative w-full pt-8 sm:pt-10 md:pt-12"
+      style={{ ['--hero-purple']: HERO_PURPLE_RGB }}
     >
-      {/* Heading outside the belt */}
-      <div className="container mx-auto px-6">
-        <h3 className="text-slate-200 font-semibold text-lg md:text-2xl text-center">
-          Our graduates work at leading tech companies
-        </h3>
-      </div>
+      {/* Heading sits outside the belt */}
+      <p className="text-center font-semibold text-white/85 text-sm sm:text-base md:text-lg mb-3 md:mb-4">
+        Our graduates work at leading tech companies
+      </p>
 
-      {/* Rotating belt */}
-      <div className="relative w-full mt-5 overflow-hidden">
-        {/* subtle edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-gray-950 to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-gray-950 to-transparent" />
+      {/* Belt */}
+      <div className="relative overflow-hidden">
+        <div
+          className="belt-track"
+          // ↓ Make it slower by increasing the seconds value
+          style={{ ['--belt-duration']: '40s' }} // was faster; now slower
+        >
+          <ul className="belt-list" aria-label="Companies">
+            {LOGOS.map((l) => (
+              <li key={l.name} className="tile" title={l.name}>
+                <img src={l.src} alt={l.name} loading="lazy" />
+              </li>
+            ))}
+          </ul>
 
-        <div className="marquee flex items-center gap-7 md:gap-10 py-2.5 md:py-3">
-          {track.map((logo, i) => (
-            <div key={`${logo.name}-${i}`} className="flex-none">
-              {/* very light grey tile behind each logo */}
-              <div className="bg-gray-100 rounded-xl shadow-sm ring-1 ring-black/5 px-4 py-2.5 h-11 md:h-12 w-[150px] md:w-[170px] flex items-center justify-center">
-                <img
-                  src={logo.src}
-                  alt={logo.name}
-                  className="max-h-7 md:max-h-9 w-auto object-contain"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </div>
-          ))}
+          {/* Duplicate for seamless loop */}
+          <ul className="belt-list" aria-hidden="true">
+            {LOGOS.map((l, i) => (
+              <li key={`${l.name}-dupe-${i}`} className="tile">
+                <img src={l.src} alt="" loading="lazy" />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {/* animation */}
       <style jsx>{`
-        .marquee {
+        .belt-track {
+          display: flex;
           width: max-content;
-          animation: belt-scroll 26s linear infinite;
+          gap: 0; /* lists sit back-to-back */
+          animation: belt-scroll var(--belt-duration) linear infinite;
         }
+        .belt-list {
+          display: flex;
+          align-items: center;
+          gap: 28px;              /* spacing between logo chips */
+          padding: 12px 28px;     /* inner belt breathing room */
+        }
+        .tile {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 172px;
+          height: 68px;
+          border-radius: 12px;
+          /* very light purple chip, same hue as hero line */
+          background: rgba(var(--hero-purple), 0.12);
+          border: 1px solid rgba(var(--hero-purple), 0.22);
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+          transition: transform 200ms ease;
+        }
+        .tile:hover { transform: translateY(-2px); }
+        .tile img {
+          width: auto;
+          height: 38px;
+          object-fit: contain;
+          display: block;
+        }
+
         @keyframes belt-scroll {
           from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
+          to   { transform: translateX(-50%); } /* second list continues seamlessly */
         }
-        @media (prefers-reduced-motion: reduce) {
-          .marquee { animation: none; }
+
+        /* Slightly larger on desktop */
+        @media (min-width: 1024px) {
+          .belt-list { gap: 36px; padding: 14px 36px; }
+          .tile { width: 188px; height: 72px; }
+          .tile img { height: 42px; }
         }
       `}</style>
     </section>
   );
-};
-
+}
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
