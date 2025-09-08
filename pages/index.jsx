@@ -511,7 +511,7 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 const CompaniesBelt = () => {
   // Reliable public logo files (SVG/PNG)
   const LOGOS = [
-    { name: 'Flipkart',  src: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Flipkart_logo.png',            width: 120 },
+    { name: 'Flipkart',  src: '/Flipkart_logo.png',            width: 120 },
     { name: 'Swiggy',    src: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Swiggy_logo.svg',              width: 110 },
     { name: 'Zomato',    src: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_Logo.svg',              width: 130 },
     { name: 'Razorpay',  src: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Razorpay_logo.svg',            width: 140 },
