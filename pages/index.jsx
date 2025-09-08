@@ -543,7 +543,7 @@ const HeroSection = ({ handleExploreCourses }) => {
       className="
         relative overflow-hidden
         min-h-[78vh] md:min-h-[82vh]
-        pt-14 md:pt-16 pb-8 md:pb-12
+        pt-16 md:pt-20 pb-8 md:pb-12
         flex items-start
         bg-gray-950
       "
@@ -570,7 +570,7 @@ const HeroSection = ({ handleExploreCourses }) => {
         <source src="/animation_1.mp4" type="video/mp4" />
       </video>
 
-      {/* Tint + tighter edge fades so the top doesn’t look like empty space */}
+      {/* Tint + tight edge fades */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/16" />
       <div
         className="pointer-events-none absolute inset-0 z-0
