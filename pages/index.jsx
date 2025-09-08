@@ -694,6 +694,7 @@ const MentorSection = ({ sectionRef }) => (
     variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
   >
     <div className="container mx-auto px-6">
+      {/* Heading */}
       <motion.div
         className="text-center mb-12"
         variants={{
@@ -706,8 +707,9 @@ const MentorSection = ({ sectionRef }) => (
         </h2>
       </motion.div>
 
+      {/* Card */}
       <motion.div
-        className="max-w-4xl mx-auto bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
+        className="mx-auto max-w-6xl bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } },
@@ -715,21 +717,18 @@ const MentorSection = ({ sectionRef }) => (
         whileHover={{ y: -5, scale: 1.01, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }}
         transition={{ type: 'spring', stiffness: 300 }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
           {/* Avatar column */}
           <div className="md:col-span-1 flex justify-center">
             <div className="relative">
-              {/* Gradient ring */}
-              <div
-                className="p-[5px] rounded-full
-                           bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]"
-              >
-                {/* Solid inner circle to avoid any leaks */}
-                <div className="rounded-full overflow-hidden bg-[#0b1220]">
+              {/* Gradient ring wrapper */}
+              <div className="p-[5px] rounded-full bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]">
+                {/* Solid inner circle to avoid leaks; keep square to maintain perfect circle */}
+                <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 md:w-72 md:h-72 aspect-square">
                   <img
                     src="/Rwitapa.png"
                     alt="Rwitapa Mitra"
-                    className="block w-64 h-64 md:w-80 md:h-80 object-cover"
+                    className="block w-full h-full object-cover"
                   />
                 </div>
               </div>
@@ -744,7 +743,8 @@ const MentorSection = ({ sectionRef }) => (
               <span className="block text-sm">9+ years at Flipkart, PharmEasy, Mu Sigma & Pilgrim</span>
             </p>
 
-            <div className="flex justify-center md:justify-start gap-3 mt-4 mb-5">
+            {/* Badges */}
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4 mb-5">
               <span className="text-xs font-bold uppercase tracking-wider bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full">
                 Director-Level Experience
               </span>
@@ -753,6 +753,7 @@ const MentorSection = ({ sectionRef }) => (
               </span>
             </div>
 
+            {/* Bio */}
             <p className="text-gray-400 text-base">
               Your instructor has walked the path you're on. Rwitapa transformed from a curious analyst to
               Director of Analytics at India's top companies. She has scaled high-growth startups by turning
