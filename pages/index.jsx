@@ -582,6 +582,7 @@ const LOGOS = [
   { name: 'Razorpay',  src: '/brand/razorpay.png'  },
   { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
 ];
+
 function LogoCard({ src, alt }) {
   return (
     <div
@@ -602,7 +603,7 @@ function LogoCard({ src, alt }) {
   );
 }
 
-function CompaniesBelt() {
+export default function CompaniesBelt() {
   // Tweak this to make the belt slower/faster (higher = slower)
   const duration = "48s"; // previously faster; reduced speed as requested
 
