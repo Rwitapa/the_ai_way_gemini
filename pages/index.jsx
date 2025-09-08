@@ -413,40 +413,25 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
           }}
           className="group flex items-center gap-3"
         >
-          {/* Mark (always visible) */}
+          {/* Mark (transparent PNG/SVG) */}
           <span className="relative block h-8 w-8 md:h-9 md:w-9">
             <Image
-              src="/brand/aiway-lockup.png"
+              src="/brand/aiway-mark.png"   /* <-- use the removebg transparent mark here */
               alt="The AI Way logo"
               fill
               sizes="(max-width: 768px) 32px, 36px"
               priority
-              className="object-contain drop-shadow-[0_0_8px_rgba(168,85,247,0.35)] transition-transform duration-200 group-hover:scale-105"
+              className="object-contain"
             />
           </span>
 
-          {/* Wordmark: show on md+; if you don’t have a transparent lockup yet, use the text fallback below */}
-          <span className="hidden md:block">
-            {/* Option A: image wordmark (preferred if you have transparent PNG/SVG) */}
-            <Image
-              src="/brand/aiway-lockup.png"
-              alt="The AI Way"
-              width={150}
-              height={28}
-              priority
-              className="h-7 w-auto object-contain drop-shadow-[0_0_6px_rgba(168,85,247,0.25)]"
-              onError={(e) => {
-                // Fallback to styled text if the image is missing
-                const parent = e.currentTarget.parentElement;
-                if (!parent) return;
-                parent.innerHTML =
-                  '<span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-sky-300 bg-clip-text text-transparent">The AI Way</span>';
-              }}
-            />
+          {/* Wordmark as text on md+ (no risky image with hidden white box) */}
+          <span className="hidden md:inline-block text-lg font-extrabold tracking-tight bg-gradient-to-r from-purple-300 via-purple-400 to-sky-300 bg-clip-text text-transparent">
+            The AI Way
           </span>
         </a>
 
-        {/* Right side: nav links (unchanged) */}
+        {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-8">
           {sections.map((section) => (
             <button
@@ -467,7 +452,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
           </a>
         </div>
 
-        {/* Mobile menu button (unchanged) */}
+        {/* Mobile menu button */}
         <div className="md:hidden">
           <button
             ref={menuButtonRef}
@@ -475,15 +460,13 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
             className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             aria-label="Open menu"
           >
-            <Icon name={'menu'} size={28} className="text-white" />
+            <Icon name="menu" size={28} className="text-white" />
           </button>
         </div>
       </nav>
     </header>
   );
 };
-
-
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
   <AnimatePresence>
     {isMenuOpen && (
