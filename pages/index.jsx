@@ -594,14 +594,13 @@ function CompaniesBelt() {
         </h3>
       </div>
 
-      {/* Scroller */}
       <div className="overflow-hidden">
-        <div
-          className="relative whitespace-nowrap will-change-transform"
-          style={{ ['--speed']: '55s' }} // slower/faster: e.g. '70s' or '40s'
-        >
-          {/* pass 1 */}
-          <ul className="flex animate-marquee [animation-duration:var(--speed)] gap-6 md:gap-8 px-6">
+        <div className="relative h-16 md:h-20">
+          {/* Track 1 */}
+          <ul
+            className="flex w-max gap-6 md:gap-8 animate-marquee"
+            style={{ animationDuration: '60s' }} // slower/faster here
+          >
             {track.map((logo, i) => (
               <li key={i} className="shrink-0">
                 <div className="flex items-center justify-center h-14 md:h-16 w-28 md:w-32 rounded-xl bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.06)_inset]">
@@ -616,10 +615,11 @@ function CompaniesBelt() {
             ))}
           </ul>
 
-          {/* pass 2 (for seamless loop) */}
+          {/* Track 2 (start just after Track 1) */}
           <ul
             aria-hidden="true"
-            className="flex animate-marquee [animation-duration:var(--speed)] gap-6 md:gap-8 absolute inset-0 translate-x-full px-6"
+            className="flex w-max gap-6 md:gap-8 animate-marquee absolute top-0 left-full"
+            style={{ animationDuration: '60s' }}
           >
             {track.map((logo, i) => (
               <li key={`dup-${i}`} className="shrink-0">
