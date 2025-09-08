@@ -584,22 +584,26 @@ function CompaniesBelt() {
     { name: 'Razorpay',  src: '/brand/razorpay.png'  },
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
-  const track = [...LOGOS, ...LOGOS];
+ const track = [...LOGOS, ...LOGOS]; // seamless loop
 
   return (
     <section id="companies" className="relative bg-transparent py-8 md:py-10">
-      <div className="container mx-auto px-6">
+      {/* GREY OVERLAY — sits above everything; tweak opacity here */}
+      <div className="pointer-events-none absolute inset-0 z-30 bg-black/10 md:bg-black/10" />
+
+      {/* Content layer */}
+      <div className="relative z-20 container mx-auto px-6">
         <h3 className="text-center text-slate-200/90 font-semibold tracking-tight text-[15px] md:text-base mb-5 md:mb-6">
           Our graduates work at leading tech companies
         </h3>
       </div>
 
-      <div className="overflow-hidden">
+      <div className="relative z-20 overflow-hidden">
         <div className="relative h-16 md:h-20">
           {/* Track 1 */}
           <ul
             className="flex w-max gap-6 md:gap-8 animate-marquee"
-            style={{ animationDuration: '60s' }} // slower/faster here
+            style={{ animationDuration: '60s' }} // adjust speed here
           >
             {track.map((logo, i) => (
               <li key={i} className="shrink-0">
@@ -615,7 +619,7 @@ function CompaniesBelt() {
             ))}
           </ul>
 
-          {/* Track 2 (start just after Track 1) */}
+          {/* Track 2 — starts right after track 1 */}
           <ul
             aria-hidden="true"
             className="flex w-max gap-6 md:gap-8 animate-marquee absolute top-0 left-full"
