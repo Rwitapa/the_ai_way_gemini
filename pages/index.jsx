@@ -466,20 +466,20 @@ const HeroSection = ({ handleExploreCourses }) => {
 
     const tryPlay = () => v.play().catch(() => {});
 
-    // Play when visible, pause when not (saves CPU/battery)
+    // Play when visible, pause when not
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) tryPlay();
       else v.pause();
-    }, { threshold: 0.15, rootMargin: '150px 0px' });
+    }, { threshold: 0.12, rootMargin: '120px 0px' });
 
     obs.observe(s);
 
-    // Fallback: if autoplay blocked on iOS, unlock on first interaction
+    // Fallback: unlock autoplay on first interaction if a browser blocks it
     const unlock = () => { tryPlay(); };
     window.addEventListener('touchstart', unlock, { once: true });
     window.addEventListener('click', unlock, { once: true });
 
-    // Pause when tab hidden
+    // Pause on tab hide
     const onVis = () => (document.hidden ? v.pause() : tryPlay());
     document.addEventListener('visibilitychange', onVis);
 
@@ -494,25 +494,33 @@ const HeroSection = ({ handleExploreCourses }) => {
       ref={sectionRef}
       className="relative overflow-hidden min-h-screen py-20 flex items-center bg-gray-950"
     >
-      {/* Full-bleed, semi-transparent background video */}
+      {/* Backfill color for letterboxing on mobile with object-contain */}
+      <div className="absolute inset-0 z-0 bg-gray-950" />
+
+      {/* Full-bleed background video */}
       <video
         ref={videoRef}
-        className="pointer-events-none absolute inset-0 w-full h-full object-cover z-0 opacity-25" /* made more transparent */
+        className="
+          pointer-events-none absolute inset-0 w-full h-full z-0
+          object-contain sm:object-cover
+          object-[50%_35%] sm:object-center        /* shift focal point up a bit on mobile */
+          opacity-55 sm:opacity-60                 /* visibility (tweak here) */
+          transition-opacity
+        "
         autoPlay
         muted
         loop
         playsInline
         preload="none"
-        poster="/hero_poster.jpg" /* optional lightweight poster in /public */
+        poster="/hero_poster.jpg"
         aria-hidden="true"
       >
-        {/* Put these files in /public; webm optional if you have it */}
         <source src="/animation.webm" type="video/webm" />
         <source src="/animation.mp4" type="video/mp4" />
       </video>
 
-      {/* Slight dark tint for text contrast (adjust if needed) */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/45" />
+      {/* Light overlay for text contrast (lighter on mobile so the video is visible) */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-gray-950/28 sm:bg-gray-950/22" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center max-w-5xl animate-fade-in">
@@ -556,7 +564,6 @@ const HeroSection = ({ handleExploreCourses }) => {
     </section>
   );
 };
-
 
 
 const PersonasSection = () => (
