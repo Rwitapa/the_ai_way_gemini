@@ -968,102 +968,91 @@ const App = () => {
         </div>
       </section>
    
-{/* V. Meet The Mentor */}
-<section
+{/* V. Meet The Mentor - REDESIGNED & ANIMATED */}
+<motion.section
   ref={sectionRefs?.mentors}
-  className="py-16 md:py-20 bg-gray-950 animate-on-scroll"
+  className="py-16 md:py-20 bg-gray-950"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.3 }}
+  variants={{
+    visible: { transition: { staggerChildren: 0.2 } }
+  }}
 >
   <div className="container mx-auto px-6">
     {/* Heading */}
-    <div
-      className="text-left"
-    >
-      <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight animated-underline mb-6 md:mb-10">
-        Meet The Mentor
+    <motion.div 
+      className="text-center mb-12"
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+      }}
+    >
+      <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
+        Learn from a Proven Industry Leader
       </h2>
-      <p className="text-base md:text-lg text-gray-400 -mt-2 mb-8">
-        Learn from someone who has shipped analytics in the real world.
-      </p>
-    </div>
+    </motion.div>
 
-    {/* Two columns - stacks on mobile */}
-    <div
-      className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
-    >
-      {/* LEFT: photo (circle) + name + intro + CTA */}
-      <div
-        className="text-left animate-on-scroll"
-      >
-        {/* Circular photo above the name */}
-        <div className="mb-5 md:mb-6 floaty">
-          <div className="relative inline-block">
-            {/* soft glow */}
-            <span className="absolute inset-0 rounded-full blur-xl opacity-30 bg-gradient-to-tr from-purple-500 to-cyan-400" />
-            {/* gradient ring */}
-            <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-purple-500 via-fuchsia-400 to-cyan-400">
+    {/* Mentor Card */}
+    <motion.div 
+      className="max-w-4xl mx-auto bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } }
+      }}
+      whileHover={{ y: -5, scale: 1.01, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)'}}
+      transition={{ type: 'spring', stiffness: 300 }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-center">
+        {/* LEFT: Photo */}
+        <div className="md:col-span-1 flex justify-center">
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 blur-xl opacity-50" />
+            <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400">
               <img
-                src="https://placehold.co/144x144/1a1a2e/ffffff?text=RM"
+                src="https://placehold.co/160x160/1a1a2e/ffffff?text=RM"
                 alt="Rwitapa Mitra"
-                width={144}
-                height={144}
-                className="rounded-full object-cover ring-1 ring-white/10 bg-gray-900 h-28 w-28 md:h-36 md:w-36"
+                width={160}
+                height={160}
+                className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800"
               />
             </div>
           </div>
         </div>
 
-        <h3 className="text-xl md:text-2xl font-semibold text-white">Rwitapa Mitra</h3>
-        <p className="text-gray-300 text-base mt-3 max-w-xl">
-          Former Director of Analytics at Pilgrim with prior roles at PharmEasy, Flipkart, and Mu Sigma.
-          Builds analytics systems that move KPIs across growth, retention, supply chain, experimentation,
-          and practical GenAI automation.
-        </p>
-
-        <motion.button
-          onClick={handleExploreCourses}
-          className="mt-7 inline-flex items-center justify-center px-6 md:px-8 py-3 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl shadow-purple-600/20 ring-1 ring-white/10"
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Learn The AI Way
-        </motion.button>
+        {/* RIGHT: Details */}
+        <div className="md:col-span-2 text-center md:text-left">
+          <h3 className="text-2xl md:text-3xl font-bold text-white">Rwitapa Mitra</h3>
+          <p className="text-purple-300 font-medium mt-2">
+            <span className="block">Director - Analytics</span>
+            <span className="block text-sm">9+ years at Flipkart, PharmEasy, Mu Sigma & Pilgrim</span>
+          </p>
+          <div className="flex justify-center md:justify-start gap-3 mt-4 mb-5">
+            <span className="text-xs font-bold uppercase tracking-wider bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full">Director-Level Experience</span>
+            <span className="text-xs font-bold uppercase tracking-wider bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full">Billion-Dollar Impact</span>
+          </div>
+          <p className="text-gray-400 text-base">
+            Your instructor has walked the path you're on. Rwitapa transformed from a curious analyst to Director of Analytics at India's top companies. She has scaled high-growth startups by turning analytics into action with measurable outcomes, won PharmEasy’s hackathon, and is a mentor at Google’s Agentic AI Hackathon.
+          </p>
+          <p className="text-gray-400 text-base mt-3">
+            <strong>Real Results:</strong> She has revolutionized supply chains (25% efficiency gains), transformed underperforming teams into profit centers (85% YoY improvement), and built industry-leading data platforms. Now she's teaching the exact playbooks that accelerated her career and will accelerate yours.
+          </p>
+          <motion.a
+            href="https://www.linkedin.com/in/rwitapamitra/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold rounded-full bg-gray-800 text-white shadow-lg ring-1 ring-white/10 hover:bg-gray-700"
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Icon name="linkedin" size={18} className="mr-2" />
+            Connect on LinkedIn
+          </motion.a>
+        </div>
       </div>
-
-      {/* RIGHT: credentials */}
-      <div
-        className="text-left md:pl-6 relative animate-on-scroll"
-      >
-        {/* animated divider on the left for desktop */}
-        <span
-          aria-hidden
-          className="hidden md:block absolute left-0 top-0 h-full w-px animated-divider rounded-full"
-        />
-        <motion.ul
-          className="text-gray-300 text-base space-y-3"
-          variants={{ hidden:{opacity:1}, show:{opacity:1,transition:{staggerChildren:.06}} }}
-        >
-          {[
-            "9+ years solving core business problems across growth, retention, supply chain, and P&L ownership.",
-            "Scaled high-growth startups by turning analytics into action with measurable outcomes.",
-            "Winner of PharmEasy’s ₹5 lakh hackathon for building trust in Generics.",
-            "Youngest and only female panelist at Bharat Gen AI & Analytics Summit.",
-            "Mentor at Google’s Agentic AI Hackathon and Open Source Connect India 2025.",
-            "Founder of The AI Way, a learning community for practical GenAI in analytics."
-          ].map((t, i) => (
-            <motion.li
-              key={i}
-              className="flex"
-            	variants={{ hidden:{opacity:0,y:10}, show:{opacity:1,y:0,transition:{duration:.45}} }}
-            >
-              <span className="text-purple-400 font-semibold mr-2">•</span>
-              <span>{t}</span>
-            </motion.li>
-          ))}
-        </motion.ul>
-      </div>
-    </div>
+    </motion.div>
   </div>
-</section>
+</motion.section>
 
       {/* VI. Testimonials */}
       <section 
