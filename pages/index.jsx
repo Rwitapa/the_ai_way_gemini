@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import Image from 'next/image';
 
 // --- CONSTANTS & UTILS ---
 
@@ -469,6 +468,10 @@ const HeroSection = ({ handleExploreCourses }) => {
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
         script.async = true;
         
+        script.onerror = () => {
+            console.error("Failed to load the three.js script. Hero animation will not run.");
+        };
+        
         const init = () => {
             if (isInitialized) return;
             const container = heroAnimationRef.current;
@@ -514,32 +517,39 @@ const HeroSection = ({ handleExploreCourses }) => {
 
         const animate = () => {
             animationFrameId = requestAnimationFrame(animate);
-            if (!particles || !lines || !renderer || !scene || !camera) return;
-            const positions = particles.geometry.attributes.position.array;
-            const linePositions = [];
-            for (let i = 0; i < points.length; i++) {
-                const p = points[i];
-                p.add(p.velocity);
-                if (p.x < -1000 || p.x > 1000) p.velocity.x *= -1;
-                if (p.y < -1000 || p.y > 1000) p.velocity.y *= -1;
-                if (p.z < -1000 || p.z > 1000) p.velocity.z *= -1;
-                positions[i * 3] = p.x;
-                positions[i * 3 + 1] = p.y;
-                positions[i * 3 + 2] = p.z;
-            }
-            for (let i = 0; i < points.length; i++) {
-                for (let j = i + 1; j < points.length; j++) {
-                    const p1 = points[i];
-                    const p2 = points[j];
-                    const dist = p1.distanceTo(p2);
-                    if (dist < 150) {
-                        linePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+            try {
+                if (!particles || !lines || !renderer || !scene || !camera) return;
+                const positions = particles.geometry.attributes.position.array;
+                const linePositions = [];
+                for (let i = 0; i < points.length; i++) {
+                    const p = points[i];
+                    p.add(p.velocity);
+                    if (p.x < -1000 || p.x > 1000) p.velocity.x *= -1;
+                    if (p.y < -1000 || p.y > 1000) p.velocity.y *= -1;
+                    if (p.z < -1000 || p.z > 1000) p.velocity.z *= -1;
+                    positions[i * 3] = p.x;
+                    positions[i * 3 + 1] = p.y;
+                    positions[i * 3 + 2] = p.z;
+                }
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const p1 = points[i];
+                        const p2 = points[j];
+                        const dist = p1.distanceTo(p2);
+                        if (dist < 150) {
+                            linePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+                        }
                     }
                 }
+                lines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+                particles.geometry.attributes.position.needsUpdate = true;
+                renderer.render(scene, camera);
+            } catch (error) {
+                console.error("Error in hero animation loop:", error);
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
             }
-            lines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-            particles.geometry.attributes.position.needsUpdate = true;
-            renderer.render(scene, camera);
         };
 
         const onWindowResize = () => {
@@ -686,7 +696,7 @@ const MentorSection = ({ sectionRef }) => (
                         <div className="relative">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-green-500 blur-xl opacity-50" />
                             <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600 to-green-500">
-                                <img src="https://placehold.co/160x160/1a1a2e/ffffff?text=RM" alt="Rwitapa Mitra" width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
+                                <img src="https://storage.googleapis.com/gemini-prod-us-west1-1p-cbf2/U03AG5006/nano-banana-no-bg-2025-08-30T05-10-02.jpg" alt="Rwitapa Mitra" width={160} height={160} className="rounded-full object-cover ring-2 ring-gray-900 bg-gray-800" />
                             </div>
                         </div>
                     </div>
@@ -702,8 +712,8 @@ const MentorSection = ({ sectionRef }) => (
                         </div>
                         <p className="text-gray-400 text-base">Your instructor has walked the path you're on. Rwitapa transformed from a curious analyst to Director of Analytics at India's top companies. She has scaled high-growth startups by turning analytics into action with measurable outcomes, won PharmEasy’s hackathon, and is a mentor at Google’s Agentic AI Hackathon.</p>
                         <p className="text-gray-400 text-base mt-3"><strong>Real Results:</strong> She has revolutionized supply chains (25% efficiency gains), transformed underperforming teams into profit centers (85% YoY improvement), and built industry-leading data platforms. Now she's teaching the exact playbooks that accelerated her career and will accelerate yours.</p>
-                        <motion.a href="https://www.linkedin.com/in/rwitapamitra/" target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold rounded-full bg-gray-800 text-white shadow-lg ring-1 ring-white/10 hover:bg-gray-700" whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                            <Icon name="linkedin" size={18} className="mr-2" /> Connect on LinkedIn
+                        <motion.a href="https://www.linkedin.com/in/rwitapa-mitra-3b43a999/" target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold rounded-full bg-gray-800 text-white shadow-lg ring-1 ring-white/10 hover:bg-gray-700" whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                            <Icon name="linkedin" size={18} className="mr-2" /> LinkedIn
                         </motion.a>
                     </div>
                 </div>
@@ -1049,5 +1059,4 @@ const App = () => {
 };
 
 export default App;
-
 
