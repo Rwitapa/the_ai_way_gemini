@@ -494,7 +494,7 @@ const HeroSection = ({ handleExploreCourses }) => {
 
       <section
         ref={sectionRef}
-        className="relative overflow-hidden min-h-screen pt-16 md:pt-24 pb-10 md:pb-16 flex items-center bg-gray-950"
+        className="relative overflow-hidden min-h-screen pt-14 md:pt-24 pb-10 md:pb-16 flex items-center bg-gray-950"
       >
         {/* Full-bleed background video */}
         <video
@@ -572,7 +572,7 @@ const HeroSection = ({ handleExploreCourses }) => {
 
 
 const PersonasSection = () => (
-    <section className="pt-10 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
+    <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
