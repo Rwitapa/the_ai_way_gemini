@@ -575,14 +575,14 @@ export const HeroSection = ({ handleExploreCourses }) => {
 export const CompaniesBelt = () => {
   // Use your public /brand/*.png files
   const LOGOS = [
-    { name: "Swiggy",    src: "/brand/Swiggy_logo.png" },
-    { name: "Zomato",    src: "/brand/Zomato_logo.png" },
-    { name: "Zoho",      src: "/brand/Zoho_logo.png" },
-    { name: "Paytm",     src: "/brand/Paytm_logo.png" },
-    { name: "Ola",       src: "/brand/Ola_logo.png" },
-    { name: "Flipkart",  src: "/brand/Flipkart_logo.png" },
-    { name: "Razorpay",  src: "/brand/Razorpay_logo.png" },
-    { name: "PharmEasy", src: "/brand/Pharmeasy_logo.png" },
+    { name: "Swiggy",    src: "/brand/swiggy.png" },
+    { name: "Zomato",    src: "/brand/zomato.png" },
+    { name: "Zoho",      src: "/brand/zoho.png" },
+    { name: "Paytm",     src: "/brand/paytm.png" },
+    { name: "Ola",       src: "/brand/ola" },
+    { name: "Flipkart",  src: "/brand/flipkart.png" },
+    { name: "Razorpay",  src: "/brand/razorpay.png" },
+    { name: "PharmEasy", src: "/brand/pharmeasy.png" },
   ];
   const track = [...LOGOS, ...LOGOS]; // duplicate for seamless loop
 
