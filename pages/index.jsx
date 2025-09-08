@@ -511,14 +511,14 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 const CompaniesBelt = () => {
   // Reliable public logo files (SVG/PNG)
   const LOGOS = [
-    { name: 'Flipkart',  src: '/Flipkart_logo.png',            width: 120 },
-    { name: 'Swiggy',    src: '/Swiggy_logo.png',              width: 110 },
-    { name: 'Zomato',    src: '/Zomato_logo.jpg',              width: 130 },
-    { name: 'Razorpay',  src: '/Razorpay_logo.png',            width: 140 },
-    { name: 'PharmEasy', src: '/Pharmeasy_logo.png',            width: 140 },
-    { name: 'Ola',       src: '/Ola_logo.png',                 width: 120 },
-    { name: 'Paytm',     src: '/Paytm_logo.png',               width: 120 },
-    { name: 'Zoho',      src: '/Zoho_logo.png',                 width: 140 },
+    { name: 'Flipkart',  src: '/brand/flipkart.png',  width: 140 },
+    { name: 'Ola',       src: '/brand/ola.png',       width: 120 },
+    { name: 'Paytm',     src: '/brand/paytm.png',     width: 140 },
+    { name: 'Razorpay',  src: '/brand/razorpay.png',  width: 160 },
+    { name: 'Swiggy',    src: '/brand/swiggy.png',    width: 140 },
+    { name: 'Zomato',    src: '/brand/zomato.png',    width: 160 },
+    { name: 'Zoho',      src: '/brand/zoho.png',      width: 150 },
+    { name: 'PharmEasy', src: '/brand/pharmeasy.png', width: 160 },
   ];
 
   // Duplicate for a seamless loop
