@@ -587,13 +587,10 @@ function LogoCard({ src, alt }) {
   return (
     <div
       className="
-        shrink-0 rounded-2xl
+        shrink-0 rounded-2xl ring-1 ring-black/5
         bg-neutral-100/90 dark:bg-neutral-100/90
-        ring-1 ring-black/5
-        h-16 md:h-18
-        w-[168px] md:w-[188px]
-        flex items-center justify-center
-        px-4
+        h-16 md:h-18 w-[160px] md:w-[180px]
+        flex items-center justify-center px-4
       "
     >
       <img src={src} alt={alt} loading="lazy" className="h-8 md:h-9 w-auto object-contain" />
@@ -602,57 +599,66 @@ function LogoCard({ src, alt }) {
 }
 
 export function CompaniesBelt() {
+  // Adjust speed globally here
+  const speed = '48s'; // slower -> '60s', faster -> '30s'
+
+  // Build a duplicated array inside a single track
+  const track = [...LOGOS, ...LOGOS];
+
   return (
     <section className="relative pt-10 md:pt-12 pb-14 md:pb-16">
-      <h3 className="text-center text-white/80 font-semibold text-lg md:text-xl mb-5 md:mb-6">
+      <h3 className="text-center text-white/85 font-semibold text-lg md:text-xl mb-5 md:mb-6">
         Our graduates work at leading tech companies
       </h3>
 
-      <div
-        className="relative overflow-hidden rounded-3xl px-2 md:px-4"
-        style={{ ['--marquee-duration']: '48s' }} // adjust speed here (e.g., '60s')
-      >
-        {/* mild dim overlay */}
+      <div className="relative overflow-hidden rounded-3xl">
+        {/* subtle dim overlay so this band doesn’t pop too bright */}
         <div className="pointer-events-none absolute inset-0 bg-black/5" />
-
-        {/* MOVING RAIL — animation is inline to guarantee it runs */}
-        <div
-          className="flex w-[200%]"
-          style={{
-            animation: 'marquee var(--marquee-duration) linear infinite',
-            willChange: 'transform',
-          }}
-        >
-          {/* Track A */}
-          <ul className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12">
-            {LOGOS.map(l => (
-              <li key={`a-${l.name}`} className="shrink-0">
-                <LogoCard src={l.src} alt={l.name} />
-              </li>
-            ))}
-          </ul>
-
-          {/* Track B (duplicate) */}
+        {/* viewport */}
+        <div className="marquee">
+          {/* single moving track that contains two identical sequences */}
           <ul
-            className="flex w-1/2 items-center whitespace-nowrap gap-8 md:gap-12 pr-8 md:pr-12"
-            aria-hidden="true"
+            className="track"
+            style={{ ['--marquee-duration']: speed }}
           >
-            {LOGOS.map(l => (
-              <li key={`b-${l.name}`} className="shrink-0">
-                <LogoCard src={l.src} alt="" />
+            {track.map((l, i) => (
+              <li key={`${l.name}-${i}`} className="shrink-0">
+                <LogoCard src={l.src} alt={l.name} />
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      <div className="h-10 md:h-12" />
-
-      {/* If you're on the PAGES router, this works fine: */}
       <style jsx global>{`
+        .marquee {
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          /* fade edges (optional) */
+          -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+                  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+        }
+        .track {
+          display: inline-flex;
+          align-items: center;
+          /* one place controls spacing, no padding that would desync halves */
+          gap: 2.5rem; /* md: gap-12 equivalent */
+          width: max-content;        /* size to content */
+          will-change: transform;
+          transform: translate3d(0,0,0);
+          animation: marquee var(--marquee-duration, 48s) linear infinite;
+          padding: 0 2.5rem;         /* safe to pad the WHOLE track */
+        }
+        /* IMPORTANT: because the track contains two identical sequences back-to-back,
+           moving by -50% (half of the track width) lands exactly at the seam. */
         @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        @media (min-width: 768px) {
+          .track { gap: 3rem; padding: 0 3rem; }
         }
       `}</style>
     </section>
