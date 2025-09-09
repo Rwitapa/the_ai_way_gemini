@@ -9,9 +9,12 @@ export default function MyApp({ Component, pageProps }) {
         {/* Title shown in browser tab */}
         <title>The AI Way</title>
 
-        {/* Favicon (put a favicon.ico file inside /public) */}
-        {/* This line correctly links your favicon */}
+        {/* Favicon for most browsers */}
         <link rel="icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+
+        {/* Apple Touch Icon for iOS homescreen */}
+        <link rel="apple-touch-icon" href="/brand/aiway-mark.png" />
 
         {/* Basic SEO meta tags */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,3 +27,4 @@ export default function MyApp({ Component, pageProps }) {
     </>
   );
 }
+
