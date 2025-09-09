@@ -527,7 +527,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 w-full">
         {/* keep hero tall so belt begins in next fold */}
-        <div className="min-h-[86svh] md:min-h-screen pt-24 md:pt-28 pb-8 md:pb-16 flex flex-col items-center justify-center text-center">
+        <div className="min-h-[86svh] md:min-h-[88vh] pt-24 md:pt-28 pb-10 md:pb-10 flex flex-col items-center justify-center text-center">
           <span className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm">
             Gen AI for Business Analysts
           </span>
