@@ -181,8 +181,6 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
   return icons[name] || null;
 };
 
-
-
 const getNextDayOfWeek = (dayIndices) => {
   const now = new Date();
   const currentDay = now.getDay();
@@ -353,6 +351,10 @@ const faqs = [
     {
       q: "I'm a manager, not an analyst. Is this for me?",
       a: "Yes. Many managers take our courses to understand what's possible with AI and automation so they can lead their teams more effectively. You'll learn how to scope AI projects, measure their ROI, and guide your team to deliver high-impact results instead of just dashboards."
+    },
+    {
+      q: "How can I contact support?",
+      a: "You can reach out to our support team anytime by emailing theaiway.official@gmail.com. We're happy to help with any questions you might have!"
     }
 ];
 const testimonials = [
@@ -361,35 +363,35 @@ const testimonials = [
       name: "Akshay Sharma",
       role: "Business Analyst",
       company: "Swiggy",
-      avatar: "https://placehold.co/60x60/4A0E70/ffffff?text=AS"
+      avatar: "https://i.imgur.com/QvGHYtA.jpg"
     },
     {
       quote: "The hands-on projects gave me a portfolio I could immediately show in interviews. I landed my dream job because of these skills. It was a game-changer for my career.",
       name: "Priya Singh",
       role: "BI Analyst",
       company: "Razorpay",
-      avatar: "https://placehold.co/60x60/0A472E/ffffff?text=PS"
+      avatar: "https://i.imgur.com/7k5g3g0.jpg"
     },
     {
       quote: "Finally, a course that focuses on real-world outcomes. The content is directly applicable and has made me a more strategic asset to my company, saving us countless hours.",
       name: "Rahul Kumar",
       role: "Product Manager",
       company: "Zomato",
-      avatar: "https://placehold.co/60x60/4A0E70/ffffff?text=RK"
+      avatar: "https://i.imgur.com/oJtGqI5.jpg"
     },
     {
       quote: "I was overwhelmed by all the new AI tools. The AI Way gave me a clear, step-by-step methodology to start shipping real results. It's the most practical training I've ever had.",
       name: "Sneha Patel",
       role: "Data Analyst",
       company: "Fintech Co.",
-      avatar: "https://placehold.co/60x60/0A472E/ffffff?text=SP"
+      avatar: "https://i.imgur.com/N3a4b0d.jpg"
     },
     {
       quote: "I've been able to tie my work directly to our team's ROI. The lessons on building impact memos were invaluable. This course is a must for any analyst looking to get noticed.",
       name: "Aman Gupta",
       role: "Analytics Manager",
       company: "Retail Inc.",
-      avatar: "https://placehold.co/60x60/4A0E70/ffffff?text=AG"
+      avatar: "https://i.imgur.com/cZ201zT.jpg"
     },
 ];
 const personas = [
@@ -761,7 +763,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="py-16 md:py-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
-                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60"
+                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60 relative"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -809,7 +811,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                   <Icon name="compass" size={32} className="text-purple-400" />
                                   <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
                                 </div>
-                                <p className="text-gray-400 text-center mb-8">Answer these 4 quick questions to find your perfect path.</p>
+                                <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
@@ -829,6 +831,9 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                             </motion.button>
                                         ))}
                                     </div>
+                                </div>
+                                <div className="absolute top-4 right-4 font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full">
+                                    {step + 1} / {questions.length}
                                 </div>
                             </motion.div>
                         )}
@@ -1020,7 +1025,7 @@ const TestimonialCard = ({ testimonial }) => (
     <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
         <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
         <div className="flex items-center">
-            <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12" />
+             <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12 object-cover" />
             <div>
                 <p className="font-semibold text-white">{testimonial.name}</p>
                 <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
@@ -1166,8 +1171,9 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="text-center text-gray-500 text-sm">
-        &copy; 2025 The AI Way. All Rights Reserved.
+      <div className="text-center text-gray-500 text-sm space-y-1">
+        <p>&copy; 2025 The AI Way. All Rights Reserved.</p>
+        <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
       </div>
     </div>
   </footer>
