@@ -11,7 +11,7 @@ export default function MyApp({ Component, pageProps }) {
 
         {/* Favicon (put a favicon.ico file inside /public) */}
         {/* This line correctly links your favicon */}
-        <link rel="icon" href="/brand/aiway-mark.png" />
+        <link rel="icon" href="/favicon.ico" />
 
         {/* Basic SEO meta tags */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
