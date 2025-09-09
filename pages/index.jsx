@@ -583,51 +583,50 @@ const LOGOS = [
   { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
 ];
 
+
 function LogoCard({ src, alt }) {
   return (
     <div
       className="
         flex items-center justify-center
         rounded-2xl ring-1 ring-white/10 shadow-sm
-        bg-[#F3F4F6]   /* very light grey */
-        w-[168px] h-[76px] md:w-[184px] md:h-[82px] lg:w-[200px] lg:h-[88px]
+        bg-[#F3F4F6]                  /* very light grey tile */
+        w-[184px] h-[78px]            /* tile slightly tighter */
+        md:w-[196px] md:h-[84px]
+        lg:w-[208px] lg:h-[88px]
       "
     >
+      {/* logos fill more of the tile -> less white around them */}
       <img
         src={src}
         alt={`${alt} logo`}
         loading="lazy"
-        className="max-h-9 md:max-h-10 lg:max-h-11 w-auto object-contain"
+        className="
+          object-contain w-auto
+          max-h-11 md:max-h-12 lg:max-h-12
+          max-w-[86%]                   /* cut inner white padding */
+        "
       />
     </div>
   );
 }
 
 function CompaniesBelt() {
-  // Tweak this to make the belt slower/faster (higher = slower)
-  const duration = "48s"; // previously faster; reduced speed as requested
-
-  // Two identical tracks for a seamless loop
-  const items = [...LOGOS, ...LOGOS];
+  const duration = '52s';               // smooth & slow
+  const items = [...LOGOS, ...LOGOS];   // seamless loop
 
   return (
-    // Extra bottom margin pushes the next section (“This Is For You If…”) down
-    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16 mb-24 md:mb-28 lg:mb-32">
+    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16">
       <h3 className="text-center text-white/90 font-semibold text-lg md:text-xl mb-7 md:mb-8">
         Our graduates work at leading tech companies
       </h3>
 
       <div className="relative overflow-hidden">
-        {/* subtle grey overlay to soft-tone the zone */}
-        <div className="pointer-events-none absolute inset-0 bg-black/5" />
+        {/* very light grey overlay across the whole belt */}
+        <div className="pointer-events-none absolute inset-0 bg-white/5 z-10" />
 
         <div className="marquee">
-          <ul
-            className="track"
-            style={{
-              ["--marquee-duration"]: duration,
-            }}
-          >
+          <ul className="track" style={{ ['--marquee-duration']: duration }}>
             {items.map((l, i) => (
               <li key={`${l.name}-a-${i}`} className="shrink-0">
                 <LogoCard src={l.src} alt={l.name} />
@@ -635,13 +634,10 @@ function CompaniesBelt() {
             ))}
           </ul>
 
-          {/* second track starts just outside the right edge */}
           <ul
-            className="track track--2"
             aria-hidden="true"
-            style={{
-              ["--marquee-duration"]: duration,
-            }}
+            className="track track--2"
+            style={{ ['--marquee-duration']: duration }}
           >
             {items.map((l, i) => (
               <li key={`${l.name}-b-${i}`} className="shrink-0">
@@ -655,38 +651,17 @@ function CompaniesBelt() {
       {/* marquee + spacing styles */}
       <style jsx global>{`
         .marquee {
-          --gap: 2.75rem; /* spacing between logo cards */
+          --gap: 3rem;
           position: relative;
           overflow: hidden;
-          padding: 0.25rem 0; /* tiny breathing room */
-          mask-image: linear-gradient(
-            to right,
-            transparent,
-            black 6%,
-            black 94%,
-            transparent
-          );
-          -webkit-mask-image: linear-gradient(
-            to right,
-            transparent,
-            black 6%,
-            black 94%,
-            transparent
-          );
+          padding: 0.25rem 0;
+          mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
         }
-        @media (min-width: 768px) {
-          .marquee {
-            --gap: 3.25rem;
-          }
-        }
-        @media (min-width: 1024px) {
-          .marquee {
-            --gap: 3.75rem;
-          }
-        }
+        @media (min-width: 768px) { .marquee { --gap: 3.25rem; } }
+        @media (min-width: 1024px) { .marquee { --gap: 3.5rem; } }
 
-        .marquee .track,
-        .marquee .track--2 {
+        .marquee .track, .marquee .track--2 {
           display: flex;
           align-items: center;
           gap: var(--gap);
@@ -694,29 +669,24 @@ function CompaniesBelt() {
         }
 
         .marquee .track {
-          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
+          animation: aiway-marquee var(--marquee-duration, 52s) linear infinite;
         }
-
-        /* start the second track from the right, so the loop is seamless */
         .marquee .track--2 {
           position: absolute;
           top: 0;
           left: 100%;
-          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
+          animation: aiway-marquee var(--marquee-duration, 52s) linear infinite;
         }
 
         @keyframes aiway-marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-100%);
-          }
+          from { transform: translateX(0); }
+          to   { transform: translateX(-100%); }
         }
       `}</style>
     </section>
   );
 }
+
 
 const PersonasSection = () => (
     <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
