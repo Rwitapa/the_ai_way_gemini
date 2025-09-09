@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import Image from "next/image";
 
-
 // --- CONSTANTS & UTILS ---
 
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
@@ -764,7 +763,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="py-16 md:py-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
-                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60"
+                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60 relative"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -812,7 +811,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                   <Icon name="compass" size={32} className="text-purple-400" />
                                   <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
                                 </div>
-                                <p className="text-gray-400 text-center mb-8">Answer these 4 quick questions to find your perfect path.</p>
+                                <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
@@ -832,6 +831,9 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                             </motion.button>
                                         ))}
                                     </div>
+                                </div>
+                                <div className="absolute top-4 right-4 font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full">
+                                    {step + 1} / {questions.length}
                                 </div>
                             </motion.div>
                         )}
@@ -1453,4 +1455,5 @@ const App = () => {
 };
 
 export default App;
+
 
