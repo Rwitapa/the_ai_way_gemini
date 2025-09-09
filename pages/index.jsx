@@ -370,7 +370,7 @@ const testimonials = [
       name: "Priya Singh",
       role: "BI Analyst",
       company: "Razorpay",
-      avatar: "https://i.imgur.com/7k5g3g0.jpg"
+      avatar: "/people/priya.png"
     },
     {
       quote: "Finally, a course that focuses on real-world outcomes. The content is directly applicable and has made me a more strategic asset to my company, saving us countless hours.",
