@@ -363,7 +363,7 @@ const testimonials = [
       name: "Akshay Sharma",
       role: "Business Analyst",
       company: "Swiggy",
-      avatar: "https://i.imgur.com/QvGHYtA.jpg"
+      avatar: "/people/akshay.png"
     },
     {
       quote: "The hands-on projects gave me a portfolio I could immediately show in interviews. I landed my dream job because of these skills. It was a game-changer for my career.",
@@ -377,21 +377,21 @@ const testimonials = [
       name: "Rahul Kumar",
       role: "Product Manager",
       company: "Zomato",
-      avatar: "https://i.imgur.com/oJtGqI5.jpg"
+      avatar: "/people/rahul.png"
     },
     {
       quote: "I was overwhelmed by all the new AI tools. The AI Way gave me a clear, step-by-step methodology to start shipping real results. It's the most practical training I've ever had.",
       name: "Sneha Patel",
       role: "Data Analyst",
       company: "Fintech Co.",
-      avatar: "https://i.imgur.com/N3a4b0d.jpg"
+      avatar: "/people/sneha.png"
     },
     {
       quote: "I've been able to tie my work directly to our team's ROI. The lessons on building impact memos were invaluable. This course is a must for any analyst looking to get noticed.",
       name: "Aman Gupta",
       role: "Analytics Manager",
       company: "Retail Inc.",
-      avatar: "https://i.imgur.com/cZ201zT.jpg"
+      avatar: "/people/aman.png"
     },
 ];
 const personas = [
