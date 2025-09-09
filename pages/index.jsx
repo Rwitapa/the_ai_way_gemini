@@ -167,6 +167,15 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
     ),
     'clipboard-check': (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" /></svg>
+    ),
+    'compass': (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="10" />
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+      </svg>
+    ),
+    'plus': (
+       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     )
   };
   return icons[name] || null;
@@ -217,6 +226,8 @@ const courseData = {
     subtitle: 'Ship Your First KPI Automation in Just 3 Hours',
     description: 'Stop spending hours on manual reports. This focused, hands-on sprint will teach you how to identify a high-value KPI and build your first live automation in just three hours. You’ll walk away with a working workflow and a proof memo you can show to your manager or in an interview.',
     price: '₹349',
+    originalPrice: '₹1049',
+    bonus: '+ Free resources worth ₹699',
     level: 'Beginner Friendly',
     duration: '3 Hours',
     guarantee: 'Project Completion Guarantee',
@@ -262,7 +273,9 @@ const courseData = {
     title: '16-Hour Superstar Accelerator',
     subtitle: 'Go Beyond Dashboards. Build AI Agents That Deliver Insights.',
     description: 'This is not another theory-heavy course. The Accelerator gives you the skills to design and deploy end-to-end agentic AI systems—pipelines that pull data, analyze it, and deliver answers where people work. You will learn to build, test, and package real-world solutions that showcase your expertise.',
-    price: '₹4,999',
+    price: '₹4999',
+    originalPrice: '₹10999',
+    bonus: '+ Free Resources worth Rs. 5999',
     level: 'Intermediate',
     duration: '16 Hours (2 Weekends)',
     guarantee: 'Portfolio Project Guarantee',
@@ -318,32 +331,28 @@ const courseData = {
 };
 const faqs = [
     {
-      q: 'Will I get a certificate?',
-      a: 'Yes, upon successful completion of the course, a certificate will be emailed to you.',
+      q: "How is this different from other AI courses?",
+      a: "We focus on deployment, not just demos. Unlike theory-heavy courses, you will ship real-world automations and build tangible portfolio assets (like impact memos and deployed agents) that hiring managers respect. We teach the 'how,' not just the 'what.'"
     },
     {
-      q: 'Will I get recordings?',
-      a: 'No, we do not provide recordings. Our live classes are constantly updated to reflect the latest trends and tools in the fast-moving AI landscape, ensuring you get the most relevant, hands-on learning experience possible.',
+      q: "I don't know how to code. Can I still take these courses?",
+      a: "Absolutely. Both courses are tech-agnostic. Every single concept is taught using both code (SQL/Python) and no-code tools (n8n/Make). You can choose the path that best fits your skills and goals. The focus is on the outcome, not the tool."
     },
     {
-      q: 'Do I need coding skills?',
-      a: 'Not at all. The AI Way is a tech-agnostic course. Every workflow is shown in both code (SQL/Python) and no-code (n8n/Make). We focus on the outcome and business impact, so you can choose the approach that works best for you.',
+      q: "Will I get a job after this? What's the career support?",
+      a: "While we don't offer a direct placement guarantee, the entire curriculum is designed to make you highly employable. You'll graduate with a portfolio of real work, impact memos proving your ROI, and the confidence to nail interviews. You also get lifetime access to our community for networking and support."
     },
     {
-      q: 'How much time will it take?',
-      a: 'The 3-Hour Champion Sprint is a single, focused live workshop to get you started quickly. The 16-Hour Superstar Accelerator is a comprehensive program delivered over four sessions, typically across two weekends, for a deep dive into building end-to-end AI systems.',
+      q: "What's the difference between the Sprint and the Accelerator?",
+      a: "The Sprint is a 3-hour focused workshop to give you a quick, tangible win by automating one report. The Accelerator is a 16-hour deep dive where you'll build and deploy complex, end-to-end AI agentic systems. If you want a quick start, choose the Sprint. If you want to transform your career, choose the Accelerator."
     },
     {
-      q: 'How is this different from other courses?',
-      a: 'Most other AI courses stop at concepts or tool demos. The AI Way is built on outcomes and deployment. We teach decisions and deployment, not just models and menus. You will graduate having built actual workflows and automated tasks, and you will have tangible artifacts to show to prove your ROI, such as impact memos and portfolio projects.',
+      q: "Why are there no recordings?",
+      a: "The AI landscape changes weekly. Pre-recorded content goes stale fast. Our live, hands-on sessions ensure you are always learning the most current, relevant tools and techniques that are working in the industry right now."
     },
     {
-      q: 'Do you offer mentorship?',
-      a: 'Yes, our courses come with access to our WhatsApp-first community and mentorship, providing ongoing support and guidance as you apply your new skills.',
-    },
-    {
-      q: 'What kind of portfolio will I build?',
-      a: 'You will build a verifiable portfolio with real-world projects, including an automated KPI report, a working agentic AI system, SQL queries, no-code workflows, and impact memos that hiring managers respect.',
+      q: "I'm a manager, not an analyst. Is this for me?",
+      a: "Yes. Many managers take our courses to understand what's possible with AI and automation so they can lead their teams more effectively. You'll learn how to scope AI projects, measure their ROI, and guide your team to deliver high-impact results instead of just dashboards."
     }
 ];
 const testimonials = [
@@ -648,7 +657,7 @@ const PersonasSection = () => (
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {personas.map((persona, index) => (
-                    <motion.div key={index} className="group bg-gray-900 border border-gray-800 rounded-2xl p-6 text-left flex items-center space-x-4 transition-all duration-300 animate-on-scroll" whileHover={{ scale: 1.05, borderColor: 'rgba(168, 85, 247, 0.5)', boxShadow: '0 0 20px rgba(168, 85, 247, 0.2)' }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+                    <motion.div key={index} className="group bg-gray-900 border border-gray-800 rounded-xl p-6 text-left flex items-center space-x-4 transition-all duration-300 animate-on-scroll" whileHover={{ scale: 1.05, borderColor: 'rgba(168, 85, 247, 0.5)', boxShadow: '0 0 20px rgba(168, 85, 247, 0.2)' }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
                         <Icon name={persona.icon} size={28} className="text-purple-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
                         <p className="text-gray-300 font-medium text-base">{persona.text}</p>
                     </motion.div>
@@ -662,6 +671,36 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     const [step, setStep] = useState(0);
     const [score, setScore] = useState(0);
     const [result, setResult] = useState(null);
+
+    const mascots = {
+        champion: (
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
+                    </linearGradient>
+                </defs>
+                <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1)" strokeWidth="4" />
+                <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
+                <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1)" strokeWidth="3" strokeDasharray="5,5" />
+                <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1)" strokeWidth="3" strokeDasharray="5,5" />
+            </svg>
+        ),
+        accelerator: (
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <defs>
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
+                    </linearGradient>
+                </defs>
+                <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2)" />
+                <circle cx="50" cy="50" r="10" fill="white" />
+                <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
+            </svg>
+        )
+    };
 
     const questions = [
         {
@@ -722,7 +761,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="py-16 md:py-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
-                    className="bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto"
+                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -737,7 +776,12 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 className="text-center"
                             >
-                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">We recommend the...</h3>
+                                <div className="flex justify-center mb-4">
+                                    <div className="w-24 h-24 text-purple-400">
+                                        {result === 'sprint' ? mascots.champion : mascots.accelerator}
+                                    </div>
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">Based on your goals, we recommend the...</h3>
                                 <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
                                     {result === 'sprint' ? courseData.sprint.title : courseData.accelerator.title}
                                 </h2>
@@ -761,11 +805,14 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <h3 className="text-2xl md:text-3xl font-bold text-white text-center mb-1">Not sure where to start?</h3>
-                                <p className="text-gray-400 text-center mb-6">Answer a few questions to find your perfect path.</p>
+                                <div className="flex justify-center items-center gap-3 mb-2">
+                                  <Icon name="compass" size={32} className="text-purple-400" />
+                                  <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
+                                </div>
+                                <p className="text-gray-400 text-center mb-8">Answer these 4 quick questions to find your perfect path.</p>
                                 
-                                <div className="w-full bg-gray-700 rounded-full h-1.5 mb-6">
-                                   <motion.div className="bg-purple-600 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
+                                <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
+                                   <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
                                 </div>
                                 
                                 <div className="max-w-xl mx-auto">
@@ -793,7 +840,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
 };
 
 const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
-    <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl animate-on-scroll">
+    <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
         <div className="container mx-auto px-6">
             <div className="text-center mb-12">
                  <div className="flex items-center justify-center gap-2 mb-4">
@@ -811,7 +858,7 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <motion.div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }} transition={{ type: 'spring', stiffness: 300 }}>
+                <motion.div className="bg-gray-900 rounded-2xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }} transition={{ type: 'spring', stiffness: 300 }}>
                     <div>
                         <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
                         <p className="text-lg text-gray-400 mb-4">{courseData.sprint.subtitle}</p>
@@ -825,13 +872,17 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Automate a high-value report using SQL or no-code.</span></li>
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Package your win into an Impact Memo.</span></li>
                         </ul>
-                        <p className="text-white font-bold text-2xl mb-6">{courseData.sprint.price}</p>
+                        <div className="mb-6">
+                            <p className="text-white font-bold text-2xl inline-block mr-3">{courseData.sprint.price}</p>
+                            <p className="text-gray-400 line-through inline-block">{courseData.sprint.originalPrice}</p>
+                            <p className="text-green-400 font-semibold text-sm mt-1">{courseData.sprint.bonus}</p>
+                        </div>
                     </div>
                     <motion.a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         Enroll Now
                     </motion.a>
                 </motion.div>
-                <motion.div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-3xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }} transition={{ type: 'spring', stiffness: 300 }}>
+                <motion.div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-2xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }} transition={{ type: 'spring', stiffness: 300 }}>
                     <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">Popular</div>
                     <div>
                         <h3 className="text-2xl font-bold text-white mb-2">{courseData.accelerator.title}</h3>
@@ -846,7 +897,11 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Design and deploy AI agents for reporting, funnels, and alerts.</span></li>
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Build a portfolio case study that proves ROI.</span></li>
                         </ul>
-                        <p className="text-white font-bold text-2xl mb-6">{courseData.accelerator.price}</p>
+                         <div className="mb-6">
+                            <p className="text-white font-bold text-2xl inline-block mr-3">{courseData.accelerator.price}</p>
+                            <p className="text-gray-300 line-through inline-block">{courseData.accelerator.originalPrice}</p>
+                            <p className="text-green-400 font-semibold text-sm mt-1">{courseData.accelerator.bonus}</p>
+                        </div>
                     </div>
                     <motion.a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         Enroll Now
@@ -887,7 +942,7 @@ const MentorSection = ({ sectionRef }) => (
 
       {/* Full-width card like other sections */}
       <motion.div
-        className="w-full bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
+        className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } },
@@ -962,7 +1017,7 @@ const MentorSection = ({ sectionRef }) => (
 );
 
 const TestimonialCard = ({ testimonial }) => (
-    <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
+    <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
         <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
         <div className="flex items-center">
             <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12" />
@@ -980,7 +1035,7 @@ const TestimonialsSection = ({ sectionRef }) => {
     const column2Testimonials = testimonials.slice(middleIndex);
 
     return (
-        <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden animate-on-scroll">
+        <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 overflow-hidden animate-on-scroll">
             <div className="container mx-auto px-6 text-center">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-10">What Our Students Are Saying</h2>
                 <div className="relative h-[500px] overflow-hidden">
@@ -1013,7 +1068,7 @@ const WhatYouLearnSection = ({ sectionRef }) => (
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Learn how to free yourself from manual tasks and build credibility fast.</p>
             <div className="flex flex-nowrap overflow-x-auto gap-6 pb-6 -mx-6 px-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {whatYouLearnItems.map((item, index) => (
-                    <motion.div key={index} className="group relative flex-shrink-0 w-64 bg-gray-900 border border-gray-800 rounded-2xl p-6 text-left overflow-hidden transition-all duration-300 animate-on-scroll" whileHover={{ y: -5, boxShadow: '0 0 25px rgba(168, 85, 247, 0.25)' }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <motion.div key={index} className="group relative flex-shrink-0 w-64 bg-gray-900 border border-gray-800 rounded-xl p-6 text-left overflow-hidden transition-all duration-300 animate-on-scroll" whileHover={{ y: -5, boxShadow: '0 0 25px rgba(168, 85, 247, 0.25)' }} transition={{ type: 'spring', stiffness: 300 }}>
                         <div className="absolute -top-8 -right-8 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <Icon name={item.icon} size={28} className="text-purple-500 mb-4" />
                         <h4 className="text-lg font-semibold text-white mb-2">{item.title}</h4>
@@ -1026,18 +1081,18 @@ const WhatYouLearnSection = ({ sectionRef }) => (
 );
 
 const FAQSection = () => {
-    const [openFaq, setOpenFaq] = useState(null);
+    const [openFaq, setOpenFaq] = useState(0);
     return (
-        <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll md:hidden">
+        <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll">
             <div className="container mx-auto px-6 text-center max-w-4xl">
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Got Questions?</h2>
-                <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Quick answers to your AI automation questions.</p>
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+                <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Your most common questions, answered.</p>
                 <div className="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
                     {faqs.map((faq, index) => (
-                        <div key={index} className="rounded-2xl border border-gray-800 bg-gray-950 overflow-hidden">
+                        <div key={index} className="rounded-lg border border-gray-800 bg-gray-950 overflow-hidden">
                             <button className="w-full flex items-center justify-between p-6 text-left" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}>
                                 <h3 className="text-lg font-semibold text-white">{faq.q}</h3>
-                                <motion.div animate={{ rotate: openFaq === index ? 90 : 0 }}><Icon name="arrow-right" size={24} className="text-purple-500" /></motion.div>
+                                <motion.div animate={{ rotate: openFaq === index ? 45 : 0 }} transition={{duration:0.3}}><Icon name="plus" size={24} className="text-purple-500" /></motion.div>
                             </button>
                             <AnimatePresence>
                                 {openFaq === index && (
@@ -1055,14 +1110,6 @@ const FAQSection = () => {
 };
 
 const FinalCTASection = ({ scrollToSection }) => {
-    const LOGOS = [
-        { name: 'Swiggy', src: '/brand/swiggy.png' },
-        { name: 'Zomato', src: '/brand/zomato.png' },
-        { name: 'Flipkart', src: '/brand/flipkart_logo_256x96.png' },
-        { name: 'Razorpay', src: '/brand/razorpay.png' },
-        { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
-    ];
-
     return (
         <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
             <div className="container mx-auto px-6">
@@ -1070,17 +1117,8 @@ const FinalCTASection = ({ scrollToSection }) => {
                 <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        View all our courses
+                        View All Courses
                     </motion.button>
-                </div>
-
-                <div className="mt-12">
-                    <p className="text-sm text-gray-300 mb-4">Join graduates from world-class companies</p>
-                    <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 opacity-70">
-                        {LOGOS.map(logo => (
-                            <img key={logo.name} src={logo.src} alt={logo.name} className="h-6 md:h-7" />
-                        ))}
-                    </div>
                 </div>
             </div>
         </section>
@@ -1147,40 +1185,45 @@ const CoursesPage = ({ onBack }) => {
   const CourseDetailCard = ({ course, isPopular = false, paymentUrl }) => {
     const mascots = {
         champion: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <path d="M12 2L12 3M12 21L12 22M22 12L21 12M3 12L2 12M19.07 4.93L18.36 5.64M5.64 18.36L4.93 19.07M19.07 19.07L18.36 18.36M5.64 5.64L4.93 4.93" stroke="url(#paint0_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 6C13.1046 6 14 6.89543 14 8C14 9.10457 13.1046 10 12 10C10.8954 10 10 9.10457 10 8C10 6.89543 10.8954 6 12 6Z" stroke="url(#paint1_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M15.477 12.89L17 22L12 19L7 22L8.523 12.89C8.832 11.782 9.539 10.835 10.518 10.245C11.497 9.655 12.68 9.655 13.659 10.245C14.638 10.835 15.345 11.782 15.654 12.89H15.477Z" stroke="url(#paint2_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
-                    <linearGradient id="paint0_linear_10_37" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
-                    <linearGradient id="paint1_linear_10_37" x1="10" y1="8" x2="14" y2="8" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
-                    <linearGradient id="paint2_linear_10_37" x1="7" y1="15.8275" x2="17" y2="15.8275" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                    <linearGradient id="grad1_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
+                    </linearGradient>
                 </defs>
+                <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1_page)" strokeWidth="4" />
+                <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
+                <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+                <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
             </svg>
         ),
         accelerator: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <path d="M9.11933 14.8807L4.29289 20.7071C3.90237 21.0976 4.53237 21.7276 4.92289 21.3371L10.75 16.51M14.8807 9.11933L20.7071 4.29289C21.0976 3.90237 21.7276 4.53237 21.3371 4.92289L16.51 10.75M13.4657 13.4657L10.5343 10.5343M16 4L14 2L12.5 4.5L10 6L12 8L14.5 9.5L16 12L18 10L19.5 7.5L22 6L20 4L16 4Z" stroke="url(#paint0_linear_11_40)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12" stroke="url(#paint1_linear_11_40)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
-                    <linearGradient id="paint0_linear_11_40" x1="4.29289" y1="12.5" x2="21.3371" y2="12.5" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
-                    <linearGradient id="paint1_linear_11_40" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                    <linearGradient id="grad2_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
+                    </linearGradient>
                 </defs>
+                <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2_page)" />
+                <circle cx="50" cy="50" r="10" fill="white" />
+                <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
             </svg>
         )
     };
     
     return (
     <motion.div 
-      className="bg-gray-900/50 rounded-3xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
+      className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-       <div className="relative bg-gray-900 rounded-2xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
-        <div className="lg:col-span-2 bg-gray-950/70 rounded-2xl p-6 border border-gray-800 flex flex-col">
+       <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
+        <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
            <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-14 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
+                <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
                 <div>
                     <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
                 </div>
@@ -1203,7 +1246,11 @@ const CoursesPage = ({ onBack }) => {
             </div>
 
             <div className="text-center mt-auto">
-                 <p className="text-3xl font-bold text-white mb-4">{course.price}</p>
+                 <div className="mb-4">
+                    <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
+                    <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
+                    <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
+                 </div>
                  <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     Enroll for {course.price}
                  </motion.a>
@@ -1223,10 +1270,10 @@ const CoursesPage = ({ onBack }) => {
                 >
                   <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">{module.title}</h4>
                   <Icon
-                    name="arrow-left"
+                    name="plus"
                     size={24}
-                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? '-rotate-90' : 'rotate-180'}`}
-                    strokeWidth={1.5}
+                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? 'rotate-45' : 'rotate-0'}`}
+                    strokeWidth={2.5}
                   />
                 </div>
                 <AnimatePresence>
@@ -1372,8 +1419,8 @@ const App = () => {
                 @media (min-width: 768px) { .marquee { --gap: 2.75rem; } }
                 .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
                 @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-                .scrolling-column-up { animation: scroll-up 25s linear infinite; }
-                .scrolling-column-down { animation: scroll-down 25s linear infinite; }
+                .scrolling-column-up { animation: scroll-up 20s linear infinite; }
+                .scrolling-column-down { animation: scroll-down 20s linear infinite; }
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
                 @keyframes scroll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
             `}</style>
