@@ -164,6 +164,9 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
     ),
     'shield-check': (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    ),
+    'clipboard-check': (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" /></svg>
     )
   };
   return icons[name] || null;
@@ -209,6 +212,7 @@ const getNextAlternateWeekend = () => {
 
 const courseData = {
   sprint: {
+    mascot: 'champion',
     title: '3-Hour Champion Sprint',
     subtitle: 'Ship Your First KPI Automation in Just 3 Hours',
     description: 'Stop spending hours on manual reports. This focused, hands-on sprint will teach you how to identify a high-value KPI and build your first live automation in just three hours. You’ll walk away with a working workflow and a proof memo you can show to your manager or in an interview.',
@@ -254,6 +258,7 @@ const courseData = {
     ],
   },
   accelerator: {
+    mascot: 'accelerator',
     title: '16-Hour Superstar Accelerator',
     subtitle: 'Go Beyond Dashboards. Build AI Agents That Deliver Insights.',
     description: 'This is not another theory-heavy course. The Accelerator gives you the skills to design and deploy end-to-end agentic AI systems—pipelines that pull data, analyze it, and deliver answers where people work. You will learn to build, test, and package real-world solutions that showcase your expertise.',
@@ -653,6 +658,140 @@ const PersonasSection = () => (
     </section>
 );
 
+const CourseFinderQuiz = ({ scrollToSection }) => {
+    const [step, setStep] = useState(0);
+    const [score, setScore] = useState(0);
+    const [result, setResult] = useState(null);
+
+    const questions = [
+        {
+            question: "Which best describes your day-to-day with data?",
+            options: [
+                { text: "Mostly in Excel/Sheets, creating reports manually.", score: 0 },
+                { text: "I write SQL and use BI tools like Tableau/Power BI.", score: 1 }
+            ],
+        },
+        {
+            question: "What kind of project excites you more right now?",
+            options: [
+                { text: "Automating a repetitive task to save hours each week.", score: 0 },
+                { text: "Building a complex AI agent from scratch for my portfolio.", score: 1 }
+            ],
+        },
+        {
+            question: "How much time can you commit?",
+            options: [
+                { text: "A single focused session to get a quick win.", score: 0 },
+                { text: "A couple of weekends for a deep-dive experience.", score: 1 }
+            ],
+        },
+        {
+            question: "What's your main career goal with this course?",
+            options: [
+                { text: "Prove my value and efficiency in my current role.", score: 0 },
+                { text: "Transition to a more senior or specialized AI-focused role.", score: 1 }
+            ],
+        }
+    ];
+
+    const handleAnswer = (answerScore) => {
+        const newScore = score + answerScore;
+        if (step < questions.length - 1) {
+            setScore(newScore);
+            setStep(step + 1);
+        } else {
+            calculateResult(newScore);
+        }
+    };
+
+    const calculateResult = (finalScore) => {
+        if (finalScore >= 2) {
+            setResult('accelerator');
+        } else {
+            setResult('sprint');
+        }
+    };
+    
+    const resetQuiz = () => {
+        setStep(0);
+        setScore(0);
+        setResult(null);
+    }
+
+    return (
+        <section className="py-16 md:py-20 bg-gray-950">
+            <div className="container mx-auto px-6">
+                <motion.div 
+                    className="bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/40 p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <AnimatePresence mode="wait">
+                        {result ? (
+                            <motion.div
+                                key="result"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="text-center"
+                            >
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">We recommend the...</h3>
+                                <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
+                                    {result === 'sprint' ? courseData.sprint.title : courseData.accelerator.title}
+                                </h2>
+                                <p className="text-gray-300 max-w-xl mx-auto mb-6">
+                                    {result === 'sprint' ? "This course is perfect for getting a quick, impactful win and mastering the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
+                                </p>
+                                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                        Learn More
+                                    </motion.button>
+                                    <button onClick={resetQuiz} className="text-gray-400 hover:text-white transition-colors">
+                                        Retake Quiz
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key={step}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <h3 className="text-2xl md:text-3xl font-bold text-white text-center mb-1">Not sure where to start?</h3>
+                                <p className="text-gray-400 text-center mb-6">Answer a few questions to find your perfect path.</p>
+                                
+                                <div className="w-full bg-gray-700 rounded-full h-1.5 mb-6">
+                                   <motion.div className="bg-purple-600 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
+                                </div>
+                                
+                                <div className="max-w-xl mx-auto">
+                                    <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step].question}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {questions[step].options.map(option => (
+                                            <motion.button
+                                                key={option.text}
+                                                onClick={() => handleAnswer(option.score)}
+                                                className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all"
+                                                whileHover={{ y: -3 }}
+                                            >
+                                                <p className="font-semibold text-white">{option.text}</p>
+                                            </motion.button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            </div>
+        </section>
+    );
+};
+
 const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl animate-on-scroll">
         <div className="container mx-auto px-6">
@@ -915,19 +1054,38 @@ const FAQSection = () => {
     );
 };
 
-const FinalCTASection = ({ scrollToSection }) => (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
-        <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator.</h2>
-            <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
-            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    View all our courses
-                </motion.button>
+const FinalCTASection = ({ scrollToSection }) => {
+    const LOGOS = [
+        { name: 'Swiggy', src: '/brand/swiggy.png' },
+        { name: 'Zomato', src: '/brand/zomato.png' },
+        { name: 'Flipkart', src: '/brand/flipkart_logo_256x96.png' },
+        { name: 'Razorpay', src: '/brand/razorpay.png' },
+        { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
+    ];
+
+    return (
+        <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
+            <div className="container mx-auto px-6">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator.</h2>
+                <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        View all our courses
+                    </motion.button>
+                </div>
+
+                <div className="mt-12">
+                    <p className="text-sm text-gray-300 mb-4">Join graduates from world-class companies</p>
+                    <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 opacity-70">
+                        {LOGOS.map(logo => (
+                            <img key={logo.name} src={logo.src} alt={logo.name} className="h-6 md:h-7" />
+                        ))}
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+}
 
 const Footer = () => (
   <footer className="bg-gray-950 py-10 border-t border-gray-800">
@@ -986,16 +1144,47 @@ const CoursesPage = ({ onBack }) => {
     setOpenModule(openModule === identifier ? null : identifier);
   };
   
-  const CourseDetailCard = ({ course, isPopular = false, paymentUrl }) => (
+  const CourseDetailCard = ({ course, isPopular = false, paymentUrl }) => {
+    const mascots = {
+        champion: (
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <path d="M12 2L12 3M12 21L12 22M22 12L21 12M3 12L2 12M19.07 4.93L18.36 5.64M5.64 18.36L4.93 19.07M19.07 19.07L18.36 18.36M5.64 5.64L4.93 4.93" stroke="url(#paint0_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 6C13.1046 6 14 6.89543 14 8C14 9.10457 13.1046 10 12 10C10.8954 10 10 9.10457 10 8C10 6.89543 10.8954 6 12 6Z" stroke="url(#paint1_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15.477 12.89L17 22L12 19L7 22L8.523 12.89C8.832 11.782 9.539 10.835 10.518 10.245C11.497 9.655 12.68 9.655 13.659 10.245C14.638 10.835 15.345 11.782 15.654 12.89H15.477Z" stroke="url(#paint2_linear_10_37)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear_10_37" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                    <linearGradient id="paint1_linear_10_37" x1="10" y1="8" x2="14" y2="8" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                    <linearGradient id="paint2_linear_10_37" x1="7" y1="15.8275" x2="17" y2="15.8275" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                </defs>
+            </svg>
+        ),
+        accelerator: (
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <path d="M9.11933 14.8807L4.29289 20.7071C3.90237 21.0976 4.53237 21.7276 4.92289 21.3371L10.75 16.51M14.8807 9.11933L20.7071 4.29289C21.0976 3.90237 21.7276 4.53237 21.3371 4.92289L16.51 10.75M13.4657 13.4657L10.5343 10.5343M16 4L14 2L12.5 4.5L10 6L12 8L14.5 9.5L16 12L18 10L19.5 7.5L22 6L20 4L16 4Z" stroke="url(#paint0_linear_11_40)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12" stroke="url(#paint1_linear_11_40)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear_11_40" x1="4.29289" y1="12.5" x2="21.3371" y2="12.5" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                    <linearGradient id="paint1_linear_11_40" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#F472B6"/></linearGradient>
+                </defs>
+            </svg>
+        )
+    };
+    
+    return (
     <motion.div 
-      className="bg-gray-900/50 rounded-3xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10"
+      className="bg-gray-900/50 rounded-3xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="bg-gray-900 rounded-2xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
+       <div className="relative bg-gray-900 rounded-2xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
         <div className="lg:col-span-2 bg-gray-950/70 rounded-2xl p-6 border border-gray-800 flex flex-col">
-           <h2 className="text-3xl font-bold text-white mb-2">{course.title}</h2>
+           <div className="flex items-start gap-4 mb-4">
+                <div className="w-14 h-14 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
+                <div>
+                    <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                </div>
+           </div>
            <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
           
            <div className="grid grid-cols-2 gap-4 text-sm mb-6">
@@ -1058,7 +1247,7 @@ const CoursesPage = ({ onBack }) => {
         </div>
       </div>
     </motion.div>
-  );
+  )};
 
   return (
     <div className="min-h-screen pt-24 md:pt-32 pb-16 bg-gray-950">
@@ -1151,6 +1340,7 @@ const App = () => {
         <HeroSection handleExploreCourses={handleExploreCourses} />
         <CompaniesBelt />
         <PersonasSection />
+        <CourseFinderQuiz scrollToSection={scrollToSection} />
         <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
         <MentorSection sectionRef={sectionRefs.mentors} />
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
@@ -1182,8 +1372,8 @@ const App = () => {
                 @media (min-width: 768px) { .marquee { --gap: 2.75rem; } }
                 .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
                 @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-                .scrolling-column-up { animation: scroll-up 40s linear infinite; }
-                .scrolling-column-down { animation: scroll-down 40s linear infinite; }
+                .scrolling-column-up { animation: scroll-up 25s linear infinite; }
+                .scrolling-column-down { animation: scroll-down 25s linear infinite; }
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
                 @keyframes scroll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
             `}</style>
@@ -1201,7 +1391,4 @@ const App = () => {
 };
 
 export default App;
-
-
-
 
