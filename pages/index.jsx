@@ -584,8 +584,8 @@ function CompaniesBelt() {
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
 
-  // single track duplicated inside itself → animate -50% for a perfect loop
-  const ITEMS = [...LOGOS, ...LOGOS];
+  const ITEMS = [...LOGOS, ...LOGOS]; // single seamless track duplicated
+  const duration = "52s"; // adjust speed if you like
 
   return (
     <section id="companies" className="relative w-full pt-8 md:pt-10 pb-6 md:pb-8">
@@ -594,44 +594,49 @@ function CompaniesBelt() {
       </h3>
 
       <div className="relative overflow-hidden">
-        {/* clearly visible, super-light grey overlay above the belt */}
+        {/* subtle, very light overlay across the belt */}
         <div className="pointer-events-none absolute inset-0 z-20 bg-white/12" />
 
-        {/* viewport (edge fades so the loop seam is invisible) */}
+        {/* viewport with edge fade */}
         <div className="marquee relative z-10">
-          <ul
-            className="marquee__track"
-            style={{ ["--dur"]:"52s" }} /* slower = bigger number */
-          >
-            {ITEMS.map((logo, i) => (
-              <li key={`${logo.name}-${i}`} className="shrink-0">
-                <div
-                  className="
-                    flex items-center justify-center
-                    rounded-xl ring-1 ring-black/6 shadow-sm
-                    bg-[#F3F4F6]                /* very light grey tile */
-                    w-[156px] md:w-[168px]      /* smaller tile width */
-                    h-[58px]  md:h-[64px]       /* tighter tile height */
-                  "
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="w-auto max-h-9 md:max-h-10 object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </li>
-            ))}
+          <ul className="marquee__track" style={{ ["--dur"]: duration }}>
+            {ITEMS.map((logo, i) => {
+              const isPharmEasy = logo.name.toLowerCase() === "pharmeasy";
+              return (
+                <li key={`${logo.name}-${i}`} className="shrink-0">
+                  <div
+                    className="
+                      flex items-center justify-center
+                      rounded-xl ring-1 ring-black/6 shadow-sm
+                      bg-[#F3F4F6]
+                      w-[156px] md:w-[168px]
+                      h-[58px]  md:h-[64px]
+                    "
+                  >
+                    <img
+                      src={logo.src}
+                      alt={logo.name}
+                      loading="lazy"
+                      decoding="async"
+                      className={
+                        // Only PharmEasy slightly smaller → more whitespace in the same tile
+                        isPharmEasy
+                          ? "w-auto max-h-8 md:max-h-9 object-contain"
+                          : "w-auto max-h-9 md:max-h-10 object-contain"
+                      }
+                    />
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
 
-      {/* scoped styles for marquee */}
+      {/* marquee styles */}
       <style jsx global>{`
         .marquee {
-          --gap: 2.25rem; /* consistent spacing between tiles */
+          --gap: 2.25rem;
           overflow: hidden;
           mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
           -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
@@ -640,15 +645,13 @@ function CompaniesBelt() {
           display: inline-flex;
           align-items: center;
           gap: var(--gap);
-          width: max-content;         /* size to content (two sequences) */
-          white-space: nowrap;        /* never wrap */
+          width: max-content;
+          white-space: nowrap;
           will-change: transform;
-          animation: aiway-marquee var(--dur, 52s) linear infinite;
+          animation: belt-marquee var(--dur, 52s) linear infinite;
           transform: translate3d(0,0,0);
         }
-        /* Because the track contains two identical sequences back-to-back,
-           shifting by -50% lands exactly at the seam → no overlap ever. */
-        @keyframes aiway-marquee {
+        @keyframes belt-marquee {
           0%   { transform: translate3d(0, 0, 0); }
           100% { transform: translate3d(-50%, 0, 0); }
         }
