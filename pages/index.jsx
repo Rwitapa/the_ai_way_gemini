@@ -152,6 +152,18 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
     ),
     'graduation-cap': (
       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v-2" /><path d="M18 12v-2" /><path d="M12 12v-2" /><path d="M4 18v-2" /><path d="M20 18v-2" /><path d="M12 18v-2" /><path d="M6 20v-2" /><path d="M18 20v-2" /><path d="M12 20v-2" /><path d="M4 22v-2" /><path d="M20 22v-2" /><path d="M12 22v-2" /><path d="M22 14v-2" /><path d="M2 14v-2" /><path d="M10 22v-2" /><path d="M14 22v-2" /><path d="M10 18v-2" /><path d="M14 18v-2" /><path d="M22 20v-2" /><path d="M2 20v-2" /></svg>
+    ),
+    'award': (
+       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    ),
+    'clock': (
+       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    ),
+     'bar-chart-2': (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    ),
+    'shield-check': (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
     )
   };
   return icons[name] || null;
@@ -201,6 +213,14 @@ const courseData = {
     subtitle: 'Ship Your First KPI Automation in Just 3 Hours',
     description: 'Stop spending hours on manual reports. This focused, hands-on sprint will teach you how to identify a high-value KPI and build your first live automation in just three hours. You’ll walk away with a working workflow and a proof memo you can show to your manager or in an interview.',
     price: '₹349',
+    level: 'Beginner Friendly',
+    duration: '3 Hours',
+    guarantee: 'Project Completion Guarantee',
+    keyOutcomes: [
+        { icon: 'bolt', text: 'Automate one high-value report' },
+        { icon: 'file-text', text: 'Create a professional Impact Memo' },
+        { icon: 'tool', text: 'Master no-code automation tools' },
+    ],
     tools: ['Google Sheets', 'BigQuery', 'n8n', 'Zapier', 'Slack'],
     modules: [
       {
@@ -238,6 +258,14 @@ const courseData = {
     subtitle: 'Go Beyond Dashboards. Build AI Agents That Deliver Insights.',
     description: 'This is not another theory-heavy course. The Accelerator gives you the skills to design and deploy end-to-end agentic AI systems—pipelines that pull data, analyze it, and deliver answers where people work. You will learn to build, test, and package real-world solutions that showcase your expertise.',
     price: '₹4,999',
+    level: 'Intermediate',
+    duration: '16 Hours (2 Weekends)',
+    guarantee: 'Portfolio Project Guarantee',
+    keyOutcomes: [
+        { icon: 'rocket', text: 'Deploy an end-to-end AI agent' },
+        { icon: 'git-fork', text: 'Build a RAG knowledge assistant' },
+        { icon: 'bar-chart', text: 'Create a portfolio-grade case study' },
+    ],
     tools: ['SQL (BigQuery/Postgres)', 'n8n', 'OpenAI GPT-4', 'LangChain/LlamaIndex', 'Qdrant/Supabase', 'Slack/Email/WhatsApp APIs'],
     modules: [
       {
@@ -396,23 +424,12 @@ const sections = [
     { name: 'Testimonials', ref: 'testimonials' },
 ];
 
-// --- REFACTORED COMPONENTS ---
+// --- COMPONENTS ---
 
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
   const menuButtonRef = useRef(null);
 
   return (
-    <>
-      {/* font load (keep only one copy in your app) */}
-      <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
-      </Head>
-      <style jsx global>{`
-        .font-poppins-medium { font-family: 'Poppins', sans-serif; font-weight: 500; }
-      `}</style>
-
       <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between h-16 md:h-20">
           {/* Brand */}
@@ -423,13 +440,10 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
             className="group flex items-center gap-3 md:gap-4"
           >
             <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
-              <Image
+              <img
                 src="/brand/aiway-mark.png"
                 alt="The AI Way logo"
-                fill
-                sizes="(max-width: 768px) 48px, (max-width: 1280px) 56px, 64px"
-                priority
-                className="object-contain"
+                className="object-contain w-full h-full"
               />
             </span>
 
@@ -473,7 +487,6 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
           </div>
         </nav>
       </header>
-    </>
   );
 };
 
@@ -493,7 +506,7 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
         </button>
         <div className="flex flex-col items-center space-y-8 text-center">
           {sections.map(section => (
-            <button key={section.ref} onClick={() => scrollToSection(section.ref)} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
+            <button key={section.ref} onClick={() => { setIsMenuOpen(false); scrollToSection(section.ref); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
               {section.name}
             </button>
           ))}
@@ -617,35 +630,6 @@ function CompaniesBelt() {
           </ul>
         </div>
       </div>
-
-      {/* marquee styles */}
-      <style jsx global>{`
-        .marquee {
-          --gap: 2.25rem; /* spacing between tiles */
-          overflow: hidden;
-          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-          -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-        }
-        @media (min-width: 768px) {
-          .marquee { --gap: 2.75rem; }
-        }
-        .marquee__track {
-          display: inline-flex;
-          align-items: center;
-          gap: var(--gap);
-          width: max-content;       /* size to content (two sequences) */
-          white-space: nowrap;      /* never wrap */
-          will-change: transform;
-          animation: companies-belt var(--dur, 52s) linear infinite;
-          transform: translate3d(0,0,0);
-        }
-        /* Because the track contains two identical sequences back-to-back,
-           shifting by -50% lands exactly at the seam → no overlap. */
-        @keyframes companies-belt {
-          0%   { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
-        }
-      `}</style>
     </section>
   );
 }
@@ -673,10 +657,19 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl animate-on-scroll">
         <div className="container mx-auto px-6">
             <div className="text-center mb-12">
+                 <div className="flex items-center justify-center gap-2 mb-4">
+                    <span className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <p className="text-green-400 font-semibold">Registrations are now open!</p>
+                </div>
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
-                <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto">
-                    Report generator → ROI generator.
-                </p>
+                 <div className="mt-6 flex justify-center items-center gap-6 text-sm text-gray-300">
+                    <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
+                    <span className="flex items-center gap-2"><Icon name="tool" size={18}/> HANDS-ON</span>
+                    <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
+                </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <motion.div className="bg-gray-900 rounded-3xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }} transition={{ type: 'spring', stiffness: 300 }}>
@@ -829,52 +822,49 @@ const MentorSection = ({ sectionRef }) => (
   </motion.section>
 );
 
+const TestimonialCard = ({ testimonial }) => (
+    <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-3xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
+        <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
+        <div className="flex items-center">
+            <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12" />
+            <div>
+                <p className="font-semibold text-white">{testimonial.name}</p>
+                <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
+            </div>
+        </div>
+    </div>
+);
 
-const TestimonialCarousel = ({ sectionRef }) => {
-    const [testimonialIndex, setTestimonialIndex] = useState(0);
-
-    const handleNextTestimonial = () => setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
-    const handlePrevTestimonial = () => setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-
-    useEffect(() => {
-        const timer = setInterval(handleNextTestimonial, 3500);
-        return () => clearInterval(timer);
-    }, []);
+const TestimonialsSection = ({ sectionRef }) => {
+    const middleIndex = Math.ceil(testimonials.length / 2);
+    const column1Testimonials = testimonials.slice(0, middleIndex);
+    const column2Testimonials = testimonials.slice(middleIndex);
 
     return (
-        <section ref={sectionRef} className="relative py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden animate-on-scroll">
-            <div className="animated-testimonials-bg" aria-hidden="true" />
-            <div className="relative z-10 container mx-auto px-6">
-                <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-10">What Our Students Are Saying</h2>
-                <div className="relative flex flex-col items-center justify-center min-h-[400px]">
-                    <AnimatePresence>
-                        {testimonials.map((testimonial, index) => {
-                            const position = index - testimonialIndex;
-                            if (Math.abs(position) >= 3) return null;
-                            return (
-                                <motion.div key={index} className="bg-gray-900 p-8 rounded-2xl border border-gray-800 absolute w-[90%] md:w-[60%] lg:w-[45%]" initial={{ scale: 1 - Math.abs(position) * 0.1, y: position * 20, zIndex: testimonials.length - Math.abs(position), opacity: 1 }} animate={{ scale: 1 - Math.abs(position) * 0.05, y: position * 15, zIndex: testimonials.length - Math.abs(position), opacity: 1 }} exit={{ x: 300, opacity: 0, scale: 0.9, transition: { duration: 0.3 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ transformOrigin: 'bottom center', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-                                    <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
-                                    <div className="flex items-center">
-                                        <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12" />
-                                        <div>
-                                            <p className="font-semibold text-white">{testimonial.name}</p>
-                                            <p className="text-sm text-gray-400">{testimonial.role}, {testimonial.company}</p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </AnimatePresence>
-                    <div className="absolute bottom-[-30px] flex items-center justify-center w-full z-40">
-                        <button onClick={handlePrevTestimonial} aria-label="Previous testimonial" className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm"><Icon name="arrow-left" size={20} /></button>
-                        <div className="text-gray-400 text-sm font-semibold px-4 py-2 bg-gray-900/50 rounded-full backdrop-blur-sm">{testimonialIndex + 1} / {testimonials.length}</div>
-                        <button onClick={handleNextTestimonial} aria-label="Next testimonial" className="bg-purple-600/50 hover:bg-purple-600 text-white rounded-full p-3 transition-colors mx-2 backdrop-blur-sm"><Icon name="arrow-right" size={20} /></button>
+        <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 rounded-t-[50px] md:rounded-t-[100px] shadow-inner-xl overflow-hidden animate-on-scroll">
+            <div className="container mx-auto px-6 text-center">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-10">What Our Students Are Saying</h2>
+                <div className="relative h-[500px] overflow-hidden">
+                    <div className="absolute inset-0 flex justify-center gap-6">
+                        <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6 scrolling-column-up">
+                            {[...column1Testimonials, ...column1Testimonials].map((testimonial, index) => (
+                                <TestimonialCard key={`col1-${index}`} testimonial={testimonial} />
+                            ))}
+                        </div>
+                        <div className="hidden md:flex w-full md:w-1/2 lg:w-1/3 flex-col space-y-6 scrolling-column-down">
+                            {[...column2Testimonials, ...column2Testimonials].map((testimonial, index) => (
+                                <TestimonialCard key={`col2-${index}`} testimonial={testimonial} />
+                            ))}
+                        </div>
                     </div>
+                     <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                     <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent"></div>
                 </div>
             </div>
         </section>
     );
 };
+
 
 const WhatYouLearnSection = ({ sectionRef }) => (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-950 animate-on-scroll overflow-hidden">
@@ -946,12 +936,10 @@ const Footer = () => (
         {/* Brand (logo + name) */}
         <div className="mb-6 md:mb-0 flex items-center gap-3 md:gap-4">
           <span className="relative block h-10 w-10 md:h-12 md:w-12">
-            <Image
+            <img
               src="/brand/aiway-mark.png"
               alt="The AI Way logo"
-              fill
-              sizes="(max-width: 768px) 40px, 48px"
-              className="object-contain"
+              className="object-contain w-full h-full"
             />
           </span>
           <span className="font-poppins-medium text-white text-xl md:text-2xl leading-none">
@@ -1000,62 +988,51 @@ const CoursesPage = ({ onBack }) => {
   
   const CourseDetailCard = ({ course, isPopular = false, paymentUrl }) => (
     <motion.div 
-      className={`bg-gray-900 rounded-3xl p-6 md:p-8 border ${isPopular ? 'border-purple-700' : 'border-gray-800'} mb-12`}
+      className="bg-gray-900/50 rounded-3xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1">
-          <h2 className="text-3xl font-bold text-white mb-2">{course.title}</h2>
-          {isPopular && (
-            <span className="inline-block bg-yellow-500 text-black font-bold text-xs px-3 py-1 rounded-full mb-4">
-              Popular
-            </span>
-          )}
-          <p className="text-lg text-gray-400 mb-4">{course.subtitle}</p>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-1">Price</h4>
-              <p className="text-white text-2xl font-bold">{course.price}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-1">Next Cohort</h4>
-              <p className="text-white text-base">
-                {course.title === '3-Hour Champion Sprint' ? `${getNextDayOfWeek([1, 3, 5])}, 7-10 PM IST` : `${getNextAlternateWeekend()}, 10 AM - 7 PM IST`}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Tools Covered</h4>
-              <div className="flex flex-wrap gap-2">
-                {course.tools.map((tool, index) => (
-                  <span key={index} className="bg-gray-800 text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">{tool}</span>
+      <div className="bg-gray-900 rounded-2xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
+        <div className="lg:col-span-2 bg-gray-950/70 rounded-2xl p-6 border border-gray-800 flex flex-col">
+           <h2 className="text-3xl font-bold text-white mb-2">{course.title}</h2>
+           <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
+          
+           <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
+                <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
+           </div>
+
+            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
+                <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
+                {course.keyOutcomes.map((outcome, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm">
+                        <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
+                        <span className="text-gray-300">{outcome.text}</span>
+                    </div>
                 ))}
-              </div>
             </div>
-          </div>
-          <motion.a 
-            href={paymentUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="mt-8 w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Enroll Now
-          </motion.a>
+
+            <div className="text-center mt-auto">
+                 <p className="text-3xl font-bold text-white mb-4">{course.price}</p>
+                 <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    Enroll for {course.price}
+                 </motion.a>
+                 <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
+            </div>
         </div>
-        <div className="md:col-span-2">
+
+        <div className="lg:col-span-3">
           <p className="text-gray-300 mb-6">{course.description}</p>
           <h3 className="text-xl font-bold text-white mb-2">Course Modules</h3>
           <div className="border-t border-gray-700">
             {course.modules.map((module, index) => (
               <div key={index} className="border-b border-gray-700 py-4">
                 <div
-                  className="flex justify-between items-center cursor-pointer"
+                  className="flex justify-between items-center cursor-pointer group"
                   onClick={() => toggleModule(course.title, module.title)}
                 >
-                  <h4 className="text-lg font-semibold text-white">{module.title}</h4>
+                  <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">{module.title}</h4>
                   <Icon
                     name="arrow-left"
                     size={24}
@@ -1069,7 +1046,7 @@ const CoursesPage = ({ onBack }) => {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 text-gray-400 overflow-hidden"
+                      className="mt-2 text-gray-400 overflow-hidden pr-8"
                     >
                       {module.summary}
                     </motion.p>
@@ -1090,10 +1067,22 @@ const CoursesPage = ({ onBack }) => {
           <Icon name="arrow-left" size={20} className="mr-2" /> Back to Home
         </button>
         <div className="text-center mb-12 md:mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Courses</h1>
+            <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <p className="text-green-400 font-semibold">Registrations are now open!</p>
+            </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">The AI Way Courses</h1>
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            Discover a learning path that turns you into a high-impact, AI-driven business analyst.
+            From report generator to ROI generator. Choose your path to turn analytics into action.
           </p>
+          <div className="mt-6 flex justify-center items-center gap-6 text-sm text-gray-300">
+                <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
+                <span className="flex items-center gap-2"><Icon name="tool" size={18}/> HANDS-ON</span>
+                <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
+          </div>
         </div>
         <CourseDetailCard course={courseData.sprint} paymentUrl={RAZORPAY_PAYMENT_URL} />
         <CourseDetailCard course={courseData.accelerator} isPopular={true} paymentUrl={SUPERSTAR_ACCELERATOR_URL} />
@@ -1160,11 +1149,11 @@ const App = () => {
     const mainPageComponent = (
       <>
         <HeroSection handleExploreCourses={handleExploreCourses} />
-        <CompaniesBelt />   {/* second fold, tight to hero */}
+        <CompaniesBelt />
         <PersonasSection />
         <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
         <MentorSection sectionRef={sectionRefs.mentors} />
-        <TestimonialCarousel sectionRef={sectionRefs.testimonials} />
+        <TestimonialsSection sectionRef={sectionRefs.testimonials} />
         <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
         <FAQSection />
         <FinalCTASection scrollToSection={scrollToSection} />
@@ -1175,8 +1164,10 @@ const App = () => {
         <div className="bg-gray-950 text-gray-200 font-sans leading-relaxed tracking-wide antialiased overflow-x-hidden">
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
                 html, body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
                 body { font-family: 'Inter', sans-serif; }
+                .font-poppins-medium { font-family: 'Poppins', sans-serif; font-weight: 500; }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
                 .animate-fade-in { animation: fadeIn 1s ease-out; }
                 .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
@@ -1187,6 +1178,14 @@ const App = () => {
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #4a0e70; border-radius: 10px; }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #5e118f; }
+                .marquee { --gap: 2.25rem; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
+                @media (min-width: 768px) { .marquee { --gap: 2.75rem; } }
+                .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
+                @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+                .scrolling-column-up { animation: scroll-up 40s linear infinite; }
+                .scrolling-column-down { animation: scroll-down 40s linear infinite; }
+                @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+                @keyframes scroll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
             `}</style>
 
             <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} />
@@ -1202,4 +1201,7 @@ const App = () => {
 };
 
 export default App;
+
+
+
 
