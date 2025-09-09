@@ -527,7 +527,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 w-full">
         {/* keep hero tall so belt begins in next fold */}
-        <div className="min-h-[86svh] md:min-h-screen pt-24 md:pt-28 pb-16 md:pb-24 flex flex-col items-center justify-center text-center">
+        <div className="min-h-[86svh] md:min-h-[88vh] pt-24 md:pt-28 pb-10 md:pb-10 flex flex-col items-center justify-center text-center">
           <span className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm">
             Gen AI for Business Analysts
           </span>
@@ -572,146 +572,78 @@ export const HeroSection = ({ handleExploreCourses }) => {
 
 // --- COMPANIES BELT (smaller logos, very light grey tiles) ---
 
-const LOGOS = [
-  { name: 'Swiggy',    src: '/brand/swiggy.png'    },
-  { name: 'Zoho',      src: '/brand/zoho.png'      },
-  { name: 'Zomato',    src: '/brand/zomato.png'    },
-  { name: 'Paytm',     src: '/brand/paytm.png'     },
-  { name: 'Ola',       src: '/brand/ola.png'       },
-  { name: 'Flipkart',  src: '/brand/flipkart_logo_256x96.png'  },
-  { name: 'Razorpay',  src: '/brand/razorpay.png'  },
-  { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
-];
-
-function LogoCard({ src, alt }) {
-  return (
-    <div
-      className="
-        flex items-center justify-center
-        rounded-2xl ring-1 ring-white/10 shadow-sm
-        bg-[#F3F4F6]   /* very light grey */
-        w-[168px] h-[76px] md:w-[184px] md:h-[82px] lg:w-[200px] lg:h-[88px]
-      "
-    >
-      <img
-        src={src}
-        alt={`${alt} logo`}
-        loading="lazy"
-        className="max-h-9 md:max-h-10 lg:max-h-11 w-auto object-contain"
-      />
-    </div>
-  );
-}
-
 function CompaniesBelt() {
-  // Tweak this to make the belt slower/faster (higher = slower)
-  const duration = "48s"; // previously faster; reduced speed as requested
+  const LOGOS = [
+    { name: 'Swiggy',    src: '/brand/swiggy.png'    },
+    { name: 'Zoho',      src: '/brand/zoho.png'      },
+    { name: 'Zomato',    src: '/brand/zomato.png'    },
+    { name: 'Paytm',     src: '/brand/paytm.png'     },
+    { name: 'Ola',       src: '/brand/ola.png'       },
+    { name: 'Flipkart',  src: '/brand/flipkart_logo_256x96.png'  },
+    { name: 'Razorpay',  src: '/brand/razorpay.png'  },
+    { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
+  ];
 
-  // Two identical tracks for a seamless loop
-  const items = [...LOGOS, ...LOGOS];
+  const ITEMS = [...LOGOS, ...LOGOS];           // single seamless track
+  const DURATION = "52s";                       // adjust speed here
 
   return (
-    // Extra bottom margin pushes the next section (“This Is For You If…”) down
-    <section className="relative pt-10 md:pt-12 pb-14 md:pb-16 mb-24 md:mb-28 lg:mb-32">
-      <h3 className="text-center text-white/90 font-semibold text-lg md:text-xl mb-7 md:mb-8">
+    <section id="companies" className="relative w-full pt-8 md:pt-10 pb-6 md:pb-8">
+      <h3 className="text-center text-white/90 font-semibold text-lg md:text-xl mb-5 md:mb-6">
         Our graduates work at leading tech companies
       </h3>
 
       <div className="relative overflow-hidden">
-        {/* subtle grey overlay to soft-tone the zone */}
-        <div className="pointer-events-none absolute inset-0 bg-black/5" />
-
+        {/* viewport with edge fade; no section-wide overlay */}
         <div className="marquee">
-          <ul
-            className="track"
-            style={{
-              ["--marquee-duration"]: duration,
-            }}
-          >
-            {items.map((l, i) => (
-              <li key={`${l.name}-a-${i}`} className="shrink-0">
-                <LogoCard src={l.src} alt={l.name} />
-              </li>
-            ))}
-          </ul>
-
-          {/* second track starts just outside the right edge */}
-          <ul
-            className="track track--2"
-            aria-hidden="true"
-            style={{
-              ["--marquee-duration"]: duration,
-            }}
-          >
-            {items.map((l, i) => (
-              <li key={`${l.name}-b-${i}`} className="shrink-0">
-                <LogoCard src={l.src} alt={l.name} />
+          <ul className="marquee__track" style={{ ["--dur"]: DURATION }}>
+            {ITEMS.map((logo, i) => (
+              <li key={`${logo.name}-${i}`} className="shrink-0">
+                {/* Tile with per-tile grey overlay BEHIND the logo */}
+                <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
+                  <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" aria-hidden="true" />
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    loading="lazy"
+                    decoding="async"
+                    className={`relative z-10 w-auto object-contain ${
+                      logo.name === "PharmEasy" ? "max-h-8 md:max-h-9" : "max-h-9 md:max-h-10"
+                    }`}
+                  />
+                </div>
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      {/* marquee + spacing styles */}
+      {/* marquee styles */}
       <style jsx global>{`
         .marquee {
-          --gap: 2.75rem; /* spacing between logo cards */
-          position: relative;
+          --gap: 2.25rem; /* spacing between tiles */
           overflow: hidden;
-          padding: 0.25rem 0; /* tiny breathing room */
-          mask-image: linear-gradient(
-            to right,
-            transparent,
-            black 6%,
-            black 94%,
-            transparent
-          );
-          -webkit-mask-image: linear-gradient(
-            to right,
-            transparent,
-            black 6%,
-            black 94%,
-            transparent
-          );
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
         }
         @media (min-width: 768px) {
-          .marquee {
-            --gap: 3.25rem;
-          }
+          .marquee { --gap: 2.75rem; }
         }
-        @media (min-width: 1024px) {
-          .marquee {
-            --gap: 3.75rem;
-          }
-        }
-
-        .marquee .track,
-        .marquee .track--2 {
-          display: flex;
+        .marquee__track {
+          display: inline-flex;
           align-items: center;
           gap: var(--gap);
-          min-width: max-content;
+          width: max-content;       /* size to content (two sequences) */
+          white-space: nowrap;      /* never wrap */
+          will-change: transform;
+          animation: companies-belt var(--dur, 52s) linear infinite;
+          transform: translate3d(0,0,0);
         }
-
-        .marquee .track {
-          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
-        }
-
-        /* start the second track from the right, so the loop is seamless */
-        .marquee .track--2 {
-          position: absolute;
-          top: 0;
-          left: 100%;
-          animation: aiway-marquee var(--marquee-duration, 48s) linear infinite;
-        }
-
-        @keyframes aiway-marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-100%);
-          }
+        /* Because the track contains two identical sequences back-to-back,
+           shifting by -50% lands exactly at the seam → no overlap. */
+        @keyframes companies-belt {
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
       `}</style>
     </section>
@@ -719,7 +651,7 @@ function CompaniesBelt() {
 }
 
 const PersonasSection = () => (
-    <section className="pt-8 md:pt-14 pb-16 bg-gray-950 animate-on-scroll">
+    <section className="pt-10 md:pt-16 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
