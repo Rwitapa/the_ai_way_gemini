@@ -595,7 +595,7 @@ function CompaniesBelt() {
 
       <div className="relative overflow-hidden">
         {/* subtle, very light overlay across the belt */}
-        <div className="pointer-events-none absolute inset-0 z-20 bg-white/12" />
+        <div className="pointer-events-none absolute inset-0 z-20 bg-white/20" />
 
         {/* viewport with edge fade */}
         <div className="marquee relative z-10">
