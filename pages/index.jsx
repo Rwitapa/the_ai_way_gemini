@@ -764,7 +764,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="py-16 md:py-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
-                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60 relative"
+                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -792,16 +792,9 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     {result === 'sprint' ? "This course is perfect for getting a quick, impactful win and mastering the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
                                 </p>
                                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                                     <motion.a 
-                                        href={result === 'sprint' ? RAZORPAY_PAYMENT_URL : SUPERSTAR_ACCELERATOR_URL}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" 
-                                        whileHover={{ scale: 1.05 }} 
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        Enroll Now for {result === 'sprint' ? courseData.sprint.price : courseData.accelerator.price}
-                                    </motion.a>
+                                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                        Learn More
+                                    </motion.button>
                                     <button onClick={resetQuiz} className="text-gray-400 hover:text-white transition-colors">
                                         Retake Quiz
                                     </button>
@@ -819,7 +812,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                   <Icon name="compass" size={32} className="text-purple-400" />
                                   <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
                                 </div>
-                                <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
+                                <p className="text-gray-400 text-center mb-8">Answer these 4 quick questions to find your perfect path.</p>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
@@ -839,9 +832,6 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                             </motion.button>
                                         ))}
                                     </div>
-                                </div>
-                                <div className="absolute top-4 right-4 font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full">
-                                    {step + 1} / {questions.length}
                                 </div>
                             </motion.div>
                         )}
@@ -1051,7 +1041,7 @@ const TestimonialsSection = ({ sectionRef }) => {
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 overflow-hidden animate-on-scroll">
             <div className="container mx-auto px-6 text-center">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-10">What Our Students Are Saying</h2>
-                <div className="relative h-[500px] overflow-hidden">
+                <div className="relative h-[450px] overflow-hidden">
                     <div className="absolute inset-0 flex justify-center gap-6">
                         <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6 scrolling-column-up">
                             {[...column1Testimonials, ...column1Testimonials].map((testimonial, index) => (
@@ -1133,15 +1123,15 @@ const FAQSection = () => {
     );
 };
 
-const FinalCTASection = ({ handleExploreCourses }) => {
+const FinalCTASection = ({ scrollToSection }) => {
     return (
         <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
             <div className="container mx-auto px-6">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator.</h2>
                 <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                    <motion.button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        Enroll Now
+                    <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        View All Courses
                     </motion.button>
                 </div>
             </div>
@@ -1240,13 +1230,13 @@ const CoursesPage = ({ onBack }) => {
     
     return (
     <motion.div 
-      className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 md:p-8 border border-purple-800/40 mb-12 shadow-2xl shadow-purple-900/20 relative overflow-hidden grid grid-cols-1 lg:grid-cols-5 gap-8"
+      className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-        {isPopular && <div className="absolute top-4 right-4 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm z-10">Popular</div>}
-       <div className="lg:col-span-2 bg-gray-950/40 rounded-xl p-6 border border-gray-800 flex flex-col">
+       <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
+        <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
            <div className="flex items-start gap-4 mb-4">
                 <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
                 <div>
@@ -1317,7 +1307,8 @@ const CoursesPage = ({ onBack }) => {
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
+    </motion.div>
   )};
 
   return (
@@ -1417,7 +1408,7 @@ const App = () => {
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
         <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
         <FAQSection />
-        <FinalCTASection handleExploreCourses={handleExploreCourses} />
+        <FinalCTASection scrollToSection={scrollToSection} />
       </>
     );
 
@@ -1443,8 +1434,8 @@ const App = () => {
                 @media (min-width: 768px) { .marquee { --gap: 2.75rem; } }
                 .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
                 @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-                .scrolling-column-up { animation: scroll-up 20s linear infinite; }
-                .scrolling-column-down { animation: scroll-down 20s linear infinite; }
+                .scrolling-column-up { animation: scroll-up 15s linear infinite; }
+                .scrolling-column-down { animation: scroll-down 15s linear infinite; }
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
                 @keyframes scroll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
             `}</style>
@@ -1462,5 +1453,4 @@ const App = () => {
 };
 
 export default App;
-
 
