@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import Image from "next/image";
 
+
 // --- CONSTANTS & UTILS ---
 
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
@@ -791,9 +792,16 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     {result === 'sprint' ? "This course is perfect for getting a quick, impactful win and mastering the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
                                 </p>
                                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                        Learn More
-                                    </motion.button>
+                                     <motion.a 
+                                        href={result === 'sprint' ? RAZORPAY_PAYMENT_URL : SUPERSTAR_ACCELERATOR_URL}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" 
+                                        whileHover={{ scale: 1.05 }} 
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Enroll Now for {result === 'sprint' ? courseData.sprint.price : courseData.accelerator.price}
+                                    </motion.a>
                                     <button onClick={resetQuiz} className="text-gray-400 hover:text-white transition-colors">
                                         Retake Quiz
                                     </button>
@@ -1086,15 +1094,26 @@ const WhatYouLearnSection = ({ sectionRef }) => (
 );
 
 const FAQSection = () => {
-    const [openFaq, setOpenFaq] = useState(0);
+    const [openFaq, setOpenFaq] = useState(null);
     return (
-        <section className="py-16 md:py-20 bg-gray-950 animate-on-scroll">
-            <div className="container mx-auto px-6 text-center max-w-4xl">
+        <section className="relative py-16 md:py-20 animate-on-scroll overflow-hidden">
+            <video
+                className="absolute inset-0 h-full w-full object-cover brightness-50"
+                src="/faq.mp4"
+                playsInline
+                muted
+                autoPlay
+                loop
+                preload="auto"
+                aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-gray-950/50" aria-hidden="true" />
+            <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h2>
                 <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Your most common questions, answered.</p>
                 <div className="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
                     {faqs.map((faq, index) => (
-                        <div key={index} className="rounded-lg border border-gray-800 bg-gray-950 overflow-hidden">
+                        <div key={index} className="rounded-lg border border-purple-800/30 bg-gray-950/50 backdrop-blur-sm overflow-hidden">
                             <button className="w-full flex items-center justify-between p-6 text-left" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}>
                                 <h3 className="text-lg font-semibold text-white">{faq.q}</h3>
                                 <motion.div animate={{ rotate: openFaq === index ? 45 : 0 }} transition={{duration:0.3}}><Icon name="plus" size={24} className="text-purple-500" /></motion.div>
@@ -1114,15 +1133,15 @@ const FAQSection = () => {
     );
 };
 
-const FinalCTASection = ({ scrollToSection }) => {
+const FinalCTASection = ({ handleExploreCourses }) => {
     return (
         <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
             <div className="container mx-auto px-6">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator.</h2>
                 <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                    <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        View All Courses
+                    <motion.button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        Enroll Now
                     </motion.button>
                 </div>
             </div>
@@ -1221,13 +1240,13 @@ const CoursesPage = ({ onBack }) => {
     
     return (
     <motion.div 
-      className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
+      className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 md:p-8 border border-purple-800/40 mb-12 shadow-2xl shadow-purple-900/20 relative overflow-hidden grid grid-cols-1 lg:grid-cols-5 gap-8"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-       <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
-        <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
+        {isPopular && <div className="absolute top-4 right-4 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm z-10">Popular</div>}
+       <div className="lg:col-span-2 bg-gray-950/40 rounded-xl p-6 border border-gray-800 flex flex-col">
            <div className="flex items-start gap-4 mb-4">
                 <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
                 <div>
@@ -1298,8 +1317,7 @@ const CoursesPage = ({ onBack }) => {
             ))}
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
   )};
 
   return (
@@ -1393,13 +1411,13 @@ const App = () => {
         <HeroSection handleExploreCourses={handleExploreCourses} />
         <CompaniesBelt />
         <PersonasSection />
-        <CourseFinderQuiz scrollToSection={scrollToSection} />
         <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
+        <CourseFinderQuiz scrollToSection={scrollToSection} />
         <MentorSection sectionRef={sectionRefs.mentors} />
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
         <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
         <FAQSection />
-        <FinalCTASection scrollToSection={scrollToSection} />
+        <FinalCTASection handleExploreCourses={handleExploreCourses} />
       </>
     );
 
@@ -1444,4 +1462,5 @@ const App = () => {
 };
 
 export default App;
+
 
