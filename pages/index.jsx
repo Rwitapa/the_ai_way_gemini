@@ -1452,7 +1452,7 @@ const FinalCTASection = ({ handleExploreCourses }) => {
     );
 }
 
-const Footer = ({ onAdminToggle }) => (
+const Footer = ({ onAdminClick, isAdmin }) => (
   <footer className="bg-gray-950 py-10 border-t border-gray-800">
     <div className="container mx-auto px-6">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -1496,7 +1496,9 @@ const Footer = ({ onAdminToggle }) => (
       <div className="text-center text-gray-500 text-sm space-y-1">
         <p>&copy; 2025 The AI Way. All Rights Reserved.</p>
         <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
-         <button onClick={onAdminToggle} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">Admin Panel</button>
+         <button onClick={onAdminClick} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">
+            {isAdmin ? 'Admin Logout' : 'Admin Panel'}
+         </button>
       </div>
     </div>
   </footer>
@@ -1886,6 +1888,7 @@ const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const [cohortDates, setCohortDates] = useState({
         sprint: getNextSprintDates(),
         accelerator: getNextAcceleratorDates(),
@@ -2007,7 +2010,7 @@ const App = () => {
                         initial={{y: '-100%'}} 
                         animate={{y: '0%'}} 
                         exit={{y: '-100%'}}
-                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-50"
+                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-[60]"
                     >
                        Admin Mode is Active. <button onClick={() => setShowAdminModal(true)} className="underline hover:text-purple-800">Edit Cohort Dates</button>
                     </motion.div>
@@ -2034,7 +2037,13 @@ const App = () => {
                 </AnimatePresence>
             </main>
 
-            <Footer onAdminToggle={() => setIsAdmin(prev => !prev)} />
+            <Footer onAdminClick={() => {
+                if (isAdmin) {
+                    setIsAdmin(false);
+                } else {
+                    setShowLoginModal(true);
+                }
+            }} isAdmin={isAdmin} />
 
             <AdminModal 
                 isOpen={showAdminModal}
@@ -2042,9 +2051,92 @@ const App = () => {
                 currentDates={cohortDates}
                 onSave={handleSaveDates}
             />
+            
+            <LoginModal 
+                isOpen={showLoginModal}
+                onClose={() => setShowLoginModal(false)}
+                onLoginSuccess={() => {
+                    setIsAdmin(true);
+                    setShowLoginModal(false);
+                }}
+            />
         </div>
     );
 };
 
-export default App;
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (username === 'theaiway.official@gmail.com' && password === 'TheAIWay@1') {
+            onLoginSuccess();
+            setUsername('');
+            setPassword('');
+            setError('');
+        } else {
+            setError('Invalid credentials. Please try again.');
+        }
+    };
+
+    const handleClose = () => {
+        setUsername('');
+        setPassword('');
+        setError('');
+        onClose();
+    }
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={handleClose}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                             <h3 className="text-xl font-bold text-white">Admin Login</h3>
+                            <button onClick={handleClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                                <Icon name="x" size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleLogin} className="p-6 space-y-4">
+                            <input 
+                                type="email"
+                                placeholder="Username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                            <input 
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                            {error && <p className="text-red-400 text-sm">{error}</p>}
+                            <button type="submit" className="w-full p-3 bg-purple-600 rounded-lg text-white font-semibold hover:bg-purple-500 transition-colors">
+                                Login
+                            </button>
+                        </form>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    )
+};
+
+export default App;
