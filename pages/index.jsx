@@ -21,7 +21,6 @@ function getFirebaseApp(config) {
   if (!config || Object.keys(config).length === 0) return null;
   return getApps().length ? getApp() : initializeApp(config);
 }
-
 // --- CONSTANTS & UTILS ---
 
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
