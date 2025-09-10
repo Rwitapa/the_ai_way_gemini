@@ -1663,7 +1663,7 @@ const CoursesPage = ({ onBack }) => {
                 <Icon name="arrow-left" size={20} className="mr-2 transition-transform group-hover:-translate-x-1" /> Back to Home
             </button>
             <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your AI Transformation Starts Here</h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your Path to AI Mastery</h1>
                 <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
             </div>
             
@@ -1843,4 +1843,5 @@ const App = () => {
 };
 
 export default App;
+
 
