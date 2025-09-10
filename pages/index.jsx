@@ -483,7 +483,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExpl
   const menuButtonRef = useRef(null);
 
   return (
-      <header className="fixed top-0 z-50 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
+      <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
         <nav className="flex items-center justify-between h-16 md:h-20">
           {/* Brand */}
           <a
@@ -936,6 +936,31 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+     // Effect for handling body scroll-lock on mobile and click-outside-to-close on desktop
+    useEffect(() => {
+        if (!isOpen) return;
+
+        if (isMobile) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Use a timeout to prevent the modal from closing immediately on the same click that opened it
+            const handleClickOutside = (event) => {
+                if (modalRef.current && !modalRef.current.contains(event.target)) {
+                    onClose();
+                }
+            };
+            setTimeout(() => document.addEventListener('mousedown', handleClickOutside), 0);
+            
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+        
+        // Cleanup function for mobile scroll-lock
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, isMobile, onClose]);
+
+
     useEffect(() => {
         if (isOpen) {
             const newDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
@@ -943,12 +968,14 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         }
     }, [isOpen, firstCohortDate, courseType]);
 
+    // Effect for positioning the modal on desktop
     useEffect(() => {
-        if (isOpen && !isMobile && position && modalRef.current) {
-            const modalWidth = modalRef.current.offsetWidth;
+        if (isOpen && !isMobile && position) {
+            const modalWidth = 384; // Corresponds to max-w-sm
             const windowWidth = window.innerWidth;
 
             let left = position.left;
+            // Adjust left position to prevent overflow
             if (left + modalWidth > windowWidth - 16) {
                 left = windowWidth - modalWidth - 16;
             }
@@ -1042,34 +1069,56 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         }
         return <div className="p-2">{rows}</div>;
     };
-
+    
+    const modalContent = (
+         <div className="flex justify-between items-center p-4 border-b border-gray-700">
+             <h3 className="text-xl font-bold text-white">{courseTitle}</h3>
+            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                <Icon name="x" size={20} />
+            </button>
+        </div>
+    );
 
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className={`fixed inset-0 z-50 bg-black/70 backdrop-blur-sm ${isMobile ? 'flex items-center justify-center p-4' : ''}`}
-                    onClick={onClose}
-                >
+                isMobile ? (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                        onClick={onClose}
+                    >
+                        <motion.div
+                            ref={modalRef}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                            className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {modalContent}
+                            {renderHeader()}
+                            {renderDaysOfWeek()}
+                            {renderCalendarGrid()}
+                             <div className="p-4 border-t border-gray-700 text-center">
+                                <p className="text-xs text-gray-400">Select an available date to book your spot.</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                ) : (
                     <motion.div
                         ref={modalRef}
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className={`bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm ${!isMobile ? 'absolute' : ''}`}
-                        style={isMobile ? {} : style}
-                        onClick={e => e.stopPropagation()}
+                        className="fixed z-[100] bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        style={style}
                     >
-                        <div className="flex justify-between items-center p-4 border-b border-gray-700">
-                             <h3 className="text-xl font-bold text-white">{courseTitle}</h3>
-                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
-                                <Icon name="x" size={20} />
-                            </button>
-                        </div>
+                        {modalContent}
                         {renderHeader()}
                         {renderDaysOfWeek()}
                         {renderCalendarGrid()}
@@ -1077,7 +1126,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                             <p className="text-xs text-gray-400">Select an available date to book your spot.</p>
                         </div>
                     </motion.div>
-                </motion.div>
+                )
             )}
         </AnimatePresence>
     );
@@ -1558,11 +1607,6 @@ const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
     }
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = calendarFor ? 'hidden' : 'unset';
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [calendarFor]);
-
   const sprintCohorts = cohortDates.sprint;
   const acceleratorCohorts = cohortDates.accelerator;
 
@@ -1632,7 +1676,10 @@ const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
                                 onClick={onOpenCalendar} 
                                 className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
                             >
-                                <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                                 <div className="flex items-center gap-3">
+                                    <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
+                                    <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                                </div>
                                 <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
                             </button>
                         </div>
@@ -1822,7 +1869,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
                 >
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
@@ -1895,8 +1942,8 @@ const App = () => {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [cohortDates, setCohortDates] = useState({
-        sprint: getNextSprintDates(),
-        accelerator: getNextAcceleratorDates(),
+        sprint: [],
+        accelerator: [],
     });
 
     const sectionRefs = {
@@ -1905,6 +1952,36 @@ const App = () => {
         mentors: useRef(null),
         testimonials: useRef(null),
     };
+
+    // Load dates from localStorage on initial render
+    useEffect(() => {
+        try {
+            const savedDatesJSON = localStorage.getItem('theaiway-cohort-dates');
+            if (savedDatesJSON) {
+                const savedDates = JSON.parse(savedDatesJSON);
+                // Important: Convert date strings back to Date objects
+                savedDates.sprint = savedDates.sprint.map(d => new Date(d));
+                savedDates.accelerator = savedDates.accelerator.map(d => ({
+                    start: new Date(d.start),
+                    end: new Date(d.end)
+                }));
+                setCohortDates(savedDates);
+            } else {
+                // Set default dates if nothing is in localStorage
+                setCohortDates({
+                    sprint: getNextSprintDates(),
+                    accelerator: getNextAcceleratorDates(),
+                });
+            }
+        } catch (error) {
+            console.error("Failed to load or parse cohort dates from localStorage:", error);
+            // Fallback to default dates on error
+            setCohortDates({
+                sprint: getNextSprintDates(),
+                accelerator: getNextAcceleratorDates(),
+            });
+        }
+    }, []);
 
     useEffect(() => {
         document.title = "The AI Way";
@@ -1947,6 +2024,12 @@ const App = () => {
 
     const handleSaveDates = (newDates) => {
         setCohortDates(newDates);
+        try {
+            // Save to localStorage
+            localStorage.setItem('theaiway-cohort-dates', JSON.stringify(newDates));
+        } catch (error) {
+            console.error("Failed to save cohort dates to localStorage:", error);
+        }
         setShowAdminModal(false);
     };
 
@@ -2015,7 +2098,7 @@ const App = () => {
                         initial={{y: '-100%'}} 
                         animate={{y: '0%'}} 
                         exit={{y: '-100%'}}
-                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-[60]"
+                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-50"
                     >
                        Admin Mode is Active. <button onClick={() => setShowAdminModal(true)} className="underline hover:text-purple-800">Edit Cohort Dates</button>
                     </motion.div>
@@ -2100,7 +2183,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
                     onClick={handleClose}
                 >
                     <motion.div
@@ -2145,3 +2228,4 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 export default App;
+
