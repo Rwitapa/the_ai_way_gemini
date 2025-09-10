@@ -258,6 +258,7 @@ const courseData = {
     title: '3-Hour Champion Sprint',
     subtitle: 'Ship Your First KPI Automation in Just 3 Hours',
     description: 'Stop spending hours on manual reports. This focused, hands-on sprint will teach you how to identify a high-value KPI and build your first live automation in just three hours. You’ll walk away with a working workflow and a proof memo you can show to your manager or in an interview.',
+    detailedDescription: "Tired of the endless reporting grind? This intensive sprint is designed to solve your biggest time-sink. In just 3 hours, you'll go from manual data pulls to a fully automated KPI bot that delivers insights directly to your team, giving you back valuable hours each week.",
     price: '₹349',
     originalPrice: '₹1,049',
     bonus: '+ Free resources worth ₹699',
@@ -306,11 +307,12 @@ const courseData = {
     title: '16-Hour Superstar Accelerator',
     subtitle: 'Go Beyond Dashboards. Build AI Agents That Deliver Insights.',
     description: 'This is not another theory-heavy course. The Accelerator gives you the skills to design and deploy end-to-end agentic AI systems—pipelines that pull data, analyze it, and deliver answers where people work. You will learn to build, test, and package real-world solutions that showcase your expertise.',
+    detailedDescription: "Ready to transition from a report builder to an AI-driven strategist? The Accelerator is your deep dive into building end-to-end agentic systems. You'll learn to create AI agents that don't just display data—they analyze funnels, answer complex questions from internal documents, and deliver actionable insights, transforming your role and impact.",
     price: '₹4,999',
     originalPrice: '₹10,999',
     bonus: '+ Free Resources worth ₹5,999',
     level: 'Intermediate',
-    duration: '16 Hours',
+    duration: '16 Hours (Sat & Sun)',
     guarantee: 'Portfolio Project Guarantee',
     keyOutcomes: [
         { icon: 'rocket', text: 'Deploy an end-to-end AI agent' },
@@ -1513,68 +1515,70 @@ const CoursesPage = ({ onBack }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="grid grid-cols-1 lg:grid-cols-10 gap-12"
         >
-            <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
-                <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg">
-                    <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-                    <p className="text-lg text-purple-300 mt-2 mb-6">{course.subtitle}</p>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
-                        <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
-                    </div>
-                    
-                    <div className="mb-6">
-                        <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
-                        <button 
-                            onClick={onOpenCalendar} 
-                            className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
-                        >
-                             <div className="flex items-center gap-3">
-                                <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
-                                <span className="font-semibold text-white text-sm">{formattedDate}</span>
-                            </div>
-                            <span className="text-xs font-bold text-purple-400 group-hover:text-white transition-colors">CHANGE</span>
-                        </button>
-                    </div>
-
-                    <div className="text-center mt-auto">
-                        <div className="mb-4">
-                            <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
-                            <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
-                            <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
+                <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
+                    <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg">
+                        <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                        <p className="text-lg text-purple-300 mt-2 mb-6">{course.subtitle}</p>
+                        
+                        <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                            <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
+                            <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
                         </div>
-                        <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            Enroll for {course.price}
-                        </motion.a>
-                        <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
+                        
+                        <div className="mb-6">
+                            <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
+                            <button 
+                                onClick={onOpenCalendar} 
+                                className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
+                            >
+                                 <div className="flex items-center gap-3">
+                                    <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
+                                    <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                                </div>
+                                <span className="text-xs font-bold text-purple-400 group-hover:text-white transition-colors">CHANGE</span>
+                            </button>
+                        </div>
+
+                        <div className="text-center mt-auto">
+                            <div className="mb-4">
+                                <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
+                                <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
+                                <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
+                            </div>
+                            <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                Enroll for {course.price}
+                            </motion.a>
+                            <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-6">
+                    <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg mb-8">
+                        <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
+                        <div className="space-y-4">
+                            {course.keyOutcomes.map((outcome, i) => (
+                                <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
+                                    <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
+                                    <span className="text-gray-200 font-medium">{outcome.text}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
+                      <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
                     </div>
                 </div>
             </div>
 
-            <div className="lg:col-span-6">
-                <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg mb-8">
-                    <p className="text-gray-300 text-lg leading-relaxed">{course.description}</p>
-                </div>
-
-                <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
-                    <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
-                    <div className="space-y-4">
-                        {course.keyOutcomes.map((outcome, i) => (
-                            <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
-                                <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
-                                <span className="text-gray-200 font-medium">{outcome.text}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="mt-8">
-                    <h3 className="text-2xl font-bold text-white mb-4 ml-2">Course Modules</h3>
+            <div className="mt-12">
+                <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden">
+                    <h3 className="text-2xl font-bold text-white p-8 pb-4">Course Modules</h3>
                     <div className="border-t border-gray-800">
                         {course.modules.map((module, index) => (
-                            <div key={index} className="border-b border-gray-800">
+                            <div key={index} className="border-b border-gray-800 last:border-b-0">
                                 <button
                                     className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
                                     onClick={() => toggleModule(course.title, module.title)}
