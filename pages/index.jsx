@@ -1478,6 +1478,36 @@ const CoursesPage = ({ onBack }) => {
   const [activeCourseId, setActiveCourseId] = useState('sprint');
   
   const videoRef = useRef(null);
+  
+  const mascots = {
+    champion: (
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <defs>
+                <linearGradient id="grad1_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
+                </linearGradient>
+            </defs>
+            <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1_page)" strokeWidth="4" />
+            <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
+            <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+            <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+        </svg>
+    ),
+    accelerator: (
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <defs>
+                <linearGradient id="grad2_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
+                </linearGradient>
+            </defs>
+            <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2_page)" />
+            <circle cx="50" cy="50" r="10" fill="white" />
+            <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
+        </svg>
+    )
+  };
 
   useEffect(() => {
     if (videoRef.current) {
@@ -1486,6 +1516,11 @@ const CoursesPage = ({ onBack }) => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = calendarFor ? 'hidden' : 'unset';
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [calendarFor]);
 
   const sprintCohorts = getNextSprintDates();
   const acceleratorCohorts = getNextAcceleratorDates();
@@ -1519,8 +1554,13 @@ const CoursesPage = ({ onBack }) => {
             <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
                 <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
                     <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg">
-                        <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-                        <p className="text-lg text-purple-300 mt-2 mb-6">{course.subtitle}</p>
+                        <div className="flex items-start gap-4 mb-4">
+                            <div className="w-12 h-12 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
+                            <div>
+                                <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                                <p className="text-lg text-purple-300 mt-2">{course.subtitle}</p>
+                            </div>
+                        </div>
                         
                         <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                             <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
@@ -1556,49 +1596,48 @@ const CoursesPage = ({ onBack }) => {
                 </div>
 
                 <div className="lg:col-span-6">
-                    <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg mb-8">
-                        <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
-                        <div className="space-y-4">
-                            {course.keyOutcomes.map((outcome, i) => (
-                                <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
-                                    <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
-                                    <span className="text-gray-200 font-medium">{outcome.text}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
-                      <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="mt-12">
-                <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden">
-                    <h3 className="text-2xl font-bold text-white p-8 pb-4">Course Modules</h3>
-                    <div className="border-t border-gray-800">
-                        {course.modules.map((module, index) => (
-                            <div key={index} className="border-b border-gray-800 last:border-b-0">
-                                <button
-                                    className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
-                                    onClick={() => toggleModule(course.title, module.title)}
-                                >
-                                    <h4 className="text-lg font-semibold text-white">{module.title}</h4>
-                                    <motion.div animate={{ rotate: openModule === `${course.title}-${module.title}` ? 45 : 0 }}>
-                                      <Icon name="plus" size={24} className="text-purple-500 transform transition-transform duration-300" strokeWidth={2.5} />
-                                    </motion.div>
-                                </button>
-                                <AnimatePresence>
-                                    {openModule === `${course.title}-${module.title}` && (
-                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                                          <div className="px-5 pb-5">
-                                            <p className="text-gray-400">{module.summary}</p>
-                                          </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                    <div className="flex flex-col gap-8">
+                        <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg order-1">
+                            <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
+                            <div className="space-y-4">
+                                {course.keyOutcomes.map((outcome, i) => (
+                                    <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
+                                        <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
+                                        <span className="text-gray-200 font-medium">{outcome.text}</span>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
+                        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden order-3 lg:order-2">
+                            <h3 className="text-2xl font-bold text-white p-8 pb-4">Course Modules</h3>
+                            <div className="border-t border-gray-800">
+                                {course.modules.map((module, index) => (
+                                    <div key={index} className="border-b border-gray-800 last:border-b-0">
+                                        <button
+                                            className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
+                                            onClick={() => toggleModule(course.title, module.title)}
+                                        >
+                                            <h4 className="text-lg font-semibold text-white">{module.title}</h4>
+                                            <motion.div animate={{ rotate: openModule === `${course.title}-${module.title}` ? 45 : 0 }}>
+                                              <Icon name="plus" size={24} className="text-purple-500 transform transition-transform duration-300" strokeWidth={2.5} />
+                                            </motion.div>
+                                        </button>
+                                        <AnimatePresence>
+                                            {openModule === `${course.title}-${module.title}` && (
+                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                                  <div className="px-5 pb-5">
+                                                    <p className="text-gray-400">{module.summary}</p>
+                                                  </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                         <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg order-2 lg:order-3">
+                            <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1624,8 +1663,8 @@ const CoursesPage = ({ onBack }) => {
                 <Icon name="arrow-left" size={20} className="mr-2 transition-transform group-hover:-translate-x-1" /> Back to Home
             </button>
             <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Choose Your Path to Impact</h1>
-                <p className="text-lg text-gray-400 max-w-3xl mx-auto">From report generator to ROI generator. Select a course to see the details.</p>
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your AI Transformation Starts Here</h1>
+                <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
             </div>
             
             <div className="flex justify-center mb-12">
