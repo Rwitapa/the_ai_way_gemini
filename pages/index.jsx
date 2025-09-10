@@ -1,13 +1,76 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import Head from "next/head";
-import Image from "next/image";
 
 // --- CONSTANTS & UTILS ---
 
 const RAZORPAY_PAYMENT_URL = 'https://pages.razorpay.com/pl_REQlevt3yir34I/view';
 const SUPERSTAR_ACCELERATOR_URL = 'https://rzp.io/rzp/ubyT3MWl';
 const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5";
+
+// --- DATE UTILS ---
+const getWeekNumber = (d) => {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+};
+
+const getNextSprintDates = () => {
+    const dates = [];
+    let currentDate = new Date('2025-09-10T12:00:00Z'); // Fixed start date
+    const endDate = new Date(currentDate);
+    endDate.setMonth(endDate.getMonth() + 3); // Set end date 3 months from start
+
+    while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) { // Mon, Wed, Fri
+            dates.push(new Date(currentDate));
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+};
+
+const getNextAcceleratorDates = () => {
+    const dates = [];
+    let currentDate = new Date('2025-09-10T12:00:00Z'); // Fixed start date
+    const endDate = new Date(currentDate);
+    endDate.setMonth(endDate.getMonth() + 3); // Set end date 3 months from start
+
+    let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7;
+    currentDate.setDate(currentDate.getDate() + daysUntilSaturday);
+
+    if (getWeekNumber(currentDate) % 2 !== 0) {
+        currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    while (currentDate <= endDate) {
+        const saturday = new Date(currentDate);
+        const sunday = new Date(currentDate);
+        sunday.setDate(saturday.getDate() + 1);
+        if (saturday <= endDate) { // Ensure the cohort starts within the 3 months
+           dates.push({ start: saturday, end: sunday });
+        }
+        currentDate.setDate(currentDate.getDate() + 14);
+    }
+    return dates;
+};
+
+const formatSprintDate = (date) => date ? `${date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, 7 PM - 10 PM IST` : 'Choose a date...';
+const formatAcceleratorDate = (cohort) => {
+    if (!cohort) return 'Choose a date...';
+    const startDay = cohort.start.toLocaleDateString('en-IN', { day: 'numeric' });
+    const startMonth = cohort.start.toLocaleDateString('en-IN', { month: 'short' });
+    const endDay = cohort.end.toLocaleDateString('en-IN', { day: 'numeric' });
+    const endMonth = cohort.end.toLocaleDateString('en-IN', { month: 'short' });
+
+    if (startMonth === endMonth) {
+        return `${startDay} - ${endDay} ${endMonth}, 10 AM - 7 PM IST`;
+    }
+    return `${startDay} ${startMonth} - ${endDay} ${endMonth}, 10 AM - 7 PM IST`;
+};
+
 
 // Icon component to render various SVG icons used throughout the page
 const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
@@ -174,47 +237,19 @@ const Icon = ({ name, size = 24, strokeWidth = 2, className = '' }) => {
         <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
       </svg>
     ),
+    'calendar': (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+    ),
     'plus': (
        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     )
   };
   return icons[name] || null;
-};
-
-const getNextDayOfWeek = (dayIndices) => {
-  const now = new Date();
-  const currentDay = now.getDay();
-  let closestDay = null;
-  let minDaysToAdd = Infinity;
-  for (const dayIndex of dayIndices) {
-    let daysToAdd = dayIndex - currentDay;
-    if (daysToAdd <= 0) {
-      daysToAdd += 7;
-    }
-    if (daysToAdd < minDaysToAdd) {
-      minDaysToAdd = daysToAdd;
-      closestDay = new Date(now);
-      closestDay.setDate(now.getDate() + daysToAdd);
-    }
-  }
-  return closestDay ? `${closestDay.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}` : '';
-};
-
-const getNextAlternateWeekend = () => {
-  const now = new Date();
-  const today = now.getDay();
-  const daysUntilSaturday = (6 - today + 7) % 7;
-  const nextSaturday = new Date(now);
-  nextSaturday.setDate(now.getDate() + daysUntilSaturday);
-  const isCurrentWeekEven = Math.floor((nextSaturday.getTime() - new Date(nextSaturday.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7)) % 2 === 0;
-  if (!isCurrentWeekEven) {
-    nextSaturday.setDate(nextSaturday.getDate() + 7);
-  }
-  const nextSunday = new Date(nextSaturday);
-  nextSunday.setDate(nextSaturday.getDate() + 1);
-  const start = nextSaturday.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
-  const end = nextSunday.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
-  return ` ${start} - ${end}`;
 };
 
 const courseData = {
@@ -625,7 +660,7 @@ function CompaniesBelt() {
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
 
-  const DURATION = "52s";                    // adjust speed here
+  const DURATION = "52s";                // adjust speed here
 
   return (
     <section id="companies" className="relative w-full pt-8 md:pt-10 pb-6 md:pb-8">
@@ -702,8 +737,8 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     const [score, setScore] = useState(0);
     const [result, setResult] = useState(null);
 
-    const mascots = {
-        champion: (
+  const mascots = {
+    champion: (
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
                     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -730,9 +765,9 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                 <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
             </svg>
         )
-    };
+  };
 
-    const questions = [
+  const questions = [
         {
             question: "Which best describes your day-to-day with data?",
             options: [
@@ -874,7 +909,151 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     );
 };
 
-const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
+const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType }) => {
+    const firstCohortDate = cohortDates[0];
+    const initialDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
+    const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+
+    useEffect(() => {
+        if(isOpen) {
+            setCurrentDate(initialDate || new Date());
+        }
+    }, [isOpen, initialDate]);
+
+    const changeMonth = (offset) => {
+        setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + offset, 1));
+    };
+
+    const renderHeader = () => (
+        <div className="flex justify-between items-center px-4 py-2">
+            <button onClick={() => changeMonth(-1)} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                <Icon name="arrow-left" size={20} />
+            </button>
+            <span className="font-bold text-lg text-white">
+                {currentDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+            </span>
+            <button onClick={() => changeMonth(1)} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                <Icon name="arrow-right" size={20} />
+            </button>
+        </div>
+    );
+
+    const renderDaysOfWeek = () => {
+        const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        return (
+            <div className="grid grid-cols-7 text-center text-xs text-gray-400 font-semibold mb-2">
+                {days.map((day, index) => <div key={index}>{day}</div>)}
+            </div>
+        );
+    };
+
+    const renderCalendarGrid = () => {
+        const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        const startDate = new Date(monthStart);
+        startDate.setDate(startDate.getDate() - monthStart.getDay());
+        const endDate = new Date(monthEnd);
+        endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay()));
+
+        const cohortDateStrings = cohortDates.map(d => courseType === 'sprint' ? d.toDateString() : d.start.toDateString());
+
+        const rows = [];
+        let days = [];
+        let day = new Date(startDate);
+
+        while (day <= endDate) {
+            for (let i = 0; i < 7; i++) {
+                const dayOfMonth = day.getDate();
+                const isCurrentMonth = day.getMonth() === currentDate.getMonth();
+                const isCohortStart = cohortDateStrings.includes(day.toDateString());
+
+                let cohortData = null;
+                if (isCohortStart) {
+                    cohortData = courseType === 'sprint' 
+                        ? cohortDates.find(d => d.toDateString() === day.toDateString())
+                        : cohortDates.find(d => d.start.toDateString() === day.toDateString());
+                }
+
+                days.push(
+                    <div
+                        key={day.toISOString()}
+                        className={`p-1 flex items-center justify-center h-10 w-10 ${!isCurrentMonth ? 'text-gray-600' : 'text-gray-200'}`}
+                    >
+                        {isCohortStart ? (
+                             <button
+                                onClick={() => onDateSelect(courseType, cohortData)}
+                                className="w-full h-full rounded-full bg-purple-600 text-white font-bold hover:bg-purple-500 transition-colors flex items-center justify-center shadow-lg"
+                            >
+                                {dayOfMonth}
+                            </button>
+                        ) : (
+                            isCurrentMonth && <span>{dayOfMonth}</span>
+                        )}
+                    </div>
+                );
+                day.setDate(day.getDate() + 1);
+            }
+            rows.push(<div className="grid grid-cols-7 justify-items-center" key={day.toISOString()}>{days}</div>);
+            days = [];
+        }
+        return <div className="p-2">{rows}</div>;
+    };
+
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    onClick={onClose}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                             <h3 className="text-xl font-bold text-white">{courseTitle}</h3>
+                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                                <Icon name="x" size={20} />
+                            </button>
+                        </div>
+                        {renderHeader()}
+                        {renderDaysOfWeek()}
+                        {renderCalendarGrid()}
+                         <div className="p-4 border-t border-gray-700 text-center">
+                            <p className="text-xs text-gray-400">Select an available date to book your spot.</p>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
+const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
+    const [calendarFor, setCalendarFor] = useState(null);
+
+    const sprintCohorts = getNextSprintDates();
+    const acceleratorCohorts = getNextAcceleratorDates();
+
+    const [selectedCohorts, setSelectedCohorts] = useState({
+        sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
+        accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null,
+    });
+    
+    const handleSelectCohort = (courseType, cohort) => {
+        setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
+        setCalendarFor(null);
+    };
+
+    return (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
         <div className="container mx-auto px-6">
             <div className="text-center mb-12">
@@ -893,14 +1072,18 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                {/* Sprint Card */}
                 <motion.div className="bg-gray-900 rounded-2xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }} transition={{ type: 'spring', stiffness: 300 }}>
                     <div>
                         <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
                         <p className="text-lg text-gray-400 mb-4">{courseData.sprint.subtitle}</p>
                         <p className="text-gray-300 mb-6 text-base">{courseData.sprint.description}</p>
                         <div className="mb-6">
-                            <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
-                            <p className="text-white text-base">{getNextDayOfWeek([1, 3, 5])}, 7-10 PM IST</p>
+                            <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Select Cohort Date</h4>
+                            <button onClick={() => setCalendarFor('sprint')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
+                                <span className="truncate">{formatSprintDate(selectedCohorts.sprint)}</span>
+                                <Icon name="calendar" size={18} className="ml-2 text-purple-400 group-hover:text-white transition-colors" />
+                            </button>
                         </div>
                         <ul className="text-gray-400 space-y-2 mb-6 text-sm">
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Learn to spot repetitive reports that eat your time.</span></li>
@@ -917,6 +1100,8 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                         Enroll Now
                     </motion.a>
                 </motion.div>
+                
+                {/* Accelerator Card */}
                 <motion.div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-2xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }} transition={{ type: 'spring', stiffness: 300 }}>
                     <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">Popular</div>
                     <div>
@@ -924,8 +1109,11 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                         <p className="text-lg text-gray-300 mb-4">{courseData.accelerator.subtitle}</p>
                         <p className="text-gray-200 mb-6 text-base">{courseData.accelerator.description}</p>
                         <div className="mb-6">
-                            <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Next Cohort</h4>
-                            <p className="text-white text-base">{getNextAlternateWeekend()}, 10 AM - 7 PM IST</p>
+                            <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Select Cohort Date</h4>
+                             <button onClick={() => setCalendarFor('accelerator')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
+                                <span className="truncate">{formatAcceleratorDate(selectedCohorts.accelerator)}</span>
+                                <Icon name="calendar" size={18} className="ml-2 text-purple-400 group-hover:text-white transition-colors"/>
+                            </button>
                         </div>
                         <ul className="text-gray-200 space-y-2 mb-6 text-sm">
                             <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Master fundamentals without the fluff.</span></li>
@@ -949,8 +1137,24 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                 </motion.button>
             </div>
         </div>
+        <CohortCalendarModal 
+            isOpen={calendarFor === 'sprint'}
+            onClose={() => setCalendarFor(null)}
+            courseTitle="Champion Sprint"
+            cohortDates={sprintCohorts}
+            onDateSelect={handleSelectCohort}
+            courseType="sprint"
+        />
+        <CohortCalendarModal 
+            isOpen={calendarFor === 'accelerator'}
+            onClose={() => setCalendarFor(null)}
+            courseTitle="Superstar Accelerator"
+            cohortDates={acceleratorCohorts}
+            onDateSelect={handleSelectCohort}
+            courseType="accelerator"
+        />
     </section>
-);
+)};
 
 const MentorSection = ({ sectionRef }) => {
   const videoRef = useRef(null);
@@ -1259,125 +1463,143 @@ const Footer = () => (
 
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
+  const [calendarFor, setCalendarFor] = useState(null);
+
+  const sprintCohorts = getNextSprintDates();
+  const acceleratorCohorts = getNextAcceleratorDates();
+
+  const [selectedCohorts, setSelectedCohorts] = useState({
+      sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
+      accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null
+  });
+
+  const handleSelectCohort = (courseType, cohort) => {
+      setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
+      setCalendarFor(null);
+  };
 
   const toggleModule = (courseTitle, moduleTitle) => {
     const identifier = `${courseTitle}-${moduleTitle}`;
     setOpenModule(openModule === identifier ? null : identifier);
   };
-  
-  const CourseDetailCard = ({ course, isPopular = false, paymentUrl }) => {
+ 
+  // This is a local component for the detailed courses page.
+  const CourseDetailCard = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
     const mascots = {
         champion: (
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
-                    <linearGradient id="grad1_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id={`${course.mascot}-grad-detail`} x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
                         <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
                     </linearGradient>
                 </defs>
-                <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1_page)" strokeWidth="4" />
+                <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="4" />
                 <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
-                <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
-                <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+                <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="3" strokeDasharray="5,5" />
+                <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="3" strokeDasharray="5,5" />
             </svg>
         ),
         accelerator: (
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 <defs>
-                    <linearGradient id="grad2_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id={`${course.mascot}-grad-detail`} x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
                         <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
                     </linearGradient>
                 </defs>
-                <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2_page)" />
+                <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill={`url(#${course.mascot}-grad-detail)`} />
                 <circle cx="50" cy="50" r="10" fill="white" />
                 <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
             </svg>
         )
     };
-    
+    const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
+   
     return (
-    <motion.div 
-      className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 mb-12 shadow-lg shadow-purple-900/10 relative overflow-hidden"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-       <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
-        <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
-           <div className="flex items-start gap-4 mb-4">
-               <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
-               <div>
-                   <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-               </div>
-           </div>
-           <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
-          
-           <div className="grid grid-cols-2 gap-4 text-sm mb-6">
-               <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
-               <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
-           </div>
-
-           <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
-               <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
-               {course.keyOutcomes.map((outcome, i) => (
-                   <div key={i} className="flex items-center gap-3 text-sm">
-                       <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
-                       <span className="text-gray-300">{outcome.text}</span>
-                   </div>
-               ))}
-           </div>
-
-           <div className="text-center mt-auto">
-               <div className="mb-4">
-                  <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
-                  <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
-                  <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
-               </div>
-               <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 Enroll for {course.price}
-               </motion.a>
-               <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
-           </div>
-        </div>
-
-        <div className="lg:col-span-3">
-          <p className="text-gray-300 mb-6">{course.description}</p>
-          <h3 className="text-xl font-bold text-white mb-2">Course Modules</h3>
-          <div className="border-t border-gray-700">
-            {course.modules.map((module, index) => (
-              <div key={index} className="border-b border-gray-700 py-4">
-                <div
-                  className="flex justify-between items-center cursor-pointer group"
-                  onClick={() => toggleModule(course.title, module.title)}
-                >
-                  <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">{module.title}</h4>
-                  <Icon
-                    name="plus"
-                    size={24}
-                    className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? 'rotate-45' : 'rotate-0'}`}
-                    strokeWidth={2.5}
-                  />
+        <motion.div 
+            className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 shadow-lg shadow-purple-900/10 relative overflow-hidden mb-12"
+            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+        >
+            <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
+                <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
+                    <div className="flex items-start gap-4 mb-4">
+                        <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
+                        <div>
+                            <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                        </div>
+                    </div>
+                    <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                        <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
+                        <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
+                    </div>
+                    <div className="mb-6">
+                        <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
+                        <button 
+                            onClick={onOpenCalendar} 
+                            className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
+                        >
+                             <div className="flex items-center gap-3">
+                                <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
+                                <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                            </div>
+                            <span className="text-xs font-bold text-purple-400 group-hover:text-white transition-colors">CHANGE</span>
+                        </button>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
+                        <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
+                        {course.keyOutcomes.map((outcome, i) => (
+                            <div key={i} className="flex items-center gap-3 text-sm">
+                                <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
+                                <span className="text-gray-300">{outcome.text}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="text-center mt-auto">
+                        <div className="mb-4">
+                            <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
+                            <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
+                            <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
+                        </div>
+                        <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            Enroll for {course.price}
+                        </motion.a>
+                        <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
+                    </div>
                 </div>
-                <AnimatePresence>
-                  {openModule === `${course.title}-${module.title}` && (
-                    <motion.p 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 text-gray-400 overflow-hidden pr-8"
-                    >
-                      {module.summary}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  )};
+
+                <div className="lg:col-span-3">
+                    <p className="text-gray-300 mb-6">{course.description}</p>
+                    <div>
+                        <h3 className="text-xl font-bold text-white mb-2">Course Modules</h3>
+                        <div className="border-t border-gray-700">
+                            {course.modules.map((module, index) => (
+                                <div key={index} className="border-b border-gray-700 py-4">
+                                    <div
+                                        className="flex justify-between items-center cursor-pointer group"
+                                        onClick={() => toggleModule(course.title, module.title)}
+                                    >
+                                        <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">{module.title}</h4>
+                                        <Icon name="plus" size={24} className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? 'rotate-45' : 'rotate-0'}`} strokeWidth={2.5} />
+                                    </div>
+                                    <AnimatePresence>
+                                        {openModule === `${course.title}-${module.title}` && (
+                                            <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-2 text-gray-400 overflow-hidden pr-8">
+                                                {module.summary}
+                                            </motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+  };
+
 
   return (
     <div className="min-h-screen pt-24 md:pt-32 pb-16 bg-gray-950">
@@ -1398,14 +1620,40 @@ const CoursesPage = ({ onBack }) => {
             From report generator to ROI generator. Choose your path to turn analytics into action.
           </p>
           <div className="mt-6 flex justify-center items-center gap-x-4 md:gap-x-6 text-sm text-gray-300">
-                <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
-                <span className="flex items-center gap-2 whitespace-nowrap"><Icon name="tool" size={18}/> HANDS-ON</span>
-                <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
+              <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
+              <span className="flex items-center gap-2 whitespace-nowrap"><Icon name="tool" size={18}/> HANDS-ON</span>
+              <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
           </div>
         </div>
-        <CourseDetailCard course={courseData.sprint} paymentUrl={RAZORPAY_PAYMENT_URL} />
-        <CourseDetailCard course={courseData.accelerator} isPopular={true} paymentUrl={SUPERSTAR_ACCELERATOR_URL} />
+        <CourseDetailCard
+            course={courseData.sprint} 
+            paymentUrl={RAZORPAY_PAYMENT_URL}
+            selectedCohort={selectedCohorts.sprint}
+            onOpenCalendar={() => setCalendarFor('sprint')} 
+        />
+        <CourseDetailCard 
+            course={courseData.accelerator} 
+            paymentUrl={SUPERSTAR_ACCELERATOR_URL}
+            selectedCohort={selectedCohorts.accelerator}
+            onOpenCalendar={() => setCalendarFor('accelerator')}
+        />
       </div>
+       <CohortCalendarModal 
+            isOpen={calendarFor === 'sprint'}
+            onClose={() => setCalendarFor(null)}
+            courseTitle="Champion Sprint"
+            cohortDates={sprintCohorts}
+            onDateSelect={handleSelectCohort}
+            courseType="sprint"
+        />
+        <CohortCalendarModal 
+            isOpen={calendarFor === 'accelerator'}
+            onClose={() => setCalendarFor(null)}
+            courseTitle="Superstar Accelerator"
+            cohortDates={acceleratorCohorts}
+            onDateSelect={handleSelectCohort}
+            courseType="accelerator"
+        />
     </div>
   );
 };
@@ -1505,7 +1753,7 @@ const App = () => {
                 .scrolling-column-up { animation: scroll-up 15s linear infinite; }
                 .scrolling-column-down { animation: scroll-down 15s linear infinite; }
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-                @keyframes scroll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+                @keyframes scroll-down { from { transform: translateY(-50%); } to { translateY(0); } }
             `}</style>
 
             <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} />
@@ -1521,8 +1769,5 @@ const App = () => {
 };
 
 export default App;
-
-
-
 
 
