@@ -541,6 +541,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
     <section className="relative overflow-hidden flex items-center bg-gray-950">
       {/* Background video: stronger + more vivid */}
       <video
+        poster="/poster.png"
         className="absolute inset-0 h-full w-full object-cover brightness-110 contrast-110 saturate-125"
         src="/animation_1.mp4"
         playsInline
