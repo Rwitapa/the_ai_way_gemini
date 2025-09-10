@@ -541,12 +541,9 @@ export const HeroSection = ({ handleExploreCourses }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Hero video autoplay was prevented:", error);
-        });
-      }
+      videoRef.current.play().catch(error => {
+        console.log("Hero video autoplay was prevented:", error);
+      });
     }
   }, []);
 
@@ -942,12 +939,9 @@ const MentorSection = ({ sectionRef }) => {
 
   useEffect(() => {
     if (videoRef.current) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Mentor video autoplay was prevented:", error);
-        });
-      }
+      videoRef.current.play().catch(error => {
+        console.log("Mentor video autoplay was prevented:", error);
+      });
     }
   }, []);
 
@@ -995,7 +989,7 @@ const MentorSection = ({ sectionRef }) => {
                   <video
                     ref={videoRef}
                     src="/Rwitapa.mp4"
-                    poster="/Rwitapa.png"
+                    poster="/poster.png"
                     className="block w-full h-full object-cover object-center scale-[1.04]"
                     autoPlay
                     loop
@@ -1125,12 +1119,9 @@ const FAQSection = () => {
 
     useEffect(() => {
         if (videoRef.current) {
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("FAQ video autoplay was prevented:", error);
-                });
-            }
+            videoRef.current.play().catch(error => {
+                console.log("FAQ video autoplay was prevented:", error);
+            });
         }
     }, []);
 
@@ -1138,6 +1129,7 @@ const FAQSection = () => {
         <section className="relative py-16 md:py-20 animate-on-scroll overflow-hidden">
             <video
                 ref={videoRef}
+                poster="/poster.png"
                 className="absolute inset-0 h-full w-full object-cover brightness-50"
                 src="/faq.mp4"
                 playsInline
