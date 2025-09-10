@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { firebaseApp } from "@/lib/firebaseClient";
+import { firebaseApp } from "../lib/firebaseClient";
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getAuth,
