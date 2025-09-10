@@ -966,6 +966,7 @@ const MentorSection = ({ sectionRef }) => (
                 <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 aspect-square">
                   <video
                     src="/Rwitapa.mp4"
+                    poster="/Rwitapa.png"
                     alt="Rwitapa Mitra"
                     className="block w-full h-full object-cover object-center scale-[1.04]"
                     autoPlay
