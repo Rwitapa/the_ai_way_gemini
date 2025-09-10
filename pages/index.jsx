@@ -1075,12 +1075,12 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     );
 };
 
-const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
+const CoursesSection = ({ sectionRef, handleExploreCourses, cohortDates }) => {
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
 
-    const sprintCohorts = getNextSprintDates();
-    const acceleratorCohorts = getNextAcceleratorDates();
+    const sprintCohorts = cohortDates.sprint;
+    const acceleratorCohorts = cohortDates.accelerator;
 
     const [selectedCohorts, setSelectedCohorts] = useState({
         sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
@@ -1452,7 +1452,7 @@ const FinalCTASection = ({ handleExploreCourses }) => {
     );
 }
 
-const Footer = () => (
+const Footer = ({ onAdminToggle }) => (
   <footer className="bg-gray-950 py-10 border-t border-gray-800">
     <div className="container mx-auto px-6">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -1496,13 +1496,14 @@ const Footer = () => (
       <div className="text-center text-gray-500 text-sm space-y-1">
         <p>&copy; 2025 The AI Way. All Rights Reserved.</p>
         <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
+         <button onClick={onAdminToggle} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">Admin Panel</button>
       </div>
     </div>
   </footer>
 );
 
 
-const CoursesPage = ({ onBack }) => {
+const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
   const [calendarFor, setCalendarFor] = useState(null);
   const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
   const [activeCourseId, setActiveCourseId] = useState('sprint');
@@ -1552,13 +1553,20 @@ const CoursesPage = ({ onBack }) => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [calendarFor]);
 
-  const sprintCohorts = getNextSprintDates();
-  const acceleratorCohorts = getNextAcceleratorDates();
+  const sprintCohorts = cohortDates.sprint;
+  const acceleratorCohorts = cohortDates.accelerator;
 
   const [selectedCohorts, setSelectedCohorts] = useState({
       sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
       accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null
   });
+
+  useEffect(() => {
+    setSelectedCohorts({
+      sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
+      accelerator: cohortDates.accelerator.length > 0 ? cohortDates.accelerator[0] : null
+    });
+  }, [cohortDates]);
 
   const handleSelectCohort = (courseType, cohort) => {
       setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
@@ -1755,12 +1763,133 @@ const CoursesPage = ({ onBack }) => {
   );
 };
 
+const AdminModal = ({ isOpen, onClose, currentDates, onSave }) => {
+    const [sprintDates, setSprintDates] = useState([]);
+    const [acceleratorDates, setAcceleratorDates] = useState([]);
+    const [newSprintDate, setNewSprintDate] = useState('');
+    const [newAcceleratorDate, setNewAcceleratorDate] = useState('');
+
+    useEffect(() => {
+        if (isOpen) {
+            setSprintDates(currentDates.sprint.map(d => new Date(d)));
+            setAcceleratorDates(currentDates.accelerator.map(d => ({ start: new Date(d.start), end: new Date(d.end) })));
+        }
+    }, [isOpen, currentDates]);
+
+    const handleAddSprintDate = () => {
+        if (newSprintDate) {
+            const date = new Date(newSprintDate + 'T12:00:00Z');
+            const updatedDates = [...sprintDates, date].sort((a, b) => a - b);
+            setSprintDates(updatedDates);
+            setNewSprintDate('');
+        }
+    };
+    
+    const handleAddAcceleratorDate = () => {
+        if (newAcceleratorDate) {
+            const start = new Date(newAcceleratorDate + 'T12:00:00Z');
+            const end = new Date(start);
+            end.setDate(start.getDate() + 1);
+            const updatedDates = [...acceleratorDates, { start, end }].sort((a, b) => a.start - b.start);
+            setAcceleratorDates(updatedDates);
+            setNewAcceleratorDate('');
+        }
+    };
+
+    const handleRemoveSprintDate = (index) => {
+        setSprintDates(sprintDates.filter((_, i) => i !== index));
+    };
+
+    const handleRemoveAcceleratorDate = (index) => {
+        setAcceleratorDates(acceleratorDates.filter((_, i) => i !== index));
+    };
+
+    const handleSave = () => {
+        onSave({ sprint: sprintDates, accelerator: acceleratorDates });
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col"
+                    >
+                        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                             <h3 className="text-xl font-bold text-white">Admin: Manage Cohort Dates</h3>
+                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                                <Icon name="x" size={20} />
+                            </button>
+                        </div>
+                        
+                        <div className="p-6 grid md:grid-cols-2 gap-6 overflow-y-auto">
+                            {/* Sprint Dates */}
+                            <div className="bg-gray-900/50 p-4 rounded-lg">
+                                <h4 className="font-bold text-white text-lg mb-3">Champion Sprint</h4>
+                                <div className="space-y-2 mb-4 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                                    {sprintDates.map((date, index) => (
+                                        <div key={index} className="flex justify-between items-center bg-gray-700 p-2 rounded">
+                                            <span className="text-sm">{formatSprintDate(date)}</span>
+                                            <button onClick={() => handleRemoveSprintDate(index)}><Icon name="x" size={16} className="text-red-400 hover:text-red-300"/></button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <input type="date" value={newSprintDate} onChange={e => setNewSprintDate(e.target.value)} className="bg-gray-700 text-white p-2 rounded w-full text-sm"/>
+                                    <button onClick={handleAddSprintDate} className="bg-purple-600 px-4 rounded text-sm font-semibold hover:bg-purple-500">Add</button>
+                                </div>
+                            </div>
+
+                            {/* Accelerator Dates */}
+                            <div className="bg-gray-900/50 p-4 rounded-lg">
+                                <h4 className="font-bold text-white text-lg mb-3">Superstar Accelerator</h4>
+                                <div className="space-y-2 mb-4 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                                    {acceleratorDates.map((cohort, index) => (
+                                        <div key={index} className="flex justify-between items-center bg-gray-700 p-2 rounded">
+                                            <span className="text-sm">{formatAcceleratorDate(cohort)}</span>
+                                            <button onClick={() => handleRemoveAcceleratorDate(index)}><Icon name="x" size={16} className="text-red-400 hover:text-red-300"/></button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                     <input type="date" value={newAcceleratorDate} onChange={e => setNewAcceleratorDate(e.target.value)} className="bg-gray-700 text-white p-2 rounded w-full text-sm" placeholder="Select start (Saturday)"/>
+                                    <button onClick={handleAddAcceleratorDate} className="bg-purple-600 px-4 rounded text-sm font-semibold hover:bg-purple-500">Add</button>
+                                </div>
+                                 <p className="text-xs text-gray-500 mt-2">Note: Select the start date (Saturday) for the weekend cohort.</p>
+                            </div>
+                        </div>
+
+                         <div className="p-4 border-t border-gray-700 mt-auto flex justify-end gap-3">
+                            <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
+                            <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm bg-purple-600 hover:bg-purple-500 font-semibold">Save Changes</button>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
 
 // --- MAIN APP COMPONENT ---
 
 const App = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showCoursesPage, setShowCoursesPage] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [showAdminModal, setShowAdminModal] = useState(false);
+    const [cohortDates, setCohortDates] = useState({
+        sprint: getNextSprintDates(),
+        accelerator: getNextAcceleratorDates(),
+    });
 
     const sectionRefs = {
         courses: useRef(null),
@@ -1789,6 +1918,16 @@ const App = () => {
     }, [showCoursesPage]);
 
     useEffect(() => {
+        const handleAdminKey = (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                setIsAdmin(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleAdminKey);
+        return () => window.removeEventListener('keydown', handleAdminKey);
+    }, []);
+
+    useEffect(() => {
         document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
     }, [isMenuOpen]);
@@ -1796,6 +1935,11 @@ const App = () => {
     const handleExploreCourses = () => {
         setShowCoursesPage(true);
         window.scrollTo(0, 0);
+    };
+
+    const handleSaveDates = (newDates) => {
+        setCohortDates(newDates);
+        setShowAdminModal(false);
     };
 
     const scrollToSection = (sectionName) => {
@@ -1816,7 +1960,11 @@ const App = () => {
         <HeroSection handleExploreCourses={handleExploreCourses} />
         <CompaniesBelt />
         <PersonasSection />
-        <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
+        <CoursesSection 
+            sectionRef={sectionRefs.courses} 
+            handleExploreCourses={handleExploreCourses}
+            cohortDates={cohortDates}
+        />
         <MentorSection sectionRef={sectionRefs.mentors} />
         <CourseFinderQuiz scrollToSection={scrollToSection} />
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
@@ -1853,6 +2001,19 @@ const App = () => {
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
             `}</style>
 
+            <AnimatePresence>
+                {isAdmin && (
+                    <motion.div 
+                        initial={{y: '-100%'}} 
+                        animate={{y: '0%'}} 
+                        exit={{y: '-100%'}}
+                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-50"
+                    >
+                       Admin Mode is Active. <button onClick={() => setShowAdminModal(true)} className="underline hover:text-purple-800">Edit Cohort Dates</button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} handleExploreCourses={handleExploreCourses} />
             <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} handleExploreCourses={handleExploreCourses} />
             
@@ -1860,7 +2021,10 @@ const App = () => {
                 <AnimatePresence mode="wait">
                   {showCoursesPage ? (
                     <motion.div key="courses-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
-                      <CoursesPage onBack={() => setShowCoursesPage(false)} />
+                      <CoursesPage 
+                        onBack={() => setShowCoursesPage(false)} 
+                        cohortDates={cohortDates}
+                      />
                     </motion.div>
                   ) : (
                     <motion.div key="main-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
@@ -1870,7 +2034,14 @@ const App = () => {
                 </AnimatePresence>
             </main>
 
-            <Footer />
+            <Footer onAdminToggle={() => setIsAdmin(prev => !prev)} />
+
+            <AdminModal 
+                isOpen={showAdminModal}
+                onClose={() => setShowAdminModal(false)}
+                currentDates={cohortDates}
+                onSave={handleSaveDates}
+            />
         </div>
     );
 };
