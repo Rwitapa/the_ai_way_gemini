@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-//import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-//import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-//import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { firebaseApp } from "@/lib/firebaseClient";
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getAuth,
