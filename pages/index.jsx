@@ -989,7 +989,7 @@ const MentorSection = ({ sectionRef }) => {
                   <video
                     ref={videoRef}
                     src="/Rwitapa.mp4"
-                    poster="/poster.png"
+                    poster="/Rwitapa.png"
                     className="block w-full h-full object-cover object-center scale-[1.04]"
                     autoPlay
                     loop
