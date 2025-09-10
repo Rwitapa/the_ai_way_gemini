@@ -984,7 +984,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
             }
 
             setStyle({
-                top: `${position.top}px`,
+                top: `${position.top + window.scrollY}px`,
                 left: `${left}px`,
             });
         }
@@ -1115,7 +1115,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="fixed z-[100] bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        className="absolute z-[100] bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
                         style={style}
                     >
                         {modalContent}
@@ -2235,5 +2235,6 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 export default App;
+
 
 
