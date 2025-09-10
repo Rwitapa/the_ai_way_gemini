@@ -964,10 +964,14 @@ const MentorSection = ({ sectionRef }) => (
               <div className="p-[6px] rounded-full bg-[conic-gradient(at_70%_30%,#8b5cf6,#22d3ee,#22c55e,#8b5cf6)]">
                 {/* Solid inner circle; keep square to maintain perfect circle */}
                 <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 aspect-square">
-                  <img
-                    src="/Rwitapa.png"
+                  <video
+                    src="/Rwitapa.mp4"
                     alt="Rwitapa Mitra"
                     className="block w-full h-full object-cover object-center scale-[1.04]"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                   />
                 </div>
               </div>
