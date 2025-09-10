@@ -397,7 +397,7 @@ const testimonials = [
 const personas = [
     {
       icon: 'user',
-      text: 'Analysts (0-8 yrs) stuck in repetitive reporting.'
+      text: 'Early career Analysts stuck in repetitive reporting.'
     },
     {
       icon: 'book',
