@@ -20,7 +20,7 @@ export default function MyApp({ Component, pageProps }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
-          content="The AI Way — GenAI for Business Analysts | 3-Hour Sprint & 16-Hour Accelerator"
+          content="GenAI for Business Analysts | Make AI work for you"
         />
       </Head>
       <Component {...pageProps} />
