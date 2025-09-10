@@ -224,7 +224,7 @@ const courseData = {
     subtitle: 'Ship Your First KPI Automation in Just 3 Hours',
     description: 'Stop spending hours on manual reports. This focused, hands-on sprint will teach you how to identify a high-value KPI and build your first live automation in just three hours. You’ll walk away with a working workflow and a proof memo you can show to your manager or in an interview.',
     price: '₹349',
-    originalPrice: '₹1049',
+    originalPrice: '₹1,049',
     bonus: '+ Free resources worth ₹699',
     level: 'Beginner Friendly',
     duration: '3 Hours',
@@ -271,9 +271,9 @@ const courseData = {
     title: '16-Hour Superstar Accelerator',
     subtitle: 'Go Beyond Dashboards. Build AI Agents That Deliver Insights.',
     description: 'This is not another theory-heavy course. The Accelerator gives you the skills to design and deploy end-to-end agentic AI systems—pipelines that pull data, analyze it, and deliver answers where people work. You will learn to build, test, and package real-world solutions that showcase your expertise.',
-    price: '₹4999',
-    originalPrice: '₹10999',
-    bonus: '+ Free Resources worth Rs. 5999',
+    price: '₹4,999',
+    originalPrice: '₹10,999',
+    bonus: '+ Free Resources worth ₹5,999',
     level: 'Intermediate',
     duration: '16 Hours (2 Weekends)',
     guarantee: 'Portfolio Project Guarantee',
@@ -579,7 +579,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Explore All Courses
+              Enroll Now
             </motion.button>
 
             <motion.a
@@ -613,8 +613,8 @@ function CompaniesBelt() {
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
 
-  const ITEMS = [...LOGOS, ...LOGOS];           // single seamless track
-  const DURATION = "52s";                       // adjust speed here
+  const ITEMS = [...LOGOS, ...LOGOS];        // single seamless track
+  const DURATION = "52s";                    // adjust speed here
 
   return (
     <section id="companies" className="relative w-full pt-8 md:pt-10 pb-6 md:pb-8">
@@ -1125,15 +1125,15 @@ const FAQSection = () => {
     );
 };
 
-const FinalCTASection = ({ scrollToSection }) => {
+const FinalCTASection = ({ handleExploreCourses }) => {
     return (
         <section className="py-16 md:py-20 bg-gradient-to-br from-purple-900 to-gray-900 text-center animate-on-scroll">
             <div className="container mx-auto px-6">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Report generator → ROI generator.</h2>
                 <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                    <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        View All Courses
+                    <motion.button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        Enroll Now
                     </motion.button>
                 </div>
             </div>
@@ -1240,39 +1240,39 @@ const CoursesPage = ({ onBack }) => {
        <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
         <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
            <div className="flex items-start gap-4 mb-4">
-                <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
-                <div>
-                    <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-                </div>
+               <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
+               <div>
+                   <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+               </div>
            </div>
            <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
           
            <div className="grid grid-cols-2 gap-4 text-sm mb-6">
-                <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
-                <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
+               <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
+               <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
            </div>
 
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
-                <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
-                {course.keyOutcomes.map((outcome, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm">
-                        <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
-                        <span className="text-gray-300">{outcome.text}</span>
-                    </div>
-                ))}
-            </div>
+           <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
+               <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
+               {course.keyOutcomes.map((outcome, i) => (
+                   <div key={i} className="flex items-center gap-3 text-sm">
+                       <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
+                       <span className="text-gray-300">{outcome.text}</span>
+                   </div>
+               ))}
+           </div>
 
-            <div className="text-center mt-auto">
-                 <div className="mb-4">
-                    <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
-                    <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
-                    <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
-                 </div>
-                 <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    Enroll for {course.price}
-                 </motion.a>
-                 <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
-            </div>
+           <div className="text-center mt-auto">
+               <div className="mb-4">
+                  <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
+                  <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
+                  <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
+               </div>
+               <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                 Enroll for {course.price}
+               </motion.a>
+               <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
+           </div>
         </div>
 
         <div className="lg:col-span-3">
@@ -1410,7 +1410,7 @@ const App = () => {
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
         <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
         <FAQSection />
-        <FinalCTASection scrollToSection={scrollToSection} />
+        <FinalCTASection handleExploreCourses={handleExploreCourses} />
       </>
     );
 
@@ -1455,5 +1455,4 @@ const App = () => {
 };
 
 export default App;
-
 
