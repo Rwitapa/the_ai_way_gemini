@@ -3,6 +3,26 @@ import { motion, AnimatePresence } from "framer-motion";
 //import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 //import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 //import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import {
+  getAuth,
+  signInAnonymously,
+  signInWithCustomToken,
+  onAuthStateChanged,
+} from 'firebase/auth';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+} from 'firebase/firestore';
+
+// Small helper so Next.js (SSR) doesn’t double-init the app
+function getFirebaseApp(config) {
+  if (!config || Object.keys(config).length === 0) return null;
+  return getApps().length ? getApp() : initializeApp(config);
+}
 
 // --- CONSTANTS & UTILS ---
 
