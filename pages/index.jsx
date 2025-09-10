@@ -1067,8 +1067,8 @@ const MentorSection = ({ sectionRef }) => {
   </motion.section>
 )};
 
-const TestimonialCard = ({ testimonial }) => (
-    <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
+const TestimonialCard = ({ testimonial, ...rest }) => (
+    <div {...rest} className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
         <p className="italic text-gray-300 mb-4 text-base">"{testimonial.quote}"</p>
         <div className="flex items-center">
              <img src={testimonial.avatar} alt={`Avatar of ${testimonial.name}`} className="rounded-full mr-4 h-12 w-12 object-cover" />
@@ -1092,13 +1092,21 @@ const TestimonialsSection = ({ sectionRef }) => {
                 <div className="relative h-[450px] overflow-hidden">
                     <div className="absolute inset-0 flex justify-center gap-6">
                         <div className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6 scrolling-column-up">
-                            {[...column1Testimonials, ...column1Testimonials].map((testimonial, index) => (
+                            {column1Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col1-${index}`} testimonial={testimonial} />
+                            ))}
+                            {/* Duplicate for seamless scroll */}
+                            {column1Testimonials.map((testimonial, index) => (
+                                <TestimonialCard key={`col1-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
                         </div>
                         <div className="hidden md:flex w-full md:w-1/2 lg:w-1/3 flex-col space-y-6 scrolling-column-down">
-                            {[...column2Testimonials, ...column2Testimonials].map((testimonial, index) => (
+                            {column2Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col2-${index}`} testimonial={testimonial} />
+                            ))}
+                            {/* Duplicate for seamless scroll */}
+                            {column2Testimonials.map((testimonial, index) => (
+                                <TestimonialCard key={`col2-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
                         </div>
                     </div>
@@ -1513,6 +1521,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
