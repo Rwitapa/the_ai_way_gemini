@@ -1503,7 +1503,6 @@ const Footer = () => (
 
 
 const CoursesPage = ({ onBack }) => {
-  const [openModule, setOpenModule] = useState(null);
   const [calendarFor, setCalendarFor] = useState(null);
   const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
   const [activeCourseId, setActiveCourseId] = useState('sprint');
@@ -1574,13 +1573,15 @@ const CoursesPage = ({ onBack }) => {
     });
     setCalendarFor(courseType);
   };
-
-  const toggleModule = (courseTitle, moduleTitle) => {
-    const identifier = `${courseTitle}-${moduleTitle}`;
-    setOpenModule(openModule === identifier ? null : identifier);
-  };
  
   const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
+    const [openModule, setOpenModule] = useState(null);
+
+    const toggleModule = (moduleTitle) => {
+        const identifier = `${course.title}-${moduleTitle}`;
+        setOpenModule(openModule === identifier ? null : identifier);
+    };
+
     const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
    
     return (
@@ -1661,7 +1662,7 @@ const CoursesPage = ({ onBack }) => {
                         <div key={index} className="border-b border-gray-800 last:border-b-0">
                             <button
                                 className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
-                                onClick={() => toggleModule(course.title, module.title)}
+                                onClick={() => toggleModule(module.title)}
                             >
                                 <h4 className="text-lg font-semibold text-white">{module.title}</h4>
                                 <motion.div animate={{ rotate: openModule === `${course.title}-${module.title}` ? 45 : 0 }}>
@@ -1875,5 +1876,7 @@ const App = () => {
 };
 
 export default App;
+
+
 
 
