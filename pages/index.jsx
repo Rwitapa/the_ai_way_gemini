@@ -923,10 +923,18 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
 const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType, position }) => {
     const modalRef = useRef(null);
     const [style, setStyle] = useState({});
+    const [isMobile, setIsMobile] = useState(false);
 
     const firstCohortDate = cohortDates[0];
     const initialDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
     const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         if (isOpen) {
@@ -936,7 +944,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     }, [isOpen, firstCohortDate, courseType]);
 
     useEffect(() => {
-        if (isOpen && position && modalRef.current) {
+        if (isOpen && !isMobile && position && modalRef.current) {
             const modalWidth = modalRef.current.offsetWidth;
             const windowWidth = window.innerWidth;
 
@@ -953,7 +961,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                 left: `${left}px`,
             });
         }
-    }, [isOpen, position]);
+    }, [isOpen, position, isMobile]);
 
     const changeMonth = (offset) => {
         setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + offset, 1));
@@ -1043,7 +1051,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+                    className={`fixed inset-0 z-50 bg-black/70 backdrop-blur-sm ${isMobile ? 'flex items-center justify-center p-4' : ''}`}
                     onClick={onClose}
                 >
                     <motion.div
@@ -1052,8 +1060,8 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="absolute bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
-                        style={style}
+                        className={`bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm ${!isMobile ? 'absolute' : ''}`}
+                        style={isMobile ? {} : style}
                         onClick={e => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -1624,11 +1632,8 @@ const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
                                 onClick={onOpenCalendar} 
                                 className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
                             >
-                                 <div className="flex items-center gap-3">
-                                    <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
-                                    <span className="font-semibold text-white text-sm">{formattedDate}</span>
-                                </div>
-                                <span className="text-xs font-bold text-purple-400 group-hover:text-white transition-colors">CHANGE</span>
+                                <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                                <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
                             </button>
                         </div>
 
