@@ -310,7 +310,7 @@ const courseData = {
     originalPrice: '₹10,999',
     bonus: '+ Free Resources worth ₹5,999',
     level: 'Intermediate',
-    duration: '16 Hours (2 Weekends)',
+    duration: '16 Hours',
     guarantee: 'Portfolio Project Guarantee',
     keyOutcomes: [
         { icon: 'rocket', text: 'Deploy an end-to-end AI agent' },
@@ -477,7 +477,7 @@ const sections = [
 
 // --- COMPONENTS ---
 
-const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
+const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => {
   const menuButtonRef = useRef(null);
 
   return (
@@ -506,7 +506,13 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-8">
-            {sections.map((section) => (
+            <button
+                onClick={handleExploreCourses}
+                className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
+              >
+                Courses
+              </button>
+            {sections.slice(1).map((section) => (
               <button
                 key={section.ref}
                 onClick={() => scrollToSection(section.ref)}
@@ -542,7 +548,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen }) => {
 };
 
 
-const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
+const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreCourses }) => (
   <AnimatePresence>
     {isMenuOpen && (
       <motion.div
@@ -556,7 +562,10 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
           <Icon name="x" size={32} className="text-white" />
         </button>
         <div className="flex flex-col items-center space-y-8 text-center">
-          {sections.map(section => (
+            <button onClick={() => { setIsMenuOpen(false); handleExploreCourses(); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
+              Courses
+            </button>
+          {sections.slice(1).map(section => (
             <button key={section.ref} onClick={() => { setIsMenuOpen(false); scrollToSection(section.ref); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
               {section.name}
             </button>
@@ -626,7 +635,7 @@ export const HeroSection = ({ handleExploreCourses }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Enroll Now
+              Explore Courses
             </motion.button>
 
             <motion.a
@@ -1403,7 +1412,7 @@ const FinalCTASection = ({ handleExploreCourses }) => {
                 <p className="text-base md:text-lg text-gray-200 max-w-3xl mx-auto mb-8">AI isn't the future. It's already here. Analysts who adapt will lead. Join The AI Way to automate your work, prove impact, and become the analyst your team looks up to.</p>
                 <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                     <motion.button onClick={handleExploreCourses} className="w-full sm:w-auto py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        Enroll Now
+                        Explore Courses
                     </motion.button>
                 </div>
             </div>
@@ -1464,6 +1473,17 @@ const Footer = () => (
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
   const [calendarFor, setCalendarFor] = useState(null);
+  const [activeCourseId, setActiveCourseId] = useState('sprint');
+  
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Courses page video autoplay was prevented:", error);
+      });
+    }
+  }, []);
 
   const sprintCohorts = getNextSprintDates();
   const acceleratorCohorts = getNextAcceleratorDates();
@@ -1483,57 +1503,28 @@ const CoursesPage = ({ onBack }) => {
     setOpenModule(openModule === identifier ? null : identifier);
   };
  
-  // This is a local component for the detailed courses page.
-  const CourseDetailCard = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
-    const mascots = {
-        champion: (
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <defs>
-                    <linearGradient id={`${course.mascot}-grad-detail`} x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
-                        <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
-                    </linearGradient>
-                </defs>
-                <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="4" />
-                <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
-                <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="3" strokeDasharray="5,5" />
-                <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke={`url(#${course.mascot}-grad-detail)`} strokeWidth="3" strokeDasharray="5,5" />
-            </svg>
-        ),
-        accelerator: (
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <defs>
-                    <linearGradient id={`${course.mascot}-grad-detail`} x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
-                        <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
-                    </linearGradient>
-                </defs>
-                <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill={`url(#${course.mascot}-grad-detail)`} />
-                <circle cx="50" cy="50" r="10" fill="white" />
-                <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
-            </svg>
-        )
-    };
+  const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
     const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
    
     return (
         <motion.div 
-            className="bg-gray-900/50 rounded-2xl p-1.5 md:p-2 border border-gray-800 shadow-lg shadow-purple-900/10 relative overflow-hidden mb-12"
-            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            key={course.mascot}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            className="grid grid-cols-1 lg:grid-cols-10 gap-12"
         >
-            <div className="relative bg-gray-900 rounded-xl grid grid-cols-1 lg:grid-cols-5 gap-8 p-6 md:p-8">
-                <div className="lg:col-span-2 bg-gray-950/70 rounded-xl p-6 border border-gray-800 flex flex-col">
-                    <div className="flex items-start gap-4 mb-4">
-                        <div className="w-10 h-10 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
-                        <div>
-                            <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-                        </div>
-                    </div>
-                    <p className="text-lg text-purple-300 mb-4">{course.subtitle}</p>
+            <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
+                <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg">
+                    <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                    <p className="text-lg text-purple-300 mt-2 mb-6">{course.subtitle}</p>
+                    
                     <div className="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div className="flex items-center gap-2"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
-                        <div className="flex items-center gap-2"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
+                        <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
+                        <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
                     </div>
+                    
                     <div className="mb-6">
                         <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
                         <button 
@@ -1547,15 +1538,7 @@ const CoursesPage = ({ onBack }) => {
                             <span className="text-xs font-bold text-purple-400 group-hover:text-white transition-colors">CHANGE</span>
                         </button>
                     </div>
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-3 mb-6">
-                        <h4 className="font-bold text-white text-center mb-2">Key Outcomes</h4>
-                        {course.keyOutcomes.map((outcome, i) => (
-                            <div key={i} className="flex items-center gap-3 text-sm">
-                                <Icon name={outcome.icon} size={20} className="text-purple-400 flex-shrink-0" />
-                                <span className="text-gray-300">{outcome.text}</span>
-                            </div>
-                        ))}
-                    </div>
+
                     <div className="text-center mt-auto">
                         <div className="mb-4">
                             <p className="text-white font-bold text-3xl inline-block mr-3">{course.price}</p>
@@ -1568,31 +1551,50 @@ const CoursesPage = ({ onBack }) => {
                         <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
                     </div>
                 </div>
+            </div>
 
-                <div className="lg:col-span-3">
-                    <p className="text-gray-300 mb-6">{course.description}</p>
-                    <div>
-                        <h3 className="text-xl font-bold text-white mb-2">Course Modules</h3>
-                        <div className="border-t border-gray-700">
-                            {course.modules.map((module, index) => (
-                                <div key={index} className="border-b border-gray-700 py-4">
-                                    <div
-                                        className="flex justify-between items-center cursor-pointer group"
-                                        onClick={() => toggleModule(course.title, module.title)}
-                                    >
-                                        <h4 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">{module.title}</h4>
-                                        <Icon name="plus" size={24} className={`text-purple-500 transform transition-transform duration-300 ${openModule === `${course.title}-${module.title}` ? 'rotate-45' : 'rotate-0'}`} strokeWidth={2.5} />
-                                    </div>
-                                    <AnimatePresence>
-                                        {openModule === `${course.title}-${module.title}` && (
-                                            <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-2 text-gray-400 overflow-hidden pr-8">
-                                                {module.summary}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
+            <div className="lg:col-span-6">
+                <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg mb-8">
+                    <p className="text-gray-300 text-lg leading-relaxed">{course.description}</p>
+                </div>
+
+                <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
+                    <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
+                    <div className="space-y-4">
+                        {course.keyOutcomes.map((outcome, i) => (
+                            <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
+                                <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
+                                <span className="text-gray-200 font-medium">{outcome.text}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-8">
+                    <h3 className="text-2xl font-bold text-white mb-4 ml-2">Course Modules</h3>
+                    <div className="border-t border-gray-800">
+                        {course.modules.map((module, index) => (
+                            <div key={index} className="border-b border-gray-800">
+                                <button
+                                    className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
+                                    onClick={() => toggleModule(course.title, module.title)}
+                                >
+                                    <h4 className="text-lg font-semibold text-white">{module.title}</h4>
+                                    <motion.div animate={{ rotate: openModule === `${course.title}-${module.title}` ? 45 : 0 }}>
+                                      <Icon name="plus" size={24} className="text-purple-500 transform transition-transform duration-300" strokeWidth={2.5} />
+                                    </motion.div>
+                                </button>
+                                <AnimatePresence>
+                                    {openModule === `${course.title}-${module.title}` && (
+                                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                          <div className="px-5 pb-5">
+                                            <p className="text-gray-400">{module.summary}</p>
+                                          </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -1600,44 +1602,62 @@ const CoursesPage = ({ onBack }) => {
     );
   };
 
+  const activeCourseData = activeCourseId === 'sprint' ? courseData.sprint : courseData.accelerator;
 
   return (
-    <div className="min-h-screen pt-24 md:pt-32 pb-16 bg-gray-950">
-      <div className="container mx-auto px-6 md:px-12">
-        <button onClick={onBack} className="flex items-center text-purple-400 hover:text-purple-300 transition-colors mb-8">
-          <Icon name="arrow-left" size={20} className="mr-2" /> Back to Home
-        </button>
-        <div className="text-center mb-12 md:mb-16">
-            <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                </span>
-                <p className="text-green-400 font-semibold">Registrations are now open!</p>
+    <div className="min-h-screen bg-gray-950 relative overflow-hidden">
+        <video
+            ref={videoRef}
+            poster="/poster.png"
+            className="absolute inset-0 h-full w-full object-cover brightness-[0.3]"
+            src="/faq.mp4"
+            playsInline muted autoPlay loop preload="auto" aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/80 to-gray-950"></div>
+      
+        <div className="relative z-10 container mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-16">
+            <button onClick={onBack} className="flex items-center text-purple-400 hover:text-purple-300 transition-colors mb-8 group">
+                <Icon name="arrow-left" size={20} className="mr-2 transition-transform group-hover:-translate-x-1" /> Back to Home
+            </button>
+            <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Choose Your Path to Impact</h1>
+                <p className="text-lg text-gray-400 max-w-3xl mx-auto">From report generator to ROI generator. Select a course to see the details.</p>
             </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">The AI Way Courses</h1>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-            From report generator to ROI generator. Choose your path to turn analytics into action.
-          </p>
-          <div className="mt-6 flex justify-center items-center gap-x-4 md:gap-x-6 text-sm text-gray-300">
-              <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
-              <span className="flex items-center gap-2 whitespace-nowrap"><Icon name="tool" size={18}/> HANDS-ON</span>
-              <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
-          </div>
+            
+            <div className="flex justify-center mb-12">
+                <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full p-1.5">
+                    <button 
+                        onClick={() => setActiveCourseId('sprint')}
+                        className={`px-6 py-2.5 text-sm font-semibold rounded-full relative z-10 transition-colors ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Champion Sprint
+                    </button>
+                    <button 
+                        onClick={() => setActiveCourseId('accelerator')}
+                        className={`px-6 py-2.5 text-sm font-semibold rounded-full relative z-10 transition-colors ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Superstar Accelerator
+                    </button>
+                    <motion.div
+                        layoutId="course-selector-bg"
+                        className="absolute inset-0 bg-purple-600/60 border border-purple-500 rounded-full z-0"
+                        animate={{ x: activeCourseId === 'sprint' ? '0%' : '100%' }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        style={{ width: '50%'}}
+                    />
+                </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+                <CourseContent
+                    key={activeCourseId}
+                    course={activeCourseData}
+                    paymentUrl={activeCourseId === 'sprint' ? RAZORPAY_PAYMENT_URL : SUPERSTAR_ACCELERATOR_URL}
+                    selectedCohort={selectedCohorts[activeCourseId]}
+                    onOpenCalendar={() => setCalendarFor(activeCourseId)}
+                />
+            </AnimatePresence>
         </div>
-        <CourseDetailCard
-            course={courseData.sprint} 
-            paymentUrl={RAZORPAY_PAYMENT_URL}
-            selectedCohort={selectedCohorts.sprint}
-            onOpenCalendar={() => setCalendarFor('sprint')} 
-        />
-        <CourseDetailCard 
-            course={courseData.accelerator} 
-            paymentUrl={SUPERSTAR_ACCELERATOR_URL}
-            selectedCohort={selectedCohorts.accelerator}
-            onOpenCalendar={() => setCalendarFor('accelerator')}
-        />
-      </div>
        <CohortCalendarModal 
             isOpen={calendarFor === 'sprint'}
             onClose={() => setCalendarFor(null)}
@@ -1704,6 +1724,7 @@ const App = () => {
     const scrollToSection = (sectionName) => {
         if (showCoursesPage) {
             setShowCoursesPage(false);
+            // Wait for homepage to render before scrolling
             setTimeout(() => {
                 sectionRefs[sectionName]?.current?.scrollIntoView({ behavior: 'smooth' });
             }, 100);
@@ -1756,11 +1777,21 @@ const App = () => {
                 @keyframes scroll-down { from { transform: translateY(-50%); } to { translateY(0); } }
             `}</style>
 
-            <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} />
-            <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} />
+            <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} handleExploreCourses={handleExploreCourses} />
+            <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} handleExploreCourses={handleExploreCourses} />
             
             <main className="pt-16 md:pt-20">
-                {showCoursesPage ? <CoursesPage onBack={() => setShowCoursesPage(false)} /> : mainPageComponent}
+                <AnimatePresence mode="wait">
+                  {showCoursesPage ? (
+                    <motion.div key="courses-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
+                      <CoursesPage onBack={() => setShowCoursesPage(false)} />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="main-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
+                      {mainPageComponent}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
             </main>
 
             <Footer />
@@ -1769,5 +1800,4 @@ const App = () => {
 };
 
 export default App;
-
 
