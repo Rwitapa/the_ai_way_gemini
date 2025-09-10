@@ -1135,38 +1135,10 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     );
 };
 
-const CoursesSection = ({ sectionRef, handleExploreCourses, cohortDates }) => {
-    const [calendarFor, setCalendarFor] = useState(null);
-    const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
-
+const CoursesSection = ({ sectionRef, handleExploreCourses, cohortDates, handleOpenCalendar, setSelectedCohorts, selectedCohorts }) => {
+    
     const sprintCohorts = cohortDates.sprint;
     const acceleratorCohorts = cohortDates.accelerator;
-
-    const [selectedCohorts, setSelectedCohorts] = useState({
-        sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
-        accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null,
-    });
-    
-    useEffect(() => {
-        setSelectedCohorts({
-            sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
-            accelerator: cohortDates.accelerator.length > 0 ? cohortDates.accelerator[0] : null,
-        });
-    }, [cohortDates]);
-
-    const handleSelectCohort = (courseType, cohort) => {
-        setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
-        setCalendarFor(null);
-    };
-    
-    const handleOpenCalendar = (e, courseType) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setCalendarPosition({
-            top: rect.bottom + 8,
-            left: rect.left,
-        });
-        setCalendarFor(courseType);
-    };
 
     return (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
@@ -1252,15 +1224,6 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, cohortDates }) => {
                 </motion.button>
             </div>
         </div>
-        <CohortCalendarModal 
-            isOpen={!!calendarFor}
-            onClose={() => setCalendarFor(null)}
-            courseTitle={calendarFor === 'sprint' ? "Champion Sprint" : "Superstar Accelerator"}
-            cohortDates={calendarFor === 'sprint' ? sprintCohorts : acceleratorCohorts}
-            onDateSelect={handleSelectCohort}
-            courseType={calendarFor}
-            position={calendarPosition}
-        />
     </section>
 )};
 
@@ -1571,10 +1534,30 @@ const Footer = ({ onAdminClick, isAdmin }) => (
   </footer>
 );
 
+const MainPage = ({ sectionRefs, handleExploreCourses, cohortDates, scrollToSection, handleOpenCalendar, setSelectedCohorts, selectedCohorts }) => (
+    <>
+        <HeroSection handleExploreCourses={handleExploreCourses} />
+        <CompaniesBelt />
+        <PersonasSection />
+        <CoursesSection 
+            sectionRef={sectionRefs.courses} 
+            handleExploreCourses={handleExploreCourses}
+            cohortDates={cohortDates}
+            handleOpenCalendar={handleOpenCalendar}
+            setSelectedCohorts={setSelectedCohorts}
+            selectedCohorts={selectedCohorts}
+        />
+        <MentorSection sectionRef={sectionRefs.mentors} />
+        <CourseFinderQuiz scrollToSection={scrollToSection} />
+        <TestimonialsSection sectionRef={sectionRefs.testimonials} />
+        <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
+        <FAQSection />
+        <FinalCTASection handleExploreCourses={handleExploreCourses} />
+    </>
+);
 
-const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
-  const [calendarFor, setCalendarFor] = useState(null);
-  const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
+
+const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, setSelectedCohorts, selectedCohorts }) => {
   const [activeCourseId, setActiveCourseId] = useState('sprint');
   
   const videoRef = useRef(null);
@@ -1616,35 +1599,6 @@ const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
       });
     }
   }, []);
-
-  const sprintCohorts = cohortDates.sprint;
-  const acceleratorCohorts = cohortDates.accelerator;
-
-  const [selectedCohorts, setSelectedCohorts] = useState({
-      sprint: sprintCohorts.length > 0 ? sprintCohorts[0] : null,
-      accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null
-  });
-
-  useEffect(() => {
-    setSelectedCohorts({
-      sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
-      accelerator: cohortDates.accelerator.length > 0 ? cohortDates.accelerator[0] : null
-    });
-  }, [cohortDates]);
-
-  const handleSelectCohort = (courseType, cohort) => {
-      setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
-      setCalendarFor(null);
-  };
-  
-  const handleOpenCalendar = (e, courseType) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setCalendarPosition({
-        top: rect.bottom + 8,
-        left: rect.left,
-    });
-    setCalendarFor(courseType);
-  };
  
   const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
     const [openModule, setOpenModule] = useState(null);
@@ -1814,15 +1768,6 @@ const CoursesPage = ({ onBack, cohortDates, onUpdateDates }) => {
                 />
             </AnimatePresence>
         </div>
-        <CohortCalendarModal 
-            isOpen={!!calendarFor}
-            onClose={() => setCalendarFor(null)}
-            courseTitle={calendarFor === 'sprint' ? "Champion Sprint Cohorts" : "Superstar Accelerator Cohorts"}
-            cohortDates={calendarFor === 'sprint' ? sprintCohorts : acceleratorCohorts}
-            onDateSelect={handleSelectCohort}
-            courseType={calendarFor}
-            position={calendarPosition}
-        />
     </div>
   );
 };
@@ -1956,6 +1901,12 @@ const App = () => {
         accelerator: [],
     });
     const [db, setDb] = useState(null);
+    const [calendarFor, setCalendarFor] = useState(null);
+    const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
+    const [selectedCohorts, setSelectedCohorts] = useState({
+        sprint: null,
+        accelerator: null,
+    });
 
     const sectionRefs = {
         courses: useRef(null),
@@ -2035,6 +1986,14 @@ const App = () => {
         }
     }, []);
 
+    // Effect to update the default selected cohort when dates change
+    useEffect(() => {
+        setSelectedCohorts({
+            sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
+            accelerator: cohortDates.accelerator.length > 0 ? cohortDates.accelerator[0] : null,
+        });
+    }, [cohortDates]);
+
     useEffect(() => {
         document.title = "The AI Way";
     }, []);
@@ -2090,6 +2049,20 @@ const App = () => {
         }
     };
 
+    const handleOpenCalendar = (e, courseType) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setCalendarPosition({
+            top: rect.bottom + 8,
+            left: rect.left,
+        });
+        setCalendarFor(courseType);
+    };
+
+    const handleSelectCohort = (courseType, cohort) => {
+        setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
+        setCalendarFor(null);
+    };
+
     const scrollToSection = (sectionName) => {
         if (showCoursesPage) {
             setShowCoursesPage(false);
@@ -2102,25 +2075,6 @@ const App = () => {
         }
         setIsMenuOpen(false);
     };
-
-    const mainPageComponent = (
-      <>
-        <HeroSection handleExploreCourses={handleExploreCourses} />
-        <CompaniesBelt />
-        <PersonasSection />
-        <CoursesSection 
-            sectionRef={sectionRefs.courses} 
-            handleExploreCourses={handleExploreCourses}
-            cohortDates={cohortDates}
-        />
-        <MentorSection sectionRef={sectionRefs.mentors} />
-        <CourseFinderQuiz scrollToSection={scrollToSection} />
-        <TestimonialsSection sectionRef={sectionRefs.testimonials} />
-        <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
-        <FAQSection />
-        <FinalCTASection handleExploreCourses={handleExploreCourses} />
-      </>
-    );
 
     return (
         <div className="bg-gray-950 text-gray-200 font-sans leading-relaxed tracking-wide antialiased overflow-x-hidden">
@@ -2172,11 +2126,22 @@ const App = () => {
                       <CoursesPage 
                         onBack={() => setShowCoursesPage(false)} 
                         cohortDates={cohortDates}
+                        handleOpenCalendar={handleOpenCalendar}
+                        setSelectedCohorts={setSelectedCohorts}
+                        selectedCohorts={selectedCohorts}
                       />
                     </motion.div>
                   ) : (
                     <motion.div key="main-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
-                      {mainPageComponent}
+                      <MainPage
+                        sectionRefs={sectionRefs}
+                        handleExploreCourses={handleExploreCourses}
+                        cohortDates={cohortDates}
+                        scrollToSection={scrollToSection}
+                        handleOpenCalendar={handleOpenCalendar}
+                        setSelectedCohorts={setSelectedCohorts}
+                        selectedCohorts={selectedCohorts}
+                      />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -2204,6 +2169,16 @@ const App = () => {
                     setIsAdmin(true);
                     setShowLoginModal(false);
                 }}
+            />
+
+            <CohortCalendarModal 
+                isOpen={!!calendarFor}
+                onClose={() => setCalendarFor(null)}
+                courseTitle={calendarFor === 'sprint' ? "Champion Sprint" : "Superstar Accelerator"}
+                cohortDates={calendarFor === 'sprint' ? cohortDates.sprint : cohortDates.accelerator}
+                onDateSelect={handleSelectCohort}
+                courseType={calendarFor}
+                position={calendarPosition}
             />
         </div>
     );
