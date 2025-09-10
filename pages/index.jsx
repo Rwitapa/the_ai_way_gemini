@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 
 // --- CONSTANTS & UTILS ---
 
@@ -1952,6 +1955,7 @@ const App = () => {
         sprint: [],
         accelerator: [],
     });
+    const [db, setDb] = useState(null);
 
     const sectionRefs = {
         courses: useRef(null),
@@ -1960,29 +1964,70 @@ const App = () => {
         testimonials: useRef(null),
     };
 
-    // Load dates from localStorage on initial render
+    // Firebase setup and data listener
     useEffect(() => {
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseConfig = {};
         try {
-            const savedDatesJSON = localStorage.getItem('theaiway-cohort-dates');
-            if (savedDatesJSON) {
-                const savedDates = JSON.parse(savedDatesJSON);
-                // Important: Convert date strings back to Date objects
-                savedDates.sprint = savedDates.sprint.map(d => new Date(d));
-                savedDates.accelerator = savedDates.accelerator.map(d => ({
-                    start: new Date(d.start),
-                    end: new Date(d.end)
-                }));
-                setCohortDates(savedDates);
-            } else {
-                // Set default dates if nothing is in localStorage
-                setCohortDates({
-                    sprint: getNextSprintDates(),
-                    accelerator: getNextAcceleratorDates(),
-                });
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                firebaseConfig = JSON.parse(__firebase_config);
             }
-        } catch (error) {
-            console.error("Failed to load or parse cohort dates from localStorage:", error);
-            // Fallback to default dates on error
+        } catch (e) {
+            console.error("Error parsing Firebase config:", e);
+        }
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            const firestoreDb = getFirestore(app);
+            const auth = getAuth(app);
+            setDb(firestoreDb);
+
+            const signInAndListen = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase authentication failed:", error);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        const datesDocRef = doc(firestoreDb, `/artifacts/${appId}/public/data/cohorts/dates`);
+                        
+                        const unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
+                            if (docSnap.exists()) {
+                                const data = docSnap.data();
+                                if (data.sprint && data.accelerator) {
+                                     setCohortDates({
+                                        sprint: data.sprint.map(d => d.toDate()),
+                                        accelerator: data.accelerator.map(c => ({
+                                            start: c.start.toDate(),
+                                            end: c.end.toDate()
+                                        }))
+                                    });
+                                }
+                            } else {
+                                console.log("No cohort dates document. Creating one with defaults.");
+                                const defaultDates = {
+                                    sprint: getNextSprintDates(),
+                                    accelerator: getNextAcceleratorDates(),
+                                };
+                                setDoc(datesDocRef, defaultDates).catch(e => console.error("Error creating initial dates doc:", e));
+                            }
+                        }, (error) => {
+                            console.error("Error listening to cohort dates:", error);
+                        });
+                        return () => unsubscribe();
+                    }
+                });
+            };
+            signInAndListen();
+
+        } else {
+            console.warn("Firebase config not available. Using default generated dates.");
             setCohortDates({
                 sprint: getNextSprintDates(),
                 accelerator: getNextAcceleratorDates(),
@@ -2029,15 +2074,20 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    const handleSaveDates = (newDates) => {
-        setCohortDates(newDates);
-        try {
-            // Save to localStorage
-            localStorage.setItem('theaiway-cohort-dates', JSON.stringify(newDates));
-        } catch (error) {
-            console.error("Failed to save cohort dates to localStorage:", error);
+    const handleSaveDates = async (newDates) => {
+        if (!db) {
+            console.error("Firestore is not initialized. Cannot save dates.");
+            setShowAdminModal(false);
+            return;
         }
-        setShowAdminModal(false);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+        try {
+            await setDoc(datesDocRef, newDates);
+            setShowAdminModal(false);
+        } catch (error) {
+            console.error("Failed to save cohort dates to Firestore:", error);
+        }
     };
 
     const scrollToSection = (sectionName) => {
@@ -2235,6 +2285,4 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 export default App;
-
-
 
