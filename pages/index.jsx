@@ -625,7 +625,6 @@ function CompaniesBelt() {
     { name: 'PharmEasy', src: '/brand/PharmEasy_logo (1).png' },
   ];
 
-  const ITEMS = [...LOGOS, ...LOGOS];        // single seamless track
   const DURATION = "52s";                    // adjust speed here
 
   return (
@@ -638,7 +637,7 @@ function CompaniesBelt() {
         {/* viewport with edge fade; no section-wide overlay */}
         <div className="marquee">
           <ul className="marquee__track" style={{ ["--dur"]: DURATION }}>
-            {ITEMS.map((logo, i) => (
+            {LOGOS.map((logo, i) => (
               <li key={`${logo.name}-${i}`} className="shrink-0">
                 {/* Tile with per-tile grey overlay BEHIND the logo */}
                 <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
@@ -654,6 +653,23 @@ function CompaniesBelt() {
                   />
                 </div>
               </li>
+            ))}
+            {/* Duplicate the logos here for the seamless scroll effect */}
+            {LOGOS.map((logo, i) => (
+                <li key={`${logo.name}-${i}-clone`} className="shrink-0" aria-hidden="true">
+                    <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
+                        <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" aria-hidden="true" />
+                        <img
+                            src={logo.src}
+                            alt={logo.name}
+                            loading="lazy"
+                            decoding="async"
+                            className={`relative z-10 w-auto object-contain ${
+                                logo.name === "PharmEasy" ? "max-h-8 md:max-h-9" : "max-h-9 md:max-h-10"
+                            }`}
+                        />
+                    </div>
+                </li>
             ))}
           </ul>
         </div>
@@ -1497,5 +1513,6 @@ const App = () => {
 };
 
 export default App;
+
 
 
