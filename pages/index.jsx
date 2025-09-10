@@ -537,10 +537,24 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection }) => (
 
 
 export const HeroSection = ({ handleExploreCourses }) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Hero video autoplay was prevented:", error);
+        });
+      }
+    }
+  }, []);
+
   return (
     <section className="relative overflow-hidden flex items-center bg-gray-950">
       {/* Background video: stronger + more vivid */}
       <video
+        ref={videoRef}
         poster="/poster.png"
         className="absolute inset-0 h-full w-full object-cover brightness-110 contrast-110 saturate-125"
         src="/animation_1.mp4"
@@ -923,7 +937,21 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
     </section>
 );
 
-const MentorSection = ({ sectionRef }) => (
+const MentorSection = ({ sectionRef }) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Mentor video autoplay was prevented:", error);
+        });
+      }
+    }
+  }, []);
+
+  return (
   <motion.section
     ref={sectionRef}
     className="py-16 md:py-20 bg-gray-950"
@@ -965,9 +993,9 @@ const MentorSection = ({ sectionRef }) => (
                 {/* Solid inner circle; keep square to maintain perfect circle */}
                 <div className="rounded-full overflow-hidden bg-[#0b1220] w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 aspect-square">
                   <video
+                    ref={videoRef}
                     src="/Rwitapa.mp4"
                     poster="/Rwitapa.png"
-                    alt="Rwitapa Mitra"
                     className="block w-full h-full object-cover object-center scale-[1.04]"
                     autoPlay
                     loop
@@ -1025,7 +1053,7 @@ const MentorSection = ({ sectionRef }) => (
       </motion.div>
     </div>
   </motion.section>
-);
+)};
 
 const TestimonialCard = ({ testimonial }) => (
     <div className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-purple-800/20 p-6 shadow-2xl shadow-purple-900/20 mb-6">
@@ -1093,9 +1121,23 @@ const WhatYouLearnSection = ({ sectionRef }) => (
 
 const FAQSection = () => {
     const [openFaq, setOpenFaq] = useState(null);
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            const playPromise = videoRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("FAQ video autoplay was prevented:", error);
+                });
+            }
+        }
+    }, []);
+
     return (
         <section className="relative py-16 md:py-20 animate-on-scroll overflow-hidden">
             <video
+                ref={videoRef}
                 className="absolute inset-0 h-full w-full object-cover brightness-50"
                 src="/faq.mp4"
                 playsInline
