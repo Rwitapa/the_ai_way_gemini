@@ -819,9 +819,14 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className="flex justify-center items-center gap-3 mb-2">
-                                  <Icon name="compass" size={32} className="text-purple-400" />
-                                  <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
+                                <div className="flex justify-between items-start gap-4 mb-2">
+                                    <div className="flex items-center gap-3">
+                                      <Icon name="compass" size={32} className="text-purple-400 flex-shrink-0" />
+                                      <h3 className="text-2xl md:text-3xl font-bold text-white text-left">Not sure where to start?</h3>
+                                    </div>
+                                    <div className="font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full flex-shrink-0">
+                                        {step + 1} / {questions.length}
+                                    </div>
                                 </div>
                                 <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 
@@ -844,9 +849,6 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                         ))}
                                     </div>
                                 </div>
-                                <div className="absolute top-4 right-4 font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full">
-                                    {step + 1} / {questions.length}
-                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -868,9 +870,9 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => (
                     <p className="text-green-400 font-semibold">Registrations are now open!</p>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Choose Your Path to Impact</h2>
-                 <div className="mt-6 flex justify-center items-center gap-6 text-sm text-gray-300">
+                 <div className="mt-6 flex justify-center items-center gap-x-4 md:gap-x-6 text-sm text-gray-300">
                     <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
-                    <span className="flex items-center gap-2"><Icon name="tool" size={18}/> HANDS-ON</span>
+                    <span className="flex items-center gap-2 whitespace-nowrap"><Icon name="tool" size={18}/> HANDS-ON</span>
                     <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
                 </div>
             </div>
@@ -1371,9 +1373,9 @@ const CoursesPage = ({ onBack }) => {
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             From report generator to ROI generator. Choose your path to turn analytics into action.
           </p>
-          <div className="mt-6 flex justify-center items-center gap-6 text-sm text-gray-300">
+          <div className="mt-6 flex justify-center items-center gap-x-4 md:gap-x-6 text-sm text-gray-300">
                 <span className="flex items-center gap-2"><Icon name="play-circle" size={18}/> ONLINE</span>
-                <span className="flex items-center gap-2"><Icon name="tool" size={18}/> HANDS-ON</span>
+                <span className="flex items-center gap-2 whitespace-nowrap"><Icon name="tool" size={18}/> HANDS-ON</span>
                 <span className="flex items-center gap-2"><Icon name="award" size={18}/> CERTIFICATE</span>
           </div>
         </div>
@@ -1445,8 +1447,8 @@ const App = () => {
         <CompaniesBelt />
         <PersonasSection />
         <CoursesSection sectionRef={sectionRefs.courses} handleExploreCourses={handleExploreCourses} />
-        <CourseFinderQuiz scrollToSection={scrollToSection} />
         <MentorSection sectionRef={sectionRefs.mentors} />
+        <CourseFinderQuiz scrollToSection={scrollToSection} />
         <TestimonialsSection sectionRef={sectionRefs.testimonials} />
         <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
         <FAQSection />
@@ -1495,4 +1497,5 @@ const App = () => {
 };
 
 export default App;
+
 
