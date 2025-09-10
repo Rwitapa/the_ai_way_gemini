@@ -1144,6 +1144,13 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, cohortDates }) => {
         accelerator: acceleratorCohorts.length > 0 ? acceleratorCohorts[0] : null,
     });
     
+    useEffect(() => {
+        setSelectedCohorts({
+            sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
+            accelerator: cohortDates.accelerator.length > 0 ? cohortDates.accelerator[0] : null,
+        });
+    }, [cohortDates]);
+
     const handleSelectCohort = (courseType, cohort) => {
         setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
         setCalendarFor(null);
@@ -2228,4 +2235,5 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 export default App;
+
 
