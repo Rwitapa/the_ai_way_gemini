@@ -775,7 +775,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="py-16 md:py-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
-                    className="bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 max-w-4xl mx-auto border border-purple-800/60 relative"
+                    className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -819,16 +819,16 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className="flex justify-between items-start gap-4 mb-2">
-                                    <div className="flex items-center gap-3">
-                                      <Icon name="compass" size={32} className="text-purple-400 flex-shrink-0" />
-                                      <h3 className="text-2xl md:text-3xl font-bold text-white text-left">Not sure where to start?</h3>
-                                    </div>
-                                    <div className="font-mono text-lg text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full flex-shrink-0">
-                                        {step + 1} / {questions.length}
+                                <div className="relative mb-4">
+                                    <div className="absolute top-0 right-0 font-mono text-base text-purple-400 bg-gray-950/50 px-3 py-1 rounded-full">{step + 1} / {questions.length}</div>
+                                    <div className="text-center">
+                                        <div className="flex justify-center items-center gap-3 mb-2 pt-2">
+                                            <Icon name="compass" size={32} className="text-purple-400"/>
+                                            <h3 className="text-2xl md:text-3xl font-bold text-white">Not sure where to start?</h3>
+                                        </div>
+                                        <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                     </div>
                                 </div>
-                                <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
@@ -1101,7 +1101,7 @@ const WhatYouLearnSection = ({ sectionRef }) => (
             <h2 className="text-base md:text-lg font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
             <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Learn how to free yourself from manual tasks and build credibility fast.</p>
-            <div className="flex flex-nowrap overflow-x-auto gap-6 pb-6 -mx-6 px-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="flex justify-center flex-nowrap overflow-x-auto gap-6 pb-6 -mx-6 px-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {whatYouLearnItems.map((item, index) => (
                     <motion.div key={index} className="group relative flex-shrink-0 w-64 bg-gray-900 border border-gray-800 rounded-xl p-6 text-left overflow-hidden transition-all duration-300 animate-on-scroll" whileHover={{ y: -5, boxShadow: '0 0 25px rgba(168, 85, 247, 0.25)' }} transition={{ type: 'spring', stiffness: 300 }}>
                         <div className="absolute -top-8 -right-8 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
