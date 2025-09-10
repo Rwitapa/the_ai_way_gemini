@@ -834,7 +834,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     }
 
     return (
-        <section className="py-16 md:py-20 bg-gray-950">
+        <section className="pt-8 md:pt-10 pb-16 md:pb-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div 
                     className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative"
@@ -920,16 +920,40 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     );
 };
 
-const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType }) => {
+const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType, position }) => {
+    const modalRef = useRef(null);
+    const [style, setStyle] = useState({});
+
     const firstCohortDate = cohortDates[0];
     const initialDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
     const [currentDate, setCurrentDate] = useState(initialDate || new Date());
 
     useEffect(() => {
-        if(isOpen) {
-            setCurrentDate(initialDate || new Date());
+        if (isOpen) {
+            const newDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
+            setCurrentDate(newDate || new Date());
         }
-    }, [isOpen, initialDate]);
+    }, [isOpen, firstCohortDate, courseType]);
+
+    useEffect(() => {
+        if (isOpen && position && modalRef.current) {
+            const modalWidth = modalRef.current.offsetWidth;
+            const windowWidth = window.innerWidth;
+
+            let left = position.left;
+            if (left + modalWidth > windowWidth - 16) {
+                left = windowWidth - modalWidth - 16;
+            }
+            if (left < 16) {
+                left = 16;
+            }
+
+            setStyle({
+                top: `${position.top}px`,
+                left: `${left}px`,
+            });
+        }
+    }, [isOpen, position]);
 
     const changeMonth = (offset) => {
         setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + offset, 1));
@@ -969,14 +993,16 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         const cohortDateStrings = cohortDates.map(d => courseType === 'sprint' ? d.toDateString() : d.start.toDateString());
 
         const rows = [];
-        let days = [];
         let day = new Date(startDate);
 
         while (day <= endDate) {
+            const days = [];
+            const weekStartDate = new Date(day);
             for (let i = 0; i < 7; i++) {
                 const dayOfMonth = day.getDate();
                 const isCurrentMonth = day.getMonth() === currentDate.getMonth();
                 const isCohortStart = cohortDateStrings.includes(day.toDateString());
+                const dayKey = day.toISOString();
 
                 let cohortData = null;
                 if (isCohortStart) {
@@ -987,7 +1013,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
 
                 days.push(
                     <div
-                        key={day.toISOString()}
+                        key={dayKey}
                         className={`p-1 flex items-center justify-center h-10 w-10 ${!isCurrentMonth ? 'text-gray-600' : 'text-gray-200'}`}
                     >
                         {isCohortStart ? (
@@ -1004,8 +1030,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                 );
                 day.setDate(day.getDate() + 1);
             }
-            rows.push(<div className="grid grid-cols-7 justify-items-center" key={day.toISOString()}>{days}</div>);
-            days = [];
+            rows.push(<div className="grid grid-cols-7 justify-items-center" key={weekStartDate.toISOString()}>{days}</div>);
         }
         return <div className="p-2">{rows}</div>;
     };
@@ -1018,15 +1043,17 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
                     onClick={onClose}
                 >
                     <motion.div
+                        ref={modalRef}
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        className="absolute bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
+                        style={style}
                         onClick={e => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -1050,6 +1077,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
 
 const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
     const [calendarFor, setCalendarFor] = useState(null);
+    const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
 
     const sprintCohorts = getNextSprintDates();
     const acceleratorCohorts = getNextAcceleratorDates();
@@ -1062,6 +1090,15 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
     const handleSelectCohort = (courseType, cohort) => {
         setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
         setCalendarFor(null);
+    };
+    
+    const handleOpenCalendar = (e, courseType) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setCalendarPosition({
+            top: rect.bottom + window.scrollY + 8,
+            left: rect.left + window.scrollX,
+        });
+        setCalendarFor(courseType);
     };
 
     return (
@@ -1091,7 +1128,7 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
                         <p className="text-gray-300 mb-6 text-base">{courseData.sprint.description}</p>
                         <div className="mb-6">
                             <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Select Cohort Date</h4>
-                            <button onClick={() => setCalendarFor('sprint')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
+                            <button onClick={(e) => handleOpenCalendar(e, 'sprint')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
                                 <span className="truncate">{formatSprintDate(selectedCohorts.sprint)}</span>
                                 <Icon name="calendar" size={18} className="ml-2 text-purple-400 group-hover:text-white transition-colors" />
                             </button>
@@ -1121,7 +1158,7 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
                         <p className="text-gray-200 mb-6 text-base">{courseData.accelerator.description}</p>
                         <div className="mb-6">
                             <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2">Select Cohort Date</h4>
-                             <button onClick={() => setCalendarFor('accelerator')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
+                             <button onClick={(e) => handleOpenCalendar(e, 'accelerator')} className="text-white text-base font-semibold border border-gray-600 rounded-lg px-4 py-2 w-full text-left hover:bg-gray-800 transition-colors flex justify-between items-center group">
                                 <span className="truncate">{formatAcceleratorDate(selectedCohorts.accelerator)}</span>
                                 <Icon name="calendar" size={18} className="ml-2 text-purple-400 group-hover:text-white transition-colors"/>
                             </button>
@@ -1149,20 +1186,13 @@ const CoursesSection = ({ sectionRef, handleExploreCourses }) => {
             </div>
         </div>
         <CohortCalendarModal 
-            isOpen={calendarFor === 'sprint'}
+            isOpen={!!calendarFor}
             onClose={() => setCalendarFor(null)}
-            courseTitle="Champion Sprint"
-            cohortDates={sprintCohorts}
+            courseTitle={calendarFor === 'sprint' ? "Champion Sprint" : "Superstar Accelerator"}
+            cohortDates={calendarFor === 'sprint' ? sprintCohorts : acceleratorCohorts}
             onDateSelect={handleSelectCohort}
-            courseType="sprint"
-        />
-        <CohortCalendarModal 
-            isOpen={calendarFor === 'accelerator'}
-            onClose={() => setCalendarFor(null)}
-            courseTitle="Superstar Accelerator"
-            cohortDates={acceleratorCohorts}
-            onDateSelect={handleSelectCohort}
-            courseType="accelerator"
+            courseType={calendarFor}
+            position={calendarPosition}
         />
     </section>
 )};
@@ -1181,7 +1211,7 @@ const MentorSection = ({ sectionRef }) => {
   return (
   <motion.section
     ref={sectionRef}
-    className="py-16 md:py-20 bg-gray-950"
+    className="pt-16 md:pt-20 pb-8 md:pb-10 bg-gray-950"
     initial="hidden"
     whileInView="visible"
     viewport={{ once: true, amount: 0.3 }}
@@ -1475,6 +1505,7 @@ const Footer = () => (
 const CoursesPage = ({ onBack }) => {
   const [openModule, setOpenModule] = useState(null);
   const [calendarFor, setCalendarFor] = useState(null);
+  const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
   const [activeCourseId, setActiveCourseId] = useState('sprint');
   
   const videoRef = useRef(null);
@@ -1533,6 +1564,15 @@ const CoursesPage = ({ onBack }) => {
   const handleSelectCohort = (courseType, cohort) => {
       setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
       setCalendarFor(null);
+  };
+  
+  const handleOpenCalendar = (e, courseType) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setCalendarPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+    });
+    setCalendarFor(courseType);
   };
 
   const toggleModule = (courseTitle, moduleTitle) => {
@@ -1608,7 +1648,10 @@ const CoursesPage = ({ onBack }) => {
                                 ))}
                             </div>
                         </div>
-                        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden order-3 lg:order-2">
+                        <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg order-2 hidden lg:block">
+                            <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
+                        </div>
+                        <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden order-3">
                             <h3 className="text-2xl font-bold text-white p-8 pb-4">Course Modules</h3>
                             <div className="border-t border-gray-800">
                                 {course.modules.map((module, index) => (
@@ -1634,9 +1677,6 @@ const CoursesPage = ({ onBack }) => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                         <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg order-2 lg:order-3">
-                            <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
                         </div>
                     </div>
                 </div>
@@ -1697,25 +1737,18 @@ const CoursesPage = ({ onBack }) => {
                     course={activeCourseData}
                     paymentUrl={activeCourseId === 'sprint' ? RAZORPAY_PAYMENT_URL : SUPERSTAR_ACCELERATOR_URL}
                     selectedCohort={selectedCohorts[activeCourseId]}
-                    onOpenCalendar={() => setCalendarFor(activeCourseId)}
+                    onOpenCalendar={(e) => handleOpenCalendar(e, activeCourseId)}
                 />
             </AnimatePresence>
         </div>
-       <CohortCalendarModal 
-            isOpen={calendarFor === 'sprint'}
-            onClose={() => setCalendarFor(null)}
-            courseTitle="Champion Sprint"
-            cohortDates={sprintCohorts}
-            onDateSelect={handleSelectCohort}
-            courseType="sprint"
-        />
         <CohortCalendarModal 
-            isOpen={calendarFor === 'accelerator'}
+            isOpen={!!calendarFor}
             onClose={() => setCalendarFor(null)}
-            courseTitle="Superstar Accelerator"
-            cohortDates={acceleratorCohorts}
+            courseTitle={calendarFor === 'sprint' ? "Champion Sprint Cohorts" : "Superstar Accelerator Cohorts"}
+            cohortDates={calendarFor === 'sprint' ? sprintCohorts : acceleratorCohorts}
             onDateSelect={handleSelectCohort}
-            courseType="accelerator"
+            courseType={calendarFor}
+            position={calendarPosition}
         />
     </div>
   );
@@ -1815,9 +1848,8 @@ const App = () => {
                 .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
                 @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
                 .scrolling-column-up { animation: scroll-up 15s linear infinite; }
-                .scrolling-column-down { animation: scroll-down 15s linear infinite; }
+                .scrolling-column-down { animation: scroll-up 15s linear infinite reverse; }
                 @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-                @keyframes scroll-down { from { transform: translateY(-50%); } to { translateY(0); } }
             `}</style>
 
             <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} handleExploreCourses={handleExploreCourses} />
@@ -1843,5 +1875,4 @@ const App = () => {
 };
 
 export default App;
-
 
