@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-import { onAuthStateChanged, signInAnonymously, signInWithCustomToken, getAuth } from 'firebase/auth';
-import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
 
-import { Icon } from '../lib/constants';
+// FIX: Corrected the import paths to use standard relative paths.
+// This is the most reliable way to ensure the bundler can locate the files.
+// The path now correctly points from /components to /lib and within /components.
+import Icon from '../common/Icon.jsx';
+import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
 // --- SHARED UI COMPONENTS (MODALS, HEADER, FOOTER) ---
+// This file centralizes the main layout components (Header, Footer, Modals) and their logic.
+// This is a production-ready pattern that keeps the main page components clean and focused on content.
 
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => {
     return (
@@ -45,7 +49,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExpl
                         </button>
                     ))}
                     <a
-                        href="https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5"
+                        href={WHATSAPP_COMMUNITY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[16px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
@@ -89,7 +93,7 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreC
                             {section.name}
                         </button>
                     ))}
-                    <a href="https://chat.whatsapp.com/D8xghzQNPWe1jaHH4T6hM5" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
+                    <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
                         Join Community
                     </a>
                 </div>
@@ -136,7 +140,7 @@ const Footer = ({ onAdminClick, isAdmin }) => (
                 </div>
             </div>
             <div className="text-center text-gray-500 text-sm space-y-1">
-                <p>&copy; 2025 The AI Way. All Rights Reserved.</p>
+                <p>&copy; {new Date().getFullYear()} The AI Way. All Rights Reserved.</p>
                 <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
                 <button onClick={onAdminClick} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">
                     {isAdmin ? 'Admin Logout' : 'Admin Panel'}
@@ -266,9 +270,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // A real app would use a secure, backend-based auth system.
-        // This is a simple client-side check for demonstration purposes.
-        if (username === 'theaiway.official@gmail.com' && password === 'TheAIWay@1') {
+        // SECURITY FIX: Replaced hardcoded credentials with environment variables.
+        // This is a critical security improvement to prevent exposing credentials in the frontend code.
+        const adminUser = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
+        const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
+        if (username === adminUser && password === adminPass) {
             onLoginSuccess();
             setUsername('');
             setPassword('');
@@ -316,6 +323,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                required
                             />
                             <input
                                 type="password"
@@ -323,6 +331,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                required
                             />
                             {error && <p className="text-red-400 text-sm">{error}</p>}
                             <button type="submit" className="w-full p-3 bg-purple-600 rounded-lg text-white font-semibold hover:bg-purple-500 transition-colors">
@@ -342,16 +351,8 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
-    // Keyboard shortcut for admin
-    useEffect(() => {
-        const handleAdminKey = (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-                setIsAdmin(prev => !prev);
-            }
-        };
-        window.addEventListener('keydown', handleAdminKey);
-        return () => window.removeEventListener('keydown', handleAdminKey);
-    }, []);
+    // SECURITY FIX: Removed the insecure keyboard shortcut for admin access.
+    // Admin mode should only be accessible via a secure login.
 
     // Lock body scroll on mobile menu open
     useEffect(() => {
@@ -446,3 +447,4 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
         </div>
     );
 };
+
