@@ -8,7 +8,7 @@ import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAc
 
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
-// FIX 1: Changed from a named import { CompaniesBelt } to a default import. This fixes the Vercel build error.
+// FIX: Changed to a default import to match the component's export.
 import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
@@ -18,8 +18,6 @@ import TestimonialsSection from '../components/TestimonialsSection';
 import WhatYouLearnSection from '../components/WhatYouLearnSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
-// FIX 2: The component is imported as CohortCalendarModal. The Vercel log shows you might be using <CourseCalendar />, which would cause a ReferenceError.
-// The code below correctly uses <CohortCalendarModal />, which matches this import.
 import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
 
