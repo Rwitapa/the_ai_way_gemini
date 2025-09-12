@@ -20,3 +20,4 @@ const PersonasSection = () => (
         </div>
     </section>
 );
+export default PersonasSection;
