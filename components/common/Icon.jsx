@@ -8,8 +8,6 @@ import React from 'react';
 // 3.  Performance: Inlines SVGs directly, avoiding extra network requests for image files.
 // 4.  Reusability: Any component can easily use any icon with a simple prop.
 
-// To use: <Icon name="icon-name" size={24} className="text-white" />
-
 const Icon = ({ name, size = 24, className = '', strokeWidth = 2 }) => {
     const iconProps = {
         width: size,
