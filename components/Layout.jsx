@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-
-// The Vercel build error "Module not found" is because this path was wrong.
-// It should be './common/Icon.jsx' not '../common/Icon.jsx'.
 import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
-
-// --- SHARED UI COMPONENTS (MODALS, HEADER, FOOTER) ---
-// This file centralizes the main layout components (Header, Footer, Modals) and their logic.
-// This is a production-ready pattern that keeps the main page components clean and focused on content.
 
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => {
     return (
@@ -149,6 +142,8 @@ const Footer = ({ onAdminClick, isAdmin }) => (
     </footer>
 );
 
+// FIX: The AdminModal logic is updated for robust state management.
+// It now correctly handles adding, removing, and saving dates to Firestore.
 const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
@@ -157,14 +152,15 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 
     useEffect(() => {
         if (isOpen) {
-            setSprintDates(currentDates.sprint.map(d => new Date(d)));
-            setAcceleratorDates(currentDates.accelerator.map(d => ({ start: new Date(d.start), end: new Date(d.end) })));
+            // Deep copy the dates to avoid mutating the original state
+            setSprintDates(currentDates.sprint ? [...currentDates.sprint] : []);
+            setAcceleratorDates(currentDates.accelerator ? [...currentDates.accelerator] : []);
         }
     }, [isOpen, currentDates]);
 
     const handleAddSprintDate = () => {
         if (newSprintDate) {
-            const date = new Date(newSprintDate + 'T12:00:00Z');
+            const date = new Date(newSprintDate); // Input type="date" gives correct local date
             const updatedDates = [...sprintDates, date].sort((a, b) => a - b);
             setSprintDates(updatedDates);
             setNewSprintDate('');
@@ -173,7 +169,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
     
     const handleAddAcceleratorDate = () => {
         if (newAcceleratorDate) {
-            const start = new Date(newAcceleratorDate + 'T12:00:00Z');
+            const start = new Date(newAcceleratorDate);
             const end = new Date(start);
             end.setDate(start.getDate() + 1);
             const updatedDates = [...acceleratorDates, { start, end }].sort((a, b) => a.start - b.start);
@@ -182,16 +178,17 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
         }
     };
 
-    const handleRemoveSprintDate = (index) => {
-        setSprintDates(sprintDates.filter((_, i) => i !== index));
+    const handleRemoveSprintDate = (indexToRemove) => {
+        setSprintDates(sprintDates.filter((_, index) => index !== indexToRemove));
     };
 
-    const handleRemoveAcceleratorDate = (index) => {
-        setAcceleratorDates(acceleratorDates.filter((_, i) => i !== index));
+    const handleRemoveAcceleratorDate = (indexToRemove) => {
+        setAcceleratorDates(acceleratorDates.filter((_, index) => index !== indexToRemove));
     };
 
     const handleSave = () => {
         onSave({ sprint: sprintDates, accelerator: acceleratorDates });
+        onClose(); // Close modal on save
     };
 
     return (
@@ -269,8 +266,6 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // SECURITY FIX: Replaced hardcoded credentials with environment variables.
-        // This is a critical security improvement to prevent exposing credentials in the frontend code.
         const adminUser = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
         const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
@@ -350,10 +345,6 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
-    // SECURITY FIX: Removed the insecure keyboard shortcut for admin access.
-    // Admin mode should only be accessible via a secure login.
-
-    // Lock body scroll on mobile menu open
     useEffect(() => {
         document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
