@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from "framer-motion";
-import { Icon } from '../lib/constants';
+// FIX: Changed from a broken named import to the correct default import path.
+import Icon from './common/Icon.jsx';
 
 const MentorSection = ({ sectionRef }) => {
     const videoRef = useRef(null);
@@ -105,3 +106,6 @@ const MentorSection = ({ sectionRef }) => {
         </motion.section>
     );
 };
+
+// FIX: The export was missing from the provided file. Added it back.
+export default MentorSection;
