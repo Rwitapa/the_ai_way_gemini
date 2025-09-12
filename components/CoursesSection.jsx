@@ -1,3 +1,5 @@
+// Course Section
+
 import { motion } from "framer-motion";
 import React from 'react';
 import Icon from './common/Icon.jsx';
