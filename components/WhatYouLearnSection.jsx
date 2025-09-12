@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from "framer-motion";
-import { Icon, whatYouLearnItems } from '../lib/constants';
+import { whatYouLearnItems } from '../lib/constants';
+import Icon from './common/Icon.jsx';
 
 const WhatYouLearnSection = ({ sectionRef }) => (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-950 animate-on-scroll overflow-hidden">
