@@ -178,3 +178,5 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         </section>
     );
 };
+
+export default CourseFinderQuiz;
