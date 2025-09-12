@@ -51,3 +51,5 @@ const CompaniesBelt = () => {
         </section>
     );
 };
+
+export default CompaniesBelt;
