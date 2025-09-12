@@ -1,7 +1,8 @@
 import React from 'react';
 import { LOGOS } from '../lib/constants';
 
-const CompaniesBelt = () => {
+// FIX: Changed to a named export to match the project's consistent pattern.
+export const CompaniesBelt = () => {
     const DURATION = "52s";
 
     return (
@@ -51,5 +52,3 @@ const CompaniesBelt = () => {
         </section>
     );
 };
-
-export default CompaniesBelt;
