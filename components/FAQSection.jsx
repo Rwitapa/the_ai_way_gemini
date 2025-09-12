@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Icon, faqs } from '../lib/constants';
+import { faqs } from '../lib/constants';
+import Icon from './common/Icon.jsx';
 
 const FAQSection = () => {
     const [openFaq, setOpenFaq] = useState(null);
