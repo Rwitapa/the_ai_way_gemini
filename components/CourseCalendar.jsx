@@ -7,7 +7,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
-    // FIX: Initialize with a valid Date object or null.
+    // FIX: Initialize with a valid Date object or null, and handle empty cohortDates.
     const getInitialDate = () => {
         if (!cohortDates || cohortDates.length === 0) return new Date();
         const firstCohort = cohortDates[0];
