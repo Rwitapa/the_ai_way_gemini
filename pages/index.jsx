@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-import { firebaseApp } from "../lib/firebaseClient";
-import { getApps, getApp, initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
+// FIX: Import the configured db and auth instances, not the whole app.
+// Also import the specific auth functions needed.
+import { auth, db } from "../lib/firebaseClient";
+import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
@@ -21,12 +22,7 @@ import FinalCTASection from '../components/FinalCTASection';
 import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
 
-// Small helper so Next.js (SSR) doesn’t double-init the app
-function getFirebaseApp(config) {
-    if (!config || Object.keys(config).length === 0) return null;
-    return getApps().length ? getApp() : initializeApp(config);
-}
-
+// FIX: Removed the incorrect, duplicate getFirebaseApp function.
 
 const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
@@ -34,7 +30,7 @@ const App = () => {
         sprint: [],
         accelerator: [],
     });
-    const [db, setDb] = useState(null);
+    // FIX: Removed the local `db` state, as we now import the live instance.
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({
@@ -49,76 +45,69 @@ const App = () => {
         testimonials: useRef(null),
     };
 
-    // Firebase setup and data listener
+    // FIX: Completely refactored the useEffect to use the imported Firebase instances.
+    // This is the correct, Vercel-compatible way to handle Firebase.
     useEffect(() => {
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        let firebaseConfig = {};
-        try {
-            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                firebaseConfig = JSON.parse(__firebase_config);
-            }
-        } catch (e) {
-            console.error("Error parsing Firebase config:", e);
-        }
-
-        if (Object.keys(firebaseConfig).length > 0) {
-            const app = getFirebaseApp(firebaseConfig);
-            const firestoreDb = getFirestore(app);
-            const auth = getAuth(app);
-            setDb(firestoreDb);
-
-            const signInAndListen = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Firebase authentication failed:", error);
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        const datesDocRef = doc(firestoreDb, `/artifacts/${appId}/public/data/cohorts/dates`);
-                        
-                        const unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
-                            if (docSnap.exists()) {
-                                const data = docSnap.data();
-                                if (data.sprint && data.accelerator) {
-                                     setCohortDates({
-                                        sprint: data.sprint.map(d => d.toDate()),
-                                        accelerator: data.accelerator.map(c => ({
-                                            start: c.start.toDate(),
-                                            end: c.end.toDate()
-                                        }))
-                                    });
-                                }
-                            } else {
-                                console.log("No cohort dates document. Creating one with defaults.");
-                                const defaultDates = {
-                                    sprint: getNextSprintDates(),
-                                    accelerator: getNextAcceleratorDates(),
-                                };
-                                setDoc(datesDocRef, defaultDates).catch(e => console.error("Error creating initial dates doc:", e));
-                            }
-                        }, (error) => {
-                            console.error("Error listening to cohort dates:", error);
-                        });
-                        return () => unsubscribe();
-                    }
-                });
-            };
-            signInAndListen();
-
-        } else {
-            console.warn("Firebase config not available. Using default generated dates.");
+        // Guard against Firebase not being initialized (e.g., missing env vars)
+        if (!auth || !db) {
+            console.warn("Firebase not initialized. Using default generated dates.");
             setCohortDates({
                 sprint: getNextSprintDates(),
                 accelerator: getNextAcceleratorDates(),
             });
+            return;
         }
-    }, []);
+
+        const signInAndListen = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Firebase anonymous sign-in failed:", error);
+            }
+        };
+
+        // onAuthStateChanged handles the user state and sets up the Firestore listener.
+        const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Use a stable App ID for the document path.
+                const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+                const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+
+                const dbUnsubscribe = onSnapshot(datesDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.sprint && data.accelerator) {
+                             setCohortDates({
+                                sprint: data.sprint.map(d => d.toDate()),
+                                accelerator: data.accelerator.map(c => ({
+                                    start: c.start.toDate(),
+                                    end: c.end.toDate()
+                                }))
+                            });
+                        }
+                    } else {
+                        console.log("No cohort dates document. Creating one with defaults.");
+                        const defaultDates = {
+                            sprint: getNextSprintDates(),
+                            accelerator: getNextAcceleratorDates(),
+                        };
+                        setDoc(datesDocRef, defaultDates).catch(e => console.error("Error creating initial dates doc:", e));
+                    }
+                }, (error) => {
+                    console.error("Error listening to cohort dates:", error);
+                });
+
+                // Return the database listener unsubscribe function to be called on cleanup.
+                return () => dbUnsubscribe();
+            }
+        });
+
+        signInAndListen();
+
+        // Return the auth listener unsubscribe function for component unmount cleanup.
+        return () => authUnsubscribe();
+
+    }, [auth, db]); // Rerun effect if auth or db instance changes.
 
     // Effect to update the default selected cohort when dates change
     useEffect(() => {
@@ -157,7 +146,7 @@ const App = () => {
             console.error("Firestore is not initialized. Cannot save dates.");
             return;
         }
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
         try {
             await setDoc(datesDocRef, newDates);
