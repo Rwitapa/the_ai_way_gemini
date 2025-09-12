@@ -185,3 +185,5 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, setSelectedCohor
         </div>
     );
 };
+
+export default CoursesPage;
