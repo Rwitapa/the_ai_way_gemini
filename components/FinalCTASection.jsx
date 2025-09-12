@@ -16,3 +16,4 @@ const FinalCTASection = ({ handleExploreCourses }) => {
         </section>
     );
 };
+export default FinalCTASection;
