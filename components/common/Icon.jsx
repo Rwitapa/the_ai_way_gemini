@@ -53,4 +53,3 @@ const Icon = ({ name, size = 24, className = '' }) => {
 };
 
 export default Icon;
-
