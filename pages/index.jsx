@@ -96,9 +96,8 @@ const App = () => {
 
     }, [auth, db]);
 
-    // FIX: This new useEffect hook listens for changes in cohortDates.
-    // When the dates are loaded from Firestore, it sets the default selected
-    // cohort to the first available date, ensuring the UI is never empty.
+    // FIX: This useEffect now correctly sets the default selected cohort date
+    // as soon as the dates are loaded from Firestore.
     useEffect(() => {
         setSelectedCohorts({
             sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
@@ -130,9 +129,6 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    // FIX: This function now correctly saves Date objects to Firestore.
-    // This ensures data consistency and makes the Admin Panel edits permanent
-    // and visible to all users across all devices.
     const handleSaveDates = async (newDates) => {
         if (!db) {
             console.error("Firestore is not initialized. Cannot save dates.");
@@ -141,7 +137,7 @@ const App = () => {
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
         try {
-            // Firestore can natively handle Date objects, so no conversion is needed.
+            // Firestore can handle Date objects natively.
             await setDoc(datesDocRef, newDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
