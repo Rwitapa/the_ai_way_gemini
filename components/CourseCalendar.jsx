@@ -211,4 +211,4 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     );
 };
 
-export default CourseCalendar;
+export default CohortCalendarModal;
