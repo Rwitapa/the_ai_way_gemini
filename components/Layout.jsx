@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 
-// FIX: Corrected the import paths to use standard relative paths.
-// This is the most reliable way to ensure the bundler can locate the files.
-// The path now correctly points from /components to /lib and within /components.
-import Icon from '../common/Icon.jsx';
+// FIX: Corrected the import path.
+// The Vercel build error "Module not found" is because this path was wrong.
+// It should be './common/Icon.jsx' not '../common/Icon.jsx'.
+import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
 // --- SHARED UI COMPONENTS (MODALS, HEADER, FOOTER) ---
