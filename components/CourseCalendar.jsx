@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
-// Course Calendar
+
 const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType, position }) => {
     const modalRef = useRef(null);
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
-    const firstCohortDate = cohortDates[0];
-    const initialDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
-    const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+    // FIX: Initialize with a valid Date object or null.
+    const getInitialDate = () => {
+        if (!cohortDates || cohortDates.length === 0) return new Date();
+        const firstCohort = cohortDates[0];
+        return courseType === 'sprint' ? firstCohort : firstCohort?.start;
+    };
+
+    const [currentDate, setCurrentDate] = useState(getInitialDate());
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -18,7 +23,12 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-     // Effect for handling body scroll-lock on mobile and click-outside-to-close on desktop
+    useEffect(() => {
+        if (isOpen) {
+            setCurrentDate(getInitialDate());
+        }
+    }, [isOpen, cohortDates, courseType]);
+
     useEffect(() => {
         if (!isOpen) return;
 
@@ -40,15 +50,6 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         };
     }, [isOpen, isMobile, onClose]);
 
-
-    useEffect(() => {
-        if (isOpen) {
-            const newDate = courseType === 'sprint' ? firstCohortDate : firstCohortDate?.start;
-            setCurrentDate(newDate || new Date());
-        }
-    }, [isOpen, firstCohortDate, courseType]);
-
-    // Effect for positioning the modal on desktop
     useEffect(() => {
         if (isOpen && !isMobile && position) {
             const modalWidth = 384;
@@ -104,7 +105,8 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         const endDate = new Date(monthEnd);
         endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay()));
 
-        const cohortDateStrings = cohortDates.map(d => courseType === 'sprint' ? d.toDateString() : d.start.toDateString());
+        // FIX: This ensures that only the valid, selectable dates are highlighted.
+        const cohortDateStrings = cohortDates.map(d => (courseType === 'sprint' ? d : d.start).toDateString());
 
         const rows = [];
         let day = new Date(startDate);
@@ -115,14 +117,13 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
             for (let i = 0; i < 7; i++) {
                 const dayOfMonth = day.getDate();
                 const isCurrentMonth = day.getMonth() === currentDate.getMonth();
-                const isCohortStart = cohortDateStrings.includes(day.toDateString());
+                const dayString = day.toDateString();
+                const isCohortStart = cohortDateStrings.includes(dayString);
                 const dayKey = day.toISOString();
 
                 let cohortData = null;
                 if (isCohortStart) {
-                    cohortData = courseType === 'sprint'
-                        ? cohortDates.find(d => d.toDateString() === day.toDateString())
-                        : cohortDates.find(d => d.start.toDateString() === day.toDateString());
+                    cohortData = cohortDates.find(d => (courseType === 'sprint' ? d : d.start).toDateString() === dayString);
                 }
 
                 days.push(
