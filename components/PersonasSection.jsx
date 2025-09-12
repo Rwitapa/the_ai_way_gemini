@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { personas } from '../lib/constants';
 import Icon from './common/Icon.jsx';
 
+// Personas
+
 const PersonasSection = () => (
     <section className="pt-10 md:pt-16 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
