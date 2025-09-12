@@ -1,10 +1,8 @@
 import { motion } from "framer-motion";
-
-// FIX: Added the .jsx and .js extensions to the import paths.
-// This makes the module paths explicit and can resolve issues in certain build environments
-// that aren't configured to automatically resolve file extensions.
-import Icon from '../components/common/Icon.jsx';
-import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
+// FIX: Changed import paths from relative ('../') to absolute from the project root.
+// This resolves the "Module not found" error shown in the Vercel build log.
+import Icon from 'components/common/Icon.jsx';
+import { WHATSAPP_COMMUNITY_URL } from 'lib/constants.js';
 
 // --- THANK YOU PAGE ---
 // This page is shown after a user successfully signs up.
