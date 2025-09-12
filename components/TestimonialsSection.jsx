@@ -36,3 +36,5 @@ const TestimonialsSection = ({ sectionRef }) => {
         </section>
     );
 };
+
+export default TestimonialsSection;
