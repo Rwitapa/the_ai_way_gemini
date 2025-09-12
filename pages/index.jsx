@@ -9,12 +9,10 @@ import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAc
 
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
-// FIX: Corrected import to be a named import { CompaniesBelt } and used the correct relative path.
-import { CompaniesBelt } from '../components/CompaniesBelt';
+import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
-// FIX: Corrected MentorSection to be a named import to match its export.
-import { MentorSection } from '../components/MentorSection';
+import MentorSection from '../components/MentorSection';
 import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
 import WhatYouLearnSection from '../components/WhatYouLearnSection';
