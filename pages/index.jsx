@@ -1,25 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-import { auth, db } from "../lib/firebaseClient";
+import { auth, db } from "lib/firebaseClient"; // FIX: Using absolute path
 import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
-import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
+import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from 'lib/constants'; // FIX: Using absolute path
 
-import { Layout } from '../components/Layout';
-import { HeroSection } from '../components/HeroSection';
-// FIX: Changed to a default import to match the component's export.
-import CompaniesBelt from '../components/CompaniesBelt';
-import PersonasSection from '../components/PersonasSection';
-import CoursesSection from '../components/CoursesSection';
-import MentorSection from '../components/MentorSection';
-import CourseFinderQuiz from '../components/CourseFinderQuiz';
-import TestimonialsSection from '../components/TestimonialsSection';
-import WhatYouLearnSection from '../components/WhatYouLearnSection';
-import FAQSection from '../components/FAQSection';
-import FinalCTASection from '../components/FinalCTASection';
-import CohortCalendarModal from '../components/CourseCalendar';
-import CoursesPage from '../components/CoursesPage';
+import { Layout } from 'components/Layout'; // FIX: Using absolute path
+import { HeroSection } from 'components/HeroSection'; // FIX: Using absolute path
+import CompaniesBelt from 'components/CompaniesBelt'; // FIX: Using absolute path
+import PersonasSection from 'components/PersonasSection'; // FIX: Using absolute path
+import CoursesSection from 'components/CoursesSection'; // FIX: Using absolute path
+import MentorSection from 'components/MentorSection'; // FIX: Using absolute path
+import CourseFinderQuiz from 'components/CourseFinderQuiz'; // FIX: Using absolute path
+import TestimonialsSection from 'components/TestimonialsSection'; // FIX: Using absolute path
+import WhatYouLearnSection from 'components/WhatYouLearnSection'; // FIX: Using absolute path
+import FAQSection from 'components/FAQSection'; // FIX: Using absolute path
+import FinalCTASection from 'components/FinalCTASection'; // FIX: Using absolute path
+import CohortCalendarModal from 'components/CourseCalendar'; // FIX: Using absolute path
+import CoursesPage from 'components/CoursesPage'; // FIX: Using absolute path
 
 const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
