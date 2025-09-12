@@ -122,7 +122,9 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, setSelectedCohor
 
     useEffect(() => {
         if (videoRef.current) {
-            video.current.play().catch(error => {
+            // FIX: Corrected the variable name from 'video' to 'videoRef'.
+            // This was causing a client-side exception.
+            videoRef.current.play().catch(error => {
                 console.log("Courses page video autoplay was prevented:", error);
             });
         }
