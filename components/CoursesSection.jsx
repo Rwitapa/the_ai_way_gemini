@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import React from 'react';
-import { Icon, courseData, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
+import Icon from './common/Icon.jsx';
+import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, selectedCohorts, formatSprintDate, formatAcceleratorDate }) => {
     return (
