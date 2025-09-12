@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
-// FIX: Changed import paths from relative ('../') to absolute from the project root.
-// This resolves the "Module not found" error shown in the Vercel build log.
-import Icon from 'components/common/Icon.jsx';
-import { WHATSAPP_COMMUNITY_URL } from 'lib/constants.js';
+// FIX: Changed import paths to be relative.
+import Icon from '../components/common/Icon.jsx';
+import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
 // --- THANK YOU PAGE ---
 // This page is shown after a user successfully signs up.
