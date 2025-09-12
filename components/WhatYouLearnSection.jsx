@@ -7,6 +7,7 @@ import Icon from './common/Icon.jsx';
 
 const WhatYouLearnSection = ({ sectionRef }) => (
     <section ref={sectionRef} className="py-16 md:py-20 bg-gray-950 animate-on-scroll overflow-hidden">
+        {/*
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-base md:text-lg font-bold uppercase tracking-wider text-purple-400 mb-2">What You’ll Learn</h2>
             <h3 className="text-3xl md:text-5xl font-bold text-white mb-4">From Repetition to ROI</h3>
@@ -22,6 +23,7 @@ const WhatYouLearnSection = ({ sectionRef }) => (
                 ))}
             </div>
         </div>
+        */}
     </section>
 );
 
