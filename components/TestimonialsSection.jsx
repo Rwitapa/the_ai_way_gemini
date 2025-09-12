@@ -1,5 +1,6 @@
 import React from 'react';
 import { testimonials, TestimonialCard } from '../lib/constants';
+// Testimonials
 
 const TestimonialsSection = ({ sectionRef }) => {
     const middleIndex = Math.ceil(testimonials.length / 2);
