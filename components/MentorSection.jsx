@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from "framer-motion";
-// FIX: Changed from a broken named import to the correct default import path.
+
 import Icon from './common/Icon.jsx';
 
 const MentorSection = ({ sectionRef }) => {
