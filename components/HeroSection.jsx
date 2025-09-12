@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import React, { useRef, useEffect } from 'react';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants';
 
+// Hero Section
+
 export const HeroSection = ({ handleExploreCourses }) => {
     const videoRef = useRef(null);
 
