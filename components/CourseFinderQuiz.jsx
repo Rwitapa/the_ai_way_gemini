@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
 import { courseData, mascots } from '../lib/constants';
 
+// Course Finder
+
 const CourseFinderQuiz = ({ scrollToSection }) => {
     const [step, setStep] = useState(0);
     const [score, setScore] = useState(0);
