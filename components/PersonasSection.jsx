@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from "framer-motion";
-import { Icon, personas } from '../lib/constants';
+import { personas } from '../lib/constants';
+import Icon from './common/Icon.jsx';
 
 const PersonasSection = () => (
     <section className="pt-10 md:pt-16 pb-16 bg-gray-950 animate-on-scroll">
