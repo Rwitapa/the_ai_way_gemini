@@ -87,3 +87,5 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
         </section>
     );
 };
+
+export default CoursesSection;
