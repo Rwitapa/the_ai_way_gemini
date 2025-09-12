@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Icon, courseData } from '../lib/constants';
+import Icon from './common/Icon.jsx';
+import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
 
 const CourseFinderQuiz = ({ scrollToSection }) => {
     const [step, setStep] = useState(0);
