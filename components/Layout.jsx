@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 
-// FIX: Corrected the import path.
 // The Vercel build error "Module not found" is because this path was wrong.
 // It should be './common/Icon.jsx' not '../common/Icon.jsx'.
 import Icon from './common/Icon.jsx';
