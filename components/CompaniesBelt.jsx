@@ -1,6 +1,6 @@
 import React from 'react';
 import { LOGOS } from '../lib/constants';
-
+// Belt of logos
 const CompaniesBelt = () => {
     const DURATION = "52s";
 
