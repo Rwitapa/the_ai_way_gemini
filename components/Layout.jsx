@@ -143,7 +143,6 @@ const Footer = ({ onAdminClick, isAdmin }) => (
 );
 
 // FIX: The AdminModal logic is updated for robust state management.
-// It now correctly handles adding, removing, and saving dates to Firestore.
 const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
@@ -152,7 +151,6 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 
     useEffect(() => {
         if (isOpen) {
-            // Deep copy the dates to avoid mutating the original state
             setSprintDates(currentDates.sprint ? [...currentDates.sprint] : []);
             setAcceleratorDates(currentDates.accelerator ? [...currentDates.accelerator] : []);
         }
@@ -160,7 +158,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 
     const handleAddSprintDate = () => {
         if (newSprintDate) {
-            const date = new Date(newSprintDate); // Input type="date" gives correct local date
+            const date = new Date(newSprintDate);
             const updatedDates = [...sprintDates, date].sort((a, b) => a - b);
             setSprintDates(updatedDates);
             setNewSprintDate('');
@@ -188,7 +186,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 
     const handleSave = () => {
         onSave({ sprint: sprintDates, accelerator: acceleratorDates });
-        onClose(); // Close modal on save
+        onClose();
     };
 
     return (
