@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-// FIX: Import the configured db and auth instances, not the whole app.
-// Also import the specific auth functions needed.
 import { auth, db } from "../lib/firebaseClient";
 import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
@@ -10,7 +8,8 @@ import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAc
 
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
-import { CompaniesBelt } from '../components/CompaniesBelt';
+// FIX 1: Changed from a named import { CompaniesBelt } to a default import. This fixes the Vercel build error.
+import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
 import MentorSection from '../components/MentorSection';
@@ -19,10 +18,10 @@ import TestimonialsSection from '../components/TestimonialsSection';
 import WhatYouLearnSection from '../components/WhatYouLearnSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
+// FIX 2: The component is imported as CohortCalendarModal. The Vercel log shows you might be using <CourseCalendar />, which would cause a ReferenceError.
+// The code below correctly uses <CohortCalendarModal />, which matches this import.
 import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
-
-// FIX: Removed the incorrect, duplicate getFirebaseApp function.
 
 const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
@@ -30,7 +29,6 @@ const App = () => {
         sprint: [],
         accelerator: [],
     });
-    // FIX: Removed the local `db` state, as we now import the live instance.
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({
@@ -45,10 +43,7 @@ const App = () => {
         testimonials: useRef(null),
     };
 
-    // FIX: Completely refactored the useEffect to use the imported Firebase instances.
-    // This is the correct, Vercel-compatible way to handle Firebase.
     useEffect(() => {
-        // Guard against Firebase not being initialized (e.g., missing env vars)
         if (!auth || !db) {
             console.warn("Firebase not initialized. Using default generated dates.");
             setCohortDates({
@@ -66,10 +61,8 @@ const App = () => {
             }
         };
 
-        // onAuthStateChanged handles the user state and sets up the Firestore listener.
         const authUnsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Use a stable App ID for the document path.
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
@@ -97,19 +90,15 @@ const App = () => {
                     console.error("Error listening to cohort dates:", error);
                 });
 
-                // Return the database listener unsubscribe function to be called on cleanup.
                 return () => dbUnsubscribe();
             }
         });
 
         signInAndListen();
-
-        // Return the auth listener unsubscribe function for component unmount cleanup.
         return () => authUnsubscribe();
 
-    }, [auth, db]); // Rerun effect if auth or db instance changes.
+    }, [auth, db]);
 
-    // Effect to update the default selected cohort when dates change
     useEffect(() => {
         setSelectedCohorts({
             sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
