@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
-
+// Course Calendar
 const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDateSelect, courseType, position }) => {
     const modalRef = useRef(null);
     const [style, setStyle] = useState({});
