@@ -72,3 +72,5 @@ export const HeroSection = ({ handleExploreCourses }) => {
         </section>
     );
 };
+
+export default HeroSection;
