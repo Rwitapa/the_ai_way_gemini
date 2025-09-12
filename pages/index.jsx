@@ -97,7 +97,7 @@ const App = () => {
     }, [auth, db]);
 
     // FIX: This useEffect now correctly sets the default selected cohort date
-    // as soon as the dates are loaded from Firestore, ensuring the UI is never empty.
+    // as soon as the dates are loaded from Firestore.
     useEffect(() => {
         setSelectedCohorts({
             sprint: cohortDates.sprint.length > 0 ? cohortDates.sprint[0] : null,
@@ -129,7 +129,6 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    // FIX: This function now correctly saves dates to Firestore, making Admin Panel edits permanent.
     const handleSaveDates = async (newDates) => {
         if (!db) {
             console.error("Firestore is not initialized. Cannot save dates.");
@@ -138,6 +137,7 @@ const App = () => {
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
         try {
+            // Firestore can handle Date objects natively.
             await setDoc(datesDocRef, newDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
