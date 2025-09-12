@@ -21,3 +21,5 @@ const WhatYouLearnSection = ({ sectionRef }) => (
         </div>
     </section>
 );
+
+export default WhatYouLearnSection;
