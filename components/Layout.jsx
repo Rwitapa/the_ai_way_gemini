@@ -447,3 +447,5 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
         </div>
     );
 };
+
+export default Layout;
