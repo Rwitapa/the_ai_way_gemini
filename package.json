@@ -10,11 +10,11 @@
     "framer-motion": "11.x",
     "next": "14.x",
     "react": "18.x",
-    "react-dom": "18.x"
+    "react-dom": "18.x",
+    "firebase": "^10.14.1"
   },
   "devDependencies": {
     "autoprefixer": "10.x",
-    "firebase": "^10.14.1",
     "postcss": "8.x",
     "tailwindcss": "3.x"
   },
