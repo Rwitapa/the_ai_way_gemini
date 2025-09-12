@@ -210,3 +210,5 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         </AnimatePresence>
     );
 };
+
+export default CourseCalendar;
