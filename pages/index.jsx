@@ -27,7 +27,6 @@ const App = () => {
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
     
-    // useRef to ensure maintenance logic runs only once per session.
     const maintenanceCheckPerformed = useRef(false);
 
     const sectionRefs = {
@@ -39,20 +38,29 @@ const App = () => {
 
     useEffect(() => {
         if (!auth || !db) {
-            console.warn("Firebase not initialized. Cannot connect to the database.");
+            console.warn("Firebase not initialized.");
             return;
         }
 
-        const initializeAndListen = async (user) => {
-            if (!user) return;
-            
-            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-            const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+        let unsubscribe = () => {};
 
-            // --- Step 1: Perform a one-time check and maintenance operation ---
-            if (!maintenanceCheckPerformed.current) {
-                maintenanceCheckPerformed.current = true;
-                try {
+        const initializeApp = async () => {
+            try {
+                // Ensure we have a user before proceeding.
+                await signInAnonymously(auth);
+                const user = auth.currentUser;
+                if (!user) {
+                    console.error("Failed to sign in anonymously.");
+                    return;
+                }
+
+                const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+                const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+
+                // --- Step 1: One-time database check and maintenance ---
+                if (!maintenanceCheckPerformed.current) {
+                    maintenanceCheckPerformed.current = true;
+                    
                     const docSnap = await getDoc(datesDocRef);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
@@ -62,14 +70,14 @@ const App = () => {
                     let needsUpdate = false;
 
                     if (!docSnap.exists()) {
-                        console.log("No cohort document. Creating one.");
+                        console.log("No cohort document found. Creating one.");
                         needsUpdate = true;
                     } else {
                         const data = docSnap.data();
                         currentSprints = data.sprint ? data.sprint.map(d => d.toDate()) : [];
                         currentAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [];
                     }
-
+                    
                     const prunedSprints = currentSprints.filter(d => d >= today);
                     if (prunedSprints.length !== currentSprints.length) needsUpdate = true;
 
@@ -86,8 +94,7 @@ const App = () => {
                         const nextDayToGenerate = lastSprint > new Date(0) ? new Date(lastSprint) : today;
                         if (lastSprint > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
                         
-                        const newSprints = getNextSprintDates(nextDayToGenerate, 5);
-                        finalSprints.push(...newSprints);
+                        finalSprints.push(...getNextSprintDates(nextDayToGenerate, 5));
                         needsUpdate = true;
                     }
                     
@@ -95,9 +102,8 @@ const App = () => {
                     if (lastAcceleratorStart < fiveYearsFromNow) {
                         const nextDayToGenerate = lastAcceleratorStart > new Date(0) ? new Date(lastAcceleratorStart) : today;
                         if (lastAcceleratorStart > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
-
-                        const newAccelerators = getNextAcceleratorDates(nextDayToGenerate, 5);
-                        finalAccelerators.push(...newAccelerators);
+                        
+                        finalAccelerators.push(...getNextAcceleratorDates(nextDayToGenerate, 5));
                         needsUpdate = true;
                     }
 
@@ -108,42 +114,27 @@ const App = () => {
                         
                         await setDoc(datesDocRef, { sprint: uniqueSprints, accelerator: uniqueAccelerators });
                     }
-                } catch (error) {
-                    console.error("Error during date maintenance:", error);
                 }
-            }
 
-            // --- Step 2: Attach the real-time listener AFTER maintenance is done ---
-            const unsubscribe = onSnapshot(datesDocRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    const liveDates = {
-                        sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
-                        accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : []
-                    };
-                    setCohortDates(liveDates);
-                }
-            }, (error) => {
-                console.error("Error listening to cohort dates:", error);
-            });
+                // --- Step 2: Attach the real-time listener ---
+                unsubscribe = onSnapshot(datesDocRef, (doc) => {
+                    if (doc.exists()) {
+                        const data = doc.data();
+                        setCohortDates({
+                            sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
+                            accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : []
+                        });
+                    }
+                }, (error) => console.error("Error listening to cohort dates:", error));
 
-            return unsubscribe;
-        };
-        
-        // Main authentication flow
-        let unsubscribe = () => {};
-        const authHandler = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                initializeAndListen(user).then(unsub => unsubscribe = unsub);
-            } else {
-                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            } catch (error) {
+                console.error("Error during app initialization:", error);
             }
-        });
-        
-        return () => {
-            authHandler();
-            unsubscribe();
         };
+
+        initializeApp();
+        
+        return () => unsubscribe();
 
     }, [db, auth]);
 
@@ -183,7 +174,7 @@ const App = () => {
 
     const handleSaveDates = async (newDates) => {
         if (!db) {
-            console.error("Firestore is not initialized. Cannot save dates.");
+            console.error("Firestore is not initialized.");
             return;
         }
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
@@ -192,7 +183,7 @@ const App = () => {
             await setDoc(datesDocRef, newDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
-            console.error("Failed to save cohort dates to Firestore:", error);
+            console.error("Failed to save cohort dates:", error);
             alert('Error saving dates. Please check the console.');
         }
     };
