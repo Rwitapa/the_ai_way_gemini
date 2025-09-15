@@ -206,9 +206,12 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
                                  <p className="text-xs text-gray-500 mt-2">Note: Select the start date (Saturday) for the weekend cohort.</p>
                             </div>
                         </div>
-                         <div className="p-4 border-t border-gray-700 mt-auto flex justify-end gap-3">
-                            <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
-                            <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm bg-purple-600 hover:bg-purple-500 font-semibold">Save Changes</button>
+                        <div className="p-4 border-t border-gray-700 mt-auto flex justify-between items-center">
+                            <button onClick={onForceSync} className="px-4 py-2 rounded-lg text-sm bg-red-600 hover:bg-red-500 font-semibold">Force Sync Dates</button>
+                            <div className="flex justify-end gap-3">
+                                <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
+                                <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm bg-purple-600 hover:bg-purple-500 font-semibold">Save Changes</button>
+                            </div>
                         </div>
                     </motion.div>
                 </motion.div>
