@@ -1,3 +1,5 @@
+// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/components/CourseCalendar.jsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -7,10 +9,12 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
-    // FIX: Initialize with a valid Date object or null, and handle empty cohortDates.
     const getInitialDate = () => {
         if (!cohortDates || cohortDates.length === 0) return new Date();
-        const firstCohort = cohortDates[0];
+        const today = new Date();
+        const futureDates = cohortDates.filter(d => (courseType === 'sprint' ? d : d.start) >= today);
+        if (futureDates.length === 0) return new Date();
+        const firstCohort = futureDates[0];
         return courseType === 'sprint' ? firstCohort : firstCohort?.start;
     };
 
@@ -104,9 +108,19 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         startDate.setDate(startDate.getDate() - monthStart.getDay());
         const endDate = new Date(monthEnd);
         endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay()));
+        
+        // --- LOGIC FOR 3-MONTH VIEW ---
+        // Filter dates to only show available cohorts in the next 3 months.
+        const today = new Date();
+        const threeMonthsFromNow = new Date();
+        threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
 
-        // FIX: This ensures that only the valid, selectable dates are highlighted.
-        const cohortDateStrings = cohortDates.map(d => (courseType === 'sprint' ? d : d.start).toDateString());
+        const displayableCohorts = cohortDates.filter(d => {
+            const cohortStartDate = courseType === 'sprint' ? d : d.start;
+            return cohortStartDate >= today && cohortStartDate <= threeMonthsFromNow;
+        });
+
+        const cohortDateStrings = displayableCohorts.map(d => (courseType === 'sprint' ? d : d.start).toDateString());
 
         const rows = [];
         let day = new Date(startDate);
@@ -123,7 +137,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
 
                 let cohortData = null;
                 if (isCohortStart) {
-                    cohortData = cohortDates.find(d => (courseType === 'sprint' ? d : d.start).toDateString() === dayString);
+                    cohortData = displayableCohorts.find(d => (courseType === 'sprint' ? d : d.start).toDateString() === dayString);
                 }
 
                 days.push(
