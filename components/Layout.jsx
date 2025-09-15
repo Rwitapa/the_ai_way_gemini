@@ -54,7 +54,7 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreC
     </AnimatePresence>
 );
 
-// --- FOOTER COMPONENT (Reverted) ---
+// --- FOOTER COMPONENT ---
 const Footer = ({ onAdminClick, isAdmin }) => (
     <footer className="bg-gray-900 border-t border-gray-800 py-8">
         <div className="container mx-auto px-6 text-center text-gray-500">
@@ -67,7 +67,7 @@ const Footer = ({ onAdminClick, isAdmin }) => (
 );
 
 
-// --- LOGIN MODAL COMPONENT (Reverted to simpler design) ---
+// --- LOGIN MODAL COMPONENT ---
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -122,7 +122,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 // --- ADMIN MODAL COMPONENT ---
-const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
+const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate, onForceSync }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
     const [newSprintDate, setNewSprintDate] = useState('');
@@ -206,7 +206,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
                                  <p className="text-xs text-gray-500 mt-2">Note: Select the start date (Saturday) for the weekend cohort.</p>
                             </div>
                         </div>
-                        <div className="p-4 border-t border-gray-700 mt-auto flex justify-between items-center">
+                         <div className="p-4 border-t border-gray-700 mt-auto flex justify-between items-center">
                             <button onClick={onForceSync} className="px-4 py-2 rounded-lg text-sm bg-red-600 hover:bg-red-500 font-semibold">Force Sync Dates</button>
                             <div className="flex justify-end gap-3">
                                 <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
@@ -221,7 +221,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 };
 
 // --- MAIN LAYOUT COMPONENT ---
-export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate }) => {
+export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate, forceSync }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -265,7 +265,7 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
             <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} handleExploreCourses={handleExploreCourses} />
             <main className="pt-16 md:pt-20">{children}</main>
             <Footer onAdminClick={handleAdminClick} isAdmin={isAdmin} />
-            <AdminModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} currentDates={cohortDates} onSave={onSaveDates} formatSprintDate={formatSprintDate} formatAcceleratorDate={formatAcceleratorDate} />
+            <AdminModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} currentDates={cohortDates} onSave={onSaveDates} formatSprintDate={formatSprintDate} formatAcceleratorDate={formatAcceleratorDate} onForceSync={forceSync} />
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onLoginSuccess={() => { setIsAdmin(true); setShowLoginModal(false); }} />
         </div>
     );
