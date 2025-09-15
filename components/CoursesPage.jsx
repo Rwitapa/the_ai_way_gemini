@@ -1,4 +1,3 @@
-// Course Page
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -122,8 +121,6 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, setSelectedCohor
 
     useEffect(() => {
         if (videoRef.current) {
-            // FIX: Corrected the variable name from 'video' to 'videoRef'.
-            // This was causing a client-side exception.
             videoRef.current.play().catch(error => {
                 console.log("Courses page video autoplay was prevented:", error);
             });
