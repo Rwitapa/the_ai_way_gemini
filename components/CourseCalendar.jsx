@@ -1,5 +1,3 @@
-// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/components/CourseCalendar.jsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -109,8 +107,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         const endDate = new Date(monthEnd);
         endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay()));
         
-        // --- LOGIC FOR 3-MONTH VIEW ---
-        // Filter dates to only show available cohorts in the next 3 months.
+        // Logic to display dates only for the next 3 months.
         const today = new Date();
         const threeMonthsFromNow = new Date();
         threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
