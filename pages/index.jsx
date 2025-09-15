@@ -47,12 +47,7 @@ const App = () => {
 
     useEffect(() => {
         if (!auth || !db) {
-            console.warn("Firebase not initialized. Using default generated dates.");
-            const today = new Date();
-            setCohortDates({
-                sprint: getNextSprintDates(today, 5),
-                accelerator: getNextAcceleratorDates(today, 5),
-            });
+            console.warn("Firebase not initialized. Cannot connect to the database.");
             return;
         }
 
@@ -73,17 +68,26 @@ const App = () => {
                     const today = new Date();
                     today.setHours(0, 0, 0, 0); // Normalize to the beginning of the day
 
+                    // If the document doesn't exist, create it and populate the local state.
                     if (!docSnap.exists()) {
-                        console.log("No cohort dates document. Creating one with dates for 5 years.");
+                        // Prevent this block from running in a loop if there's an issue.
+                        if (maintenanceCheckPerformed.current) return;
+                        maintenanceCheckPerformed.current = true;
+                        
+                        console.log("No cohort dates document found. Creating one with dates for the next 5 years.");
                         const initialDates = {
                             sprint: getNextSprintDates(today, 5),
                             accelerator: getNextAcceleratorDates(today, 5),
                         };
+                        
+                        // Set local state immediately for a fast UI response.
+                        setCohortDates(initialDates); 
+                        // Asynchronously write the new dates to the database.
                         setDoc(datesDocRef, initialDates).catch(e => console.error("Error creating initial dates doc:", e));
-                        setCohortDates(initialDates); // Set local state immediately
                         return;
                     }
 
+                    // If the document exists, parse the dates.
                     const data = docSnap.data();
                     const firestoreDates = {
                         sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
@@ -96,7 +100,6 @@ const App = () => {
                     setCohortDates(firestoreDates);
 
                     // --- Database Maintenance Logic ---
-                    // This runs once per page load to prune past dates and extend the calendar.
                     if (!maintenanceCheckPerformed.current) {
                         maintenanceCheckPerformed.current = true;
                         let needsUpdate = false;
@@ -110,38 +113,33 @@ const App = () => {
                         }
 
                         // 2. Extend dates if the calendar is running short
-                        const lastSprint = prunedSprints.length > 0 ? prunedSprints[prunedSprints.length - 1] : today;
-                        const lastAccelerator = prunedAccelerators.length > 0 ? prunedAccelerators[prunedAccelerators.length - 1].start : today;
-                        
                         const fiveYearsFromNow = new Date();
                         fiveYearsFromNow.setFullYear(fiveYearsFromNow.getFullYear() + 5);
+                        
+                        let finalSprints = [...prunedSprints];
+                        let finalAccelerators = [...prunedAccelerators];
 
-                        let extendedSprints = [...prunedSprints];
-                        let extendedAccelerators = [...prunedAccelerators];
-
+                        const lastSprint = finalSprints.length > 0 ? finalSprints[finalSprints.length - 1] : today;
                         if (lastSprint < fiveYearsFromNow) {
                             const newSprints = getNextSprintDates(lastSprint, 5);
-                            extendedSprints.push(...newSprints.filter(d => d > lastSprint));
+                            finalSprints.push(...newSprints.filter(d => d > lastSprint));
                             needsUpdate = true;
                         }
 
+                        const lastAccelerator = finalAccelerators.length > 0 ? finalAccelerators[finalAccelerators.length - 1].start : today;
                         if (lastAccelerator < fiveYearsFromNow) {
                             const newAccelerators = getNextAcceleratorDates(lastAccelerator, 5);
-                            extendedAccelerators.push(...newAccelerators.filter(c => c.start > lastAccelerator));
+                            finalAccelerators.push(...newAccelerators.filter(c => c.start > lastAccelerator));
                             needsUpdate = true;
                         }
-                        
-                        // Remove duplicates that might occur from regeneration logic
-                        const finalSprints = [...new Map(extendedSprints.map(item => [item.getTime(), item])).values()];
-                        const finalAccelerators = [...new Map(extendedAccelerators.map(item => [item.start.getTime(), item])).values()];
-                        finalSprints.sort((a, b) => a - b);
-                        finalAccelerators.sort((a,b) => a.start - b.start);
-
 
                         if (needsUpdate) {
-                            const updatedDates = { sprint: finalSprints, accelerator: finalAccelerators };
-                            console.log("Performing DB maintenance: Pruning past dates and extending future dates.");
-                            setDoc(datesDocRef, updatedDates, { merge: true }).catch(e => console.error("Error updating dates doc:", e));
+                             const updatedDates = { 
+                                sprint: [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b), 
+                                accelerator: [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start)
+                            };
+                            console.log("DB Maintenance: Pruning past dates and extending future dates.");
+                            setDoc(datesDocRef, updatedDates).catch(e => console.error("Error updating dates doc:", e));
                         }
                     }
 
@@ -203,8 +201,6 @@ const App = () => {
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
         try {
-            // Admin changes will completely override the existing dates.
-            // The maintenance logic will respect these manual changes on next load.
             await setDoc(datesDocRef, newDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
