@@ -43,17 +43,15 @@ const App = () => {
             return;
         }
 
-        const manageAndListenForDates = (user) => {
+        const initializeAndListen = async (user) => {
             if (!user) return;
             
             const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
             const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
             // --- Step 1: Perform a one-time check and maintenance operation ---
-            const runMaintenance = async () => {
-                if (maintenanceCheckPerformed.current) return;
+            if (!maintenanceCheckPerformed.current) {
                 maintenanceCheckPerformed.current = true;
-
                 try {
                     const docSnap = await getDoc(datesDocRef);
                     const today = new Date();
@@ -64,7 +62,7 @@ const App = () => {
                     let needsUpdate = false;
 
                     if (!docSnap.exists()) {
-                        console.log("No cohort document. Will create one.");
+                        console.log("No cohort document. Creating one.");
                         needsUpdate = true;
                     } else {
                         const data = docSnap.data();
@@ -72,14 +70,12 @@ const App = () => {
                         currentAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [];
                     }
 
-                    // Prune past dates
                     const prunedSprints = currentSprints.filter(d => d >= today);
                     if (prunedSprints.length !== currentSprints.length) needsUpdate = true;
 
                     const prunedAccelerators = currentAccelerators.filter(c => c.start >= today);
                     if (prunedAccelerators.length !== currentAccelerators.length) needsUpdate = true;
-
-                    // Extend dates if calendar is running short
+                    
                     let finalSprints = [...prunedSprints];
                     let finalAccelerators = [...prunedAccelerators];
                     const fiveYearsFromNow = new Date();
@@ -106,7 +102,7 @@ const App = () => {
                     }
 
                     if (needsUpdate) {
-                        console.log("Performing DB maintenance: creating/pruning/extending dates.");
+                        console.log("DB Maintenance: Creating/pruning/extending dates.");
                         const uniqueSprints = [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b);
                         const uniqueAccelerators = [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start);
                         
@@ -115,9 +111,9 @@ const App = () => {
                 } catch (error) {
                     console.error("Error during date maintenance:", error);
                 }
-            };
+            }
 
-            // --- Step 2: Attach the real-time listener ---
+            // --- Step 2: Attach the real-time listener AFTER maintenance is done ---
             const unsubscribe = onSnapshot(datesDocRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
@@ -131,28 +127,26 @@ const App = () => {
                 console.error("Error listening to cohort dates:", error);
             });
 
-            runMaintenance(); // Run maintenance once, then the listener will handle real-time changes.
             return unsubscribe;
         };
-
+        
         // Main authentication flow
         let unsubscribe = () => {};
-        if (auth.currentUser) {
-            unsubscribe = manageAndListenForDates(auth.currentUser);
-        } else {
-            const authUnsubscribe = onAuthStateChanged(auth, (user) => {
-                signInAnonymously(auth).then(cred => {
-                    unsubscribe = manageAndListenForDates(cred.user);
-                }).catch(error => console.error("Anonymous sign-in failed:", error));
-                authUnsubscribe(); // We only need this to run once to get a user
-            });
-        }
+        const authHandler = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                initializeAndListen(user).then(unsub => unsubscribe = unsub);
+            } else {
+                signInAnonymously(auth).catch(error => console.error("Anonymous sign-in failed:", error));
+            }
+        });
         
-        return () => unsubscribe();
+        return () => {
+            authHandler();
+            unsubscribe();
+        };
 
     }, [db, auth]);
 
-    // This effect correctly sets the default selected cohort whenever the main date list changes.
     useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -187,7 +181,6 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    // This function for admin saves remains the same, as it was correct.
     const handleSaveDates = async (newDates) => {
         if (!db) {
             console.error("Firestore is not initialized. Cannot save dates.");
