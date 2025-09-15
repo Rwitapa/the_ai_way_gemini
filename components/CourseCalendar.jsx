@@ -8,10 +8,13 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [isMobile, setIsMobile] = useState(false);
 
     const getInitialDate = () => {
-        if (!cohortDates || cohortDates.length === 0) return new Date();
         const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize to the beginning of the day
+
+        if (!cohortDates || cohortDates.length === 0) return today;
         const futureDates = cohortDates.filter(d => (courseType === 'sprint' ? d : d.start) >= today);
-        if (futureDates.length === 0) return new Date();
+        if (futureDates.length === 0) return today;
+        
         const firstCohort = futureDates[0];
         return courseType === 'sprint' ? firstCohort : firstCohort?.start;
     };
@@ -107,9 +110,9 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         const endDate = new Date(monthEnd);
         endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay()));
         
-        // Logic to display dates only for the next 3 months.
         const today = new Date();
-        const threeMonthsFromNow = new Date();
+        today.setHours(0, 0, 0, 0);
+        const threeMonthsFromNow = new Date(today);
         threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
 
         const displayableCohorts = cohortDates.filter(d => {
