@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
+// --- HEADER COMPONENT ---
 const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => (
     <header className="fixed top-0 left-0 right-0 z-40 bg-gray-950/70 backdrop-blur-lg border-b border-gray-800">
         <div className="container mx-auto px-6 h-16 md:h-20 flex justify-between items-center">
@@ -16,9 +17,9 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExpl
                 <button onClick={() => scrollToSection('testimonials')} className="text-gray-300 hover:text-white transition-colors">Testimonials</button>
             </nav>
             <div className="flex items-center gap-4">
-                <motion.button onClick={handleExploreCourses} className="hidden md:block py-2 px-5 text-sm font-semibold rounded-full bg-purple-600 text-white" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="hidden md:block py-2 px-5 text-sm font-semibold rounded-full bg-purple-600 text-white" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     Join Community
-                </motion.button>
+                </motion.a>
                 <button onClick={() => setIsMenuOpen(true)} className="md:hidden">
                     <Icon name="menu" size={28} />
                 </button>
@@ -27,6 +28,7 @@ const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExpl
     </header>
 );
 
+// --- MOBILE MENU COMPONENT ---
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreCourses }) => (
     <AnimatePresence>
         {isMenuOpen && (
@@ -41,15 +43,16 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreC
                         <button onClick={() => { scrollToSection('mentors'); setIsMenuOpen(false); }} className="text-left text-gray-300 hover:text-white transition-colors">Mentors</button>
                         <button onClick={() => { scrollToSection('testimonials'); setIsMenuOpen(false); }} className="text-left text-gray-300 hover:text-white transition-colors">Testimonials</button>
                     </nav>
-                    <motion.button onClick={handleExploreCourses} className="mt-auto w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="mt-auto w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         Join Community
-                    </motion.button>
+                    </motion.a>
                 </motion.div>
             </motion.div>
         )}
     </AnimatePresence>
 );
 
+// --- FOOTER COMPONENT ---
 const Footer = ({ onAdminClick, isAdmin }) => (
     <footer className="bg-gray-900 border-t border-gray-800 py-12">
         <div className="container mx-auto px-6 text-center">
@@ -61,15 +64,18 @@ const Footer = ({ onAdminClick, isAdmin }) => (
     </footer>
 );
 
+// --- LOGIN MODAL COMPONENT ---
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleLogin = () => {
+        // IMPORTANT: In a real-world app, never hardcode passwords. This is for demonstration only.
         if (password === (process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin')) {
             onLoginSuccess();
         } else {
             setError('Incorrect password');
+            setTimeout(() => setError(''), 2000);
         }
     };
 
@@ -83,13 +89,14 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-gray-700 p-2 rounded mb-4"
+                            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                            className="w-full bg-gray-700 p-2 rounded mb-4 text-white"
                             placeholder="Password"
                         />
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <div className="flex justify-end gap-2">
-                            <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600">Cancel</button>
-                            <button onClick={handleLogin} className="px-4 py-2 rounded bg-purple-600">Login</button>
+                            <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">Cancel</button>
+                            <button onClick={handleLogin} className="px-4 py-2 rounded bg-purple-600 hover:bg-purple-500">Login</button>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -98,7 +105,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     );
 };
 
-
+// --- ADMIN MODAL COMPONENT ---
 const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
@@ -114,7 +121,6 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 
     const handleAddSprintDate = () => {
         if (newSprintDate) {
-            // Sprint dates are at 7 PM
             const date = new Date(newSprintDate + 'T19:00:00');
             const updatedDates = [...sprintDates, date].sort((a, b) => a - b);
             setSprintDates(updatedDates);
@@ -124,11 +130,10 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
     
     const handleAddAcceleratorDate = () => {
         if (newAcceleratorDate) {
-            // Accelerator dates start at 10 AM
             const start = new Date(newAcceleratorDate + 'T10:00:00');
             const end = new Date(start);
             end.setDate(start.getDate() + 1);
-            end.setHours(19,0,0,0); // Ends at 7 PM next day
+            end.setHours(19,0,0,0);
             const updatedDates = [...acceleratorDates, { start, end }].sort((a, b) => a.start - b.start);
             setAcceleratorDates(updatedDates);
             setNewAcceleratorDate('');
@@ -139,7 +144,6 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
     const handleRemoveAcceleratorDate = (indexToRemove) => setAcceleratorDates(acceleratorDates.filter((_, index) => index !== indexToRemove));
 
     const handleSave = () => {
-        // This function will permanently override the dates in Firestore
         onSave({ sprint: sprintDates, accelerator: acceleratorDates });
         onClose();
     };
@@ -197,6 +201,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
     );
 };
 
+// --- MAIN LAYOUT COMPONENT ---
 export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
