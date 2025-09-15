@@ -107,5 +107,4 @@ const MentorSection = ({ sectionRef }) => {
     );
 };
 
-// FIX: The export was missing from the provided file. Added it back.
 export default MentorSection;
