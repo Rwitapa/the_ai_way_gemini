@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../lib/firebaseClient.js';
 import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
@@ -66,16 +68,21 @@ const Footer = ({ onAdminClick, isAdmin }) => (
 
 // --- LOGIN MODAL COMPONENT ---
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = () => {
-        // IMPORTANT: In a real-world app, never hardcode passwords. This is for demonstration only.
-        if (password === (process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin')) {
+    const handleLogin = async () => {
+        if (!auth) {
+            setError("Authentication service is not available.");
+            return;
+        }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
             onLoginSuccess();
-        } else {
-            setError('Incorrect password');
-            setTimeout(() => setError(''), 2000);
+        } catch (err) {
+            setError("Failed to login. Please check your credentials.");
+            console.error(err);
         }
     };
 
@@ -85,6 +92,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
                         <h3 className="text-lg font-bold mb-4">Admin Login</h3>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-gray-700 p-2 rounded mb-3 text-white"
+                            placeholder="Email"
+                        />
                         <input
                             type="password"
                             value={password}
