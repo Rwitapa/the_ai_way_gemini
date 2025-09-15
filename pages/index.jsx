@@ -38,7 +38,13 @@ const App = () => {
 
     // Simplified useEffect to fetch dates and listen for real-time updates
     useEffect(() => {
-        if (!auth || !db || appInitialized.current) {
+        console.log("index.jsx: useEffect fired.");
+        if (!auth || !db) {
+            console.error("index.jsx: Firebase auth or db is not available. Aborting.");
+            return;
+        }
+        if (appInitialized.current) {
+            console.log("index.jsx: App already initialized. Skipping.");
             return;
         }
 
@@ -46,24 +52,31 @@ const App = () => {
 
         const initializeApp = async () => {
             appInitialized.current = true;
+            console.log("index.jsx: Starting app initialization.");
             
             try {
-                // Ensure anonymous sign-in for read access if no user is present
                 if (!auth.currentUser) {
+                    console.log("index.jsx: No current user. Signing in anonymously...");
                     await signInAnonymously(auth);
+                    console.log("index.jsx: Anonymous sign-in successful.");
+                } else {
+                    console.log("index.jsx: User already signed in.", auth.currentUser.uid);
                 }
 
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-                const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+                const docPath = `/artifacts/${appId}/public/data/cohorts/dates`;
+                console.log("index.jsx: Document path to check:", docPath);
+                const datesDocRef = doc(db, docPath);
 
-                // Attach the real-time listener immediately.
+                console.log("index.jsx: Attaching Firestore onSnapshot listener.");
                 unsubscribe = onSnapshot(datesDocRef, async (docSnap) => {
+                    console.log("index.jsx: onSnapshot callback triggered.");
                     if (docSnap.exists()) {
+                        console.log("index.jsx: 'dates' document EXISTS. Fetching data.");
                         const data = docSnap.data();
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
 
-                        // Filter out past dates on the client side for display, without writing back to DB
                         const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
                         const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
                         
@@ -72,20 +85,20 @@ const App = () => {
                             accelerator: futureAccelerators
                         });
                     } else {
-                        // Document doesn't exist, so generate initial dates.
-                        console.log("No cohort document found. Generating initial dates for the next 3 months.");
+                        console.log("index.jsx: 'dates' document DOES NOT EXIST. Generating initial dates...");
                         const tomorrow = new Date();
                         tomorrow.setDate(tomorrow.getDate() + 1);
                         const initialSprints = getNextSprintDates(tomorrow, 3);
-                        const initialAccelerators = getNextAcceleratorDates(tomorrow, 5); // Keeping accelerator at 5 years as not specified
+                        const initialAccelerators = getNextAcceleratorDates(tomorrow, 5); 
                         
-                        // Save the newly generated dates to Firestore.
+                        console.log("index.jsx: Saving newly generated dates to Firestore.");
                         await handleSaveDates({ sprint: initialSprints, accelerator: initialAccelerators });
+                        console.log("index.jsx: handleSaveDates function completed.");
                     }
-                }, (error) => console.error("Error listening to cohort dates:", error));
+                }, (error) => console.error("index.jsx: CRITICAL ERROR in onSnapshot listener:", error));
 
             } catch (error) {
-                console.error("Error during app initialization:", error);
+                console.error("index.jsx: CRITICAL ERROR during app initialization:", error);
             }
         };
 
@@ -131,17 +144,12 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    // **FIXED**: This function now correctly saves dates, making admin changes permanent.
     const handleSaveDates = async (newDates) => {
         if (!db) {
-            console.error("Firestore is not initialized.");
-            alert('Error: Database not connected.');
+            console.error("handleSaveDates: Firestore is not initialized.");
             return;
         }
         
-        // This function is now also used for the initial date generation.
-        // We'll allow it to run for anonymous users only for the initial setup.
-        // A more robust implementation would use Firestore rules to restrict this.
         if (auth.currentUser && !auth.currentUser.isAnonymous && !auth.currentUser.email) {
              alert('You must be logged in as an admin to save changes.');
              return;
@@ -151,7 +159,7 @@ const App = () => {
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
         try {
-            // Convert JS Dates to Firestore Timestamps before saving.
+            console.log("handleSaveDates: Preparing data for Firestore.");
             const firestoreReadyDates = {
                 sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
                 accelerator: newDates.accelerator.map(c => ({
@@ -159,14 +167,14 @@ const App = () => {
                     end: Timestamp.fromDate(new Date(c.end))
                 }))
             };
-
+            console.log("handleSaveDates: Calling setDoc to write to Firestore.");
             await setDoc(datesDocRef, firestoreReadyDates);
-            // We won't show an alert on the initial, automatic save.
+            console.log("handleSaveDates: setDoc successful.");
             if (auth.currentUser && !auth.currentUser.isAnonymous) {
                 alert('Cohort dates updated successfully!');
             }
         } catch (error) {
-            console.error("Failed to save cohort dates:", error);
+            console.error("handleSaveDates: CRITICAL ERROR saving dates to Firestore:", error);
             if (auth.currentUser && !auth.currentUser.isAnonymous) {
                 alert(`Error saving dates: ${error.message}`);
             }
@@ -201,7 +209,7 @@ const App = () => {
             setShowCoursesPage={setShowCoursesPage}
             handleExploreCourses={handleExploreCourses}
             cohortDates={cohortDates}
-            onSaveDates={handleSaveDates} // Pass the corrected save function
+            onSaveDates={handleSaveDates}
             formatSprintDate={formatSprintDate}
             formatAcceleratorDate={formatAcceleratorDate}
         >
