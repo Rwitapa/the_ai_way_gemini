@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
 import { signInAnonymously } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc, Timestamp } from 'firebase/firestore';
 
 import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
@@ -36,6 +36,7 @@ const App = () => {
         testimonials: useRef(null),
     };
 
+    // Simplified useEffect to fetch dates and listen for real-time updates
     useEffect(() => {
         if (!auth || !db || appInitialized.current) {
             return;
@@ -47,84 +48,38 @@ const App = () => {
             appInitialized.current = true;
             
             try {
-                await signInAnonymously(auth);
-                const user = auth.currentUser;
-                if (!user) {
-                    console.error("Critical: Failed to sign in anonymously.");
-                    return;
+                // Ensure anonymous sign-in for read access if no user is present
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
                 }
 
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
-                // Step 1: Perform a one-time database check for pruning and extending dates.
-                const docSnap = await getDoc(datesDocRef);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                // Attach the real-time listener immediately.
+                unsubscribe = onSnapshot(datesDocRef, async (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
 
-                let currentSprints = [];
-                let currentAccelerators = [];
-                let needsDbUpdate = false;
-
-                if (!docSnap.exists()) {
-                    console.log("No cohort document found. Generating initial dates.");
-                    needsDbUpdate = true;
-                } else {
-                    const data = docSnap.data();
-                    currentSprints = data.sprint ? data.sprint.map(d => d.toDate()) : [];
-                    currentAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [];
-                }
-                
-                // Prune past dates
-                const prunedSprints = currentSprints.filter(d => d >= today);
-                if (prunedSprints.length !== currentSprints.length) needsDbUpdate = true;
-
-                const prunedAccelerators = currentAccelerators.filter(c => c.start >= today);
-                if (prunedAccelerators.length !== currentAccelerators.length) needsDbUpdate = true;
-                
-                let finalSprints = [...prunedSprints];
-                let finalAccelerators = [...prunedAccelerators];
-                const fiveYearsFromNow = new Date();
-                fiveYearsFromNow.setFullYear(fiveYearsFromNow.getFullYear() + 5);
-
-                // Extend dates if they don't reach far enough into the future
-                const lastSprint = finalSprints.length > 0 ? finalSprints[finalSprints.length - 1] : new Date(0);
-                if (lastSprint < fiveYearsFromNow) {
-                    const nextDayToGenerate = lastSprint > new Date(0) ? new Date(lastSprint) : today;
-                    if (lastSprint > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
-                    finalSprints.push(...getNextSprintDates(nextDayToGenerate, 5));
-                    needsDbUpdate = true;
-                }
-                
-                const lastAcceleratorStart = finalAccelerators.length > 0 ? finalAccelerators[finalAccelerators.length - 1].start : new Date(0);
-                if (lastAcceleratorStart < fiveYearsFromNow) {
-                    const nextDayToGenerate = lastAcceleratorStart > new Date(0) ? new Date(lastAcceleratorStart) : today;
-                    if (lastAcceleratorStart > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
-                    finalAccelerators.push(...getNextAcceleratorDates(nextDayToGenerate, 5));
-                    needsDbUpdate = true;
-                }
-
-                // Ensure dates are unique and sorted before saving and setting state
-                const finalUniqueSprints = [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b);
-                const finalUniqueAccelerators = [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start);
-                const newDates = { sprint: finalUniqueSprints, accelerator: finalUniqueAccelerators };
-
-                if (needsDbUpdate) {
-                    console.log("DB Maintenance: Creating/pruning/extending dates.");
-                    await setDoc(datesDocRef, newDates);
-                }
-
-                // Directly set the state with the corrected dates before attaching the listener.
-                setCohortDates(newDates);
-
-                // Step 2: Attach the real-time listener for any future changes (e.g., from admin).
-                unsubscribe = onSnapshot(datesDocRef, (doc) => {
-                    if (doc.exists()) {
-                        const data = doc.data();
+                        // Filter out past dates on the client side for display, without writing back to DB
+                        const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
+                        const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
+                        
                         setCohortDates({
-                            sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
-                            accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : []
+                            sprint: futureSprints,
+                            accelerator: futureAccelerators
                         });
+                    } else {
+                        // Document doesn't exist, so generate initial dates.
+                        console.log("No cohort document found. Generating initial dates for 5 years.");
+                        const today = new Date();
+                        const initialSprints = getNextSprintDates(today, 5);
+                        const initialAccelerators = getNextAcceleratorDates(today, 5);
+                        
+                        // Save the newly generated dates to Firestore.
+                        await handleSaveDates({ sprint: initialSprints, accelerator: initialAccelerators });
                     }
                 }, (error) => console.error("Error listening to cohort dates:", error));
 
@@ -139,11 +94,11 @@ const App = () => {
 
     }, []);
 
+    // Effect to set the default selected cohort date
     useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Find the earliest available future date for each course to set as default
         const futureSprints = cohortDates.sprint.filter(d => d >= today);
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
 
@@ -153,6 +108,7 @@ const App = () => {
         });
     }, [cohortDates]);
 
+    // General useEffect for UI animations
     useEffect(() => {
         document.title = "The AI Way";
         const scrollElements = document.querySelectorAll('.animate-on-scroll');
@@ -174,19 +130,43 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
+    // **FIXED**: This function now correctly saves dates, making admin changes permanent.
     const handleSaveDates = async (newDates) => {
         if (!db) {
             console.error("Firestore is not initialized.");
+            alert('Error: Database not connected.');
             return;
         }
+        
+        // Ensure the user is an admin before allowing a write.
+        // This is a client-side check; secure this with Firestore rules in production.
+        if (!auth.currentUser || auth.currentUser.isAnonymous) {
+             const user = auth.currentUser;
+             // This is a simplified check. A robust implementation would use custom claims.
+             if (!user.email) { // Simple check if the user is not the admin
+                alert('You must be logged in as an admin to save changes.');
+                return;
+             }
+        }
+
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+
         try {
-            await setDoc(datesDocRef, newDates);
+            // Convert JS Dates to Firestore Timestamps before saving.
+            const firestoreReadyDates = {
+                sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
+                accelerator: newDates.accelerator.map(c => ({
+                    start: Timestamp.fromDate(new Date(c.start)),
+                    end: Timestamp.fromDate(new Date(c.end))
+                }))
+            };
+
+            await setDoc(datesDocRef, firestoreReadyDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
             console.error("Failed to save cohort dates:", error);
-            alert('Error saving dates. Please check the console.');
+            alert(`Error saving dates: ${error.message}`);
         }
     };
 
@@ -218,7 +198,7 @@ const App = () => {
             setShowCoursesPage={setShowCoursesPage}
             handleExploreCourses={handleExploreCourses}
             cohortDates={cohortDates}
-            onSaveDates={handleSaveDates}
+            onSaveDates={handleSaveDates} // Pass the corrected save function
             formatSprintDate={formatSprintDate}
             formatAcceleratorDate={formatAcceleratorDate}
         >
