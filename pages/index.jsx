@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
-import { signInAnonymously } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, getDoc, Timestamp, deleteDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 
 import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
@@ -27,8 +27,6 @@ const App = () => {
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
     
-    const appInitialized = useRef(false);
-
     const sectionRefs = {
         courses: useRef(null),
         whatYouGet: useRef(null),
@@ -36,25 +34,19 @@ const App = () => {
         testimonials: useRef(null),
     };
 
+    // This effect runs only once to set up the authentication listener.
     useEffect(() => {
-        if (!auth || !db || appInitialized.current) {
-            return;
-        }
-
         let unsubscribe = () => {};
 
-        const initializeApp = async () => {
-            appInitialized.current = true;
-            
-            try {
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth);
-                }
-
+        // Listen for changes in authentication state (e.g., login, logout, anonymous sign-in)
+        const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in (either as admin or anonymously)
+                // Now, set up the Firestore listener with the correct user permissions.
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
-                unsubscribe = onSnapshot(datesDocRef, async (docSnap) => {
+                unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         const today = new Date();
@@ -68,24 +60,26 @@ const App = () => {
                             accelerator: futureAccelerators
                         });
                     } else {
-                        // This block will now only be triggered by the forceSync function
-                        // when an admin is logged in.
-                        if (auth.currentUser && !auth.currentUser.isAnonymous) {
-                             console.log("Dates document not found. Admin can now use Force Sync to create it.");
-                        }
+                        // Document doesn't exist. Clear the local state.
+                        setCohortDates({ sprint: [], accelerator: [] });
+                        console.log("Dates document not found. Admin can now use Force Sync to create it.");
                     }
                 }, (error) => console.error("Error in onSnapshot listener:", error));
-
-            } catch (error) {
-                console.error("Error during app initialization:", error);
+            } else {
+                // No user is signed in, try to sign in anonymously.
+                signInAnonymously(auth).catch((error) => {
+                    console.error("Anonymous sign-in failed:", error);
+                });
             }
+        });
+        
+        // Cleanup function for both listeners when the component unmounts.
+        return () => {
+            authUnsubscribe();
+            unsubscribe();
         };
 
-        initializeApp();
-        
-        return () => unsubscribe();
-
-    }, []);
+    }, []); // Empty dependency array ensures this runs only once.
 
     useEffect(() => {
         const today = new Date();
@@ -122,32 +116,29 @@ const App = () => {
     };
 
     const handleSaveDates = async (newDates) => {
-        if (!db) {
-            console.error("Firestore is not initialized.");
+        if (!auth.currentUser || auth.currentUser.isAnonymous) {
+            alert('You must be logged in as an admin to save changes.');
             return;
         }
-        
-        if (auth.currentUser && !auth.currentUser.isAnonymous) {
-            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-            const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
-            try {
-                const firestoreReadyDates = {
-                    sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
-                    accelerator: newDates.accelerator.map(c => ({
-                        start: Timestamp.fromDate(new Date(c.start)),
-                        end: Timestamp.fromDate(new Date(c.end))
-                    }))
-                };
+        const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+        const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
-                await setDoc(datesDocRef, firestoreReadyDates);
-                alert('Cohort dates updated successfully!');
-            } catch (error) {
-                console.error("Error saving dates to Firestore:", error);
-                alert(`Error saving dates: ${error.message}`);
-            }
-        } else {
-            alert('You must be logged in as an admin to save changes.');
+        try {
+            const firestoreReadyDates = {
+                sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
+                accelerator: newDates.accelerator.map(c => ({
+                    start: Timestamp.fromDate(new Date(c.start)),
+                    end: Timestamp.fromDate(new Date(c.end))
+                }))
+            };
+
+            await setDoc(datesDocRef, firestoreReadyDates);
+            // The onSnapshot listener will automatically update the UI.
+            alert('Cohort dates updated successfully!');
+        } catch (error) {
+            console.error("Error saving dates to Firestore:", error);
+            alert(`Error saving dates: ${error.message}`);
         }
     };
 
@@ -161,14 +152,12 @@ const App = () => {
         if (!confirmation) return;
 
         try {
-            console.log("FORCE SYNC: Generating new dates...");
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const newSprints = getNextSprintDates(tomorrow, 3);
             const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
             
             await handleSaveDates({ sprint: newSprints, accelerator: newAccelerators });
-
         } catch (error) {
             console.error("FORCE SYNC: Error generating or saving dates:", error);
             alert('An error occurred during the sync. Please check the console.');
