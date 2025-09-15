@@ -54,19 +54,20 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreC
     </AnimatePresence>
 );
 
-// --- FOOTER COMPONENT ---
+// --- FOOTER COMPONENT (Reverted) ---
 const Footer = ({ onAdminClick, isAdmin }) => (
-    <footer className="bg-gray-900 border-t border-gray-800 py-12">
-        <div className="container mx-auto px-6 text-center">
-            <p className="text-gray-400">&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
-            <button onClick={onAdminClick} className="text-xs text-gray-600 hover:text-gray-500 mt-4">
+    <footer className="bg-gray-900 border-t border-gray-800 py-8">
+        <div className="container mx-auto px-6 text-center text-gray-500">
+            <p>&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
+            <button onClick={onAdminClick} className="text-xs mt-2 hover:text-gray-300">
                 {isAdmin ? 'Exit Admin Mode' : 'Admin Panel'}
             </button>
         </div>
     </footer>
 );
 
-// --- LOGIN MODAL COMPONENT ---
+
+// --- LOGIN MODAL COMPONENT (Reverted to simpler design) ---
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -78,44 +79,45 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             return;
         }
         try {
+            setError('');
             await signInWithEmailAndPassword(auth, email, password);
             onLoginSuccess();
         } catch (err) {
-            setError("Failed to login. Please check your credentials.");
+            setError("Login failed. Please check credentials.");
             console.error(err);
         }
     };
 
+    if (!isOpen) return null;
+
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
-                        <h3 className="text-lg font-bold mb-4">Admin Login</h3>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-gray-700 p-2 rounded mb-3 text-white"
-                            placeholder="Email"
-                        />
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                            className="w-full bg-gray-700 p-2 rounded mb-4 text-white"
-                            placeholder="Password"
-                        />
-                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-                        <div className="flex justify-end gap-2">
-                            <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">Cancel</button>
-                            <button onClick={handleLogin} className="px-4 py-2 rounded bg-purple-600 hover:bg-purple-500">Login</button>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4">
+            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-sm border border-gray-700">
+                <h3 className="text-lg font-bold mb-4 text-white">Admin Login</h3>
+                <div className="space-y-4">
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-gray-700 p-2 rounded text-white placeholder-gray-400"
+                        placeholder="Email"
+                    />
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                        className="w-full bg-gray-700 p-2 rounded text-white placeholder-gray-400"
+                        placeholder="Password"
+                    />
+                </div>
+                {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+                <div className="flex justify-end gap-3 mt-5">
+                    <button onClick={onClose} className="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-white text-sm">Cancel</button>
+                    <button onClick={handleLogin} className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold">Login</button>
+                </div>
+            </div>
+        </div>
     );
 };
 
