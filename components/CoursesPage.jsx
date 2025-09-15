@@ -1,3 +1,4 @@
+// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/components/CoursesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -115,7 +116,7 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
   );
 };
 
-const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, setSelectedCohorts, selectedCohorts }) => {
+const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts }) => {
     const [activeCourseId, setActiveCourseId] = useState('sprint');
     const videoRef = useRef(null);
 
