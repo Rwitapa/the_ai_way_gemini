@@ -68,14 +68,10 @@ const App = () => {
                             accelerator: futureAccelerators
                         });
                     } else {
-                        // Only generate dates if an admin is logged in, to avoid anonymous errors
+                        // This block will now only be triggered by the forceSync function
+                        // when an admin is logged in.
                         if (auth.currentUser && !auth.currentUser.isAnonymous) {
-                            const tomorrow = new Date();
-                            tomorrow.setDate(tomorrow.getDate() + 1);
-                            const initialSprints = getNextSprintDates(tomorrow, 3);
-                            const initialAccelerators = getNextAcceleratorDates(tomorrow, 5); 
-                            
-                            await handleSaveDates({ sprint: initialSprints, accelerator: initialAccelerators });
+                             console.log("Dates document not found. Admin can now use Force Sync to create it.");
                         }
                     }
                 }, (error) => console.error("Error in onSnapshot listener:", error));
@@ -132,7 +128,7 @@ const App = () => {
         }
         
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
-             const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
             const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
             try {
@@ -161,19 +157,21 @@ const App = () => {
             return;
         }
 
-        const confirmation = confirm("Are you sure? This will delete the current dates document and force the app to regenerate it.");
+        const confirmation = confirm("Are you sure? This will generate and save the default dates for the next 3 months.");
         if (!confirmation) return;
 
-        console.log("FORCE SYNC: Admin user confirmed. Deleting dates document...");
-        const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-        const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
-
         try {
-            await deleteDoc(datesDocRef);
-            alert('Dates document deleted. The app will now automatically regenerate it. Please check Firestore.');
+            console.log("FORCE SYNC: Generating new dates...");
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const newSprints = getNextSprintDates(tomorrow, 3);
+            const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
+            
+            await handleSaveDates({ sprint: newSprints, accelerator: newAccelerators });
+
         } catch (error) {
-            console.error("FORCE SYNC: Error deleting document:", error);
-            alert('Error deleting dates document. Please check the console.');
+            console.error("FORCE SYNC: Error generating or saving dates:", error);
+            alert('An error occurred during the sync. Please check the console.');
         }
     };
 
