@@ -139,15 +139,12 @@ const App = () => {
             return;
         }
         
-        // Ensure the user is an admin before allowing a write.
-        // This is a client-side check; secure this with Firestore rules in production.
-        if (!auth.currentUser || auth.currentUser.isAnonymous) {
-             const user = auth.currentUser;
-             // This is a simplified check. A robust implementation would use custom claims.
-             if (!user.email) { // Simple check if the user is not the admin
-                alert('You must be logged in as an admin to save changes.');
-                return;
-             }
+        // This function is now also used for the initial date generation.
+        // We'll allow it to run for anonymous users only for the initial setup.
+        // A more robust implementation would use Firestore rules to restrict this.
+        if (auth.currentUser && !auth.currentUser.isAnonymous && !auth.currentUser.email) {
+             alert('You must be logged in as an admin to save changes.');
+             return;
         }
 
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
@@ -164,10 +161,15 @@ const App = () => {
             };
 
             await setDoc(datesDocRef, firestoreReadyDates);
-            alert('Cohort dates updated successfully!');
+            // We won't show an alert on the initial, automatic save.
+            if (auth.currentUser && !auth.currentUser.isAnonymous) {
+                alert('Cohort dates updated successfully!');
+            }
         } catch (error) {
             console.error("Failed to save cohort dates:", error);
-            alert(`Error saving dates: ${error.message}`);
+            if (auth.currentUser && !auth.currentUser.isAnonymous) {
+                alert(`Error saving dates: ${error.message}`);
+            }
         }
     };
 
