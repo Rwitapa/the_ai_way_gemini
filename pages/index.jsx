@@ -1,4 +1,3 @@
-// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/pages/index.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
@@ -28,7 +27,6 @@ const App = () => {
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
     
-    // useRef to ensure initialization logic runs only once.
     const appInitialized = useRef(false);
 
     const sectionRefs = {
@@ -46,7 +44,7 @@ const App = () => {
         let unsubscribe = () => {};
 
         const initializeApp = async () => {
-            appInitialized.current = true; // Mark as initialized to prevent re-runs
+            appInitialized.current = true;
             
             try {
                 await signInAnonymously(auth);
@@ -59,7 +57,7 @@ const App = () => {
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
-                // --- Step 1: Perform a one-time database check and maintenance ---
+                // Step 1: Perform a one-time database check for pruning and extending dates.
                 const docSnap = await getDoc(datesDocRef);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
@@ -77,6 +75,7 @@ const App = () => {
                     currentAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [];
                 }
                 
+                // Prune past dates
                 const prunedSprints = currentSprints.filter(d => d >= today);
                 if (prunedSprints.length !== currentSprints.length) needsDbUpdate = true;
 
@@ -88,6 +87,7 @@ const App = () => {
                 const fiveYearsFromNow = new Date();
                 fiveYearsFromNow.setFullYear(fiveYearsFromNow.getFullYear() + 5);
 
+                // Extend dates if they don't reach far enough into the future
                 const lastSprint = finalSprints.length > 0 ? finalSprints[finalSprints.length - 1] : new Date(0);
                 if (lastSprint < fiveYearsFromNow) {
                     const nextDayToGenerate = lastSprint > new Date(0) ? new Date(lastSprint) : today;
@@ -104,6 +104,7 @@ const App = () => {
                     needsDbUpdate = true;
                 }
 
+                // Ensure dates are unique and sorted before saving and setting state
                 const finalUniqueSprints = [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b);
                 const finalUniqueAccelerators = [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start);
                 const newDates = { sprint: finalUniqueSprints, accelerator: finalUniqueAccelerators };
@@ -113,10 +114,10 @@ const App = () => {
                     await setDoc(datesDocRef, newDates);
                 }
 
-                // Directly set the state with the corrected dates *before* listening.
+                // Directly set the state with the corrected dates before attaching the listener.
                 setCohortDates(newDates);
 
-                // --- Step 2: Attach the real-time listener for future changes ---
+                // Step 2: Attach the real-time listener for any future changes (e.g., from admin).
                 unsubscribe = onSnapshot(datesDocRef, (doc) => {
                     if (doc.exists()) {
                         const data = doc.data();
@@ -142,6 +143,7 @@ const App = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Find the earliest available future date for each course to set as default
         const futureSprints = cohortDates.sprint.filter(d => d >= today);
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
 
