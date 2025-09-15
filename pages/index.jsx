@@ -73,10 +73,11 @@ const App = () => {
                         });
                     } else {
                         // Document doesn't exist, so generate initial dates.
-                        console.log("No cohort document found. Generating initial dates for 5 years.");
-                        const today = new Date();
-                        const initialSprints = getNextSprintDates(today, 5);
-                        const initialAccelerators = getNextAcceleratorDates(today, 5);
+                        console.log("No cohort document found. Generating initial dates for the next 3 months.");
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        const initialSprints = getNextSprintDates(tomorrow, 3);
+                        const initialAccelerators = getNextAcceleratorDates(tomorrow, 5); // Keeping accelerator at 5 years as not specified
                         
                         // Save the newly generated dates to Firestore.
                         await handleSaveDates({ sprint: initialSprints, accelerator: initialAccelerators });
