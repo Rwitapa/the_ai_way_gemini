@@ -3,7 +3,101 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
-// ... (Header and MobileMenu components remain the same) ...
+const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => (
+    <header className="fixed top-0 left-0 right-0 z-40 bg-gray-950/70 backdrop-blur-lg border-b border-gray-800">
+        <div className="container mx-auto px-6 h-16 md:h-20 flex justify-between items-center">
+            <a href="/" className="flex items-center gap-2">
+                <img src="/logo_transparent.png" alt="The AI Way Logo" className="h-8 w-8" />
+                <span className="text-xl font-bold text-white">The AI Way</span>
+            </a>
+            <nav className="hidden md:flex items-center gap-6">
+                <button onClick={() => scrollToSection('courses')} className="text-gray-300 hover:text-white transition-colors">Courses</button>
+                <button onClick={() => scrollToSection('mentors')} className="text-gray-300 hover:text-white transition-colors">Mentors</button>
+                <button onClick={() => scrollToSection('testimonials')} className="text-gray-300 hover:text-white transition-colors">Testimonials</button>
+            </nav>
+            <div className="flex items-center gap-4">
+                <motion.button onClick={handleExploreCourses} className="hidden md:block py-2 px-5 text-sm font-semibold rounded-full bg-purple-600 text-white" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    Join Community
+                </motion.button>
+                <button onClick={() => setIsMenuOpen(true)} className="md:hidden">
+                    <Icon name="menu" size={28} />
+                </button>
+            </div>
+        </div>
+    </header>
+);
+
+const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreCourses }) => (
+    <AnimatePresence>
+        {isMenuOpen && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}>
+                <motion.div initial={{ x: '100%' }} animate={{ x: '0%' }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} className="absolute top-0 right-0 h-full w-full max-w-xs bg-gray-900 p-6 flex flex-col" onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-center mb-10">
+                        <span className="text-xl font-bold text-white">Menu</span>
+                        <button onClick={() => setIsMenuOpen(false)}><Icon name="x" size={28} /></button>
+                    </div>
+                    <nav className="flex flex-col gap-6 text-lg">
+                        <button onClick={() => { scrollToSection('courses'); setIsMenuOpen(false); }} className="text-left text-gray-300 hover:text-white transition-colors">Courses</button>
+                        <button onClick={() => { scrollToSection('mentors'); setIsMenuOpen(false); }} className="text-left text-gray-300 hover:text-white transition-colors">Mentors</button>
+                        <button onClick={() => { scrollToSection('testimonials'); setIsMenuOpen(false); }} className="text-left text-gray-300 hover:text-white transition-colors">Testimonials</button>
+                    </nav>
+                    <motion.button onClick={handleExploreCourses} className="mt-auto w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        Join Community
+                    </motion.button>
+                </motion.div>
+            </motion.div>
+        )}
+    </AnimatePresence>
+);
+
+const Footer = ({ onAdminClick, isAdmin }) => (
+    <footer className="bg-gray-900 border-t border-gray-800 py-12">
+        <div className="container mx-auto px-6 text-center">
+            <p className="text-gray-400">&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
+            <button onClick={onAdminClick} className="text-xs text-gray-600 hover:text-gray-500 mt-4">
+                {isAdmin ? 'Exit Admin Mode' : 'Admin Panel'}
+            </button>
+        </div>
+    </footer>
+);
+
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleLogin = () => {
+        if (password === (process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin')) {
+            onLoginSuccess();
+        } else {
+            setError('Incorrect password');
+        }
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+                        <h3 className="text-lg font-bold mb-4">Admin Login</h3>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full bg-gray-700 p-2 rounded mb-4"
+                            placeholder="Password"
+                        />
+                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                        <div className="flex justify-end gap-2">
+                            <button onClick={onClose} className="px-4 py-2 rounded bg-gray-600">Cancel</button>
+                            <button onClick={handleLogin} className="px-4 py-2 rounded bg-purple-600">Login</button>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
 
 const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
@@ -102,9 +196,6 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
         </AnimatePresence>
     );
 };
-
-
-// ... (LoginModal and Layout components remain the same) ...
 
 export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
