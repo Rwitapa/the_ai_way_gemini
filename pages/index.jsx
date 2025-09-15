@@ -1,10 +1,8 @@
-// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/pages/index.jsx
-
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
 import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 
 import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
@@ -24,18 +22,12 @@ import CoursesPage from '../components/CoursesPage';
 
 const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
-    const [cohortDates, setCohortDates] = useState({
-        sprint: [],
-        accelerator: [],
-    });
+    const [cohortDates, setCohortDates] = useState({ sprint: [], accelerator: [] });
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
-    const [selectedCohorts, setSelectedCohorts] = useState({
-        sprint: null,
-        accelerator: null,
-    });
+    const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
     
-    // A flag to ensure the database maintenance logic runs only once per session.
+    // useRef to ensure maintenance logic runs only once per session.
     const maintenanceCheckPerformed = useRef(false);
 
     const sectionRefs = {
@@ -51,111 +43,116 @@ const App = () => {
             return;
         }
 
-        const signInAndListen = async () => {
-            try {
-                await signInAnonymously(auth);
-            } catch (error) {
-                console.error("Firebase anonymous sign-in failed:", error);
-            }
+        const manageAndListenForDates = (user) => {
+            if (!user) return;
+            
+            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+            const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+
+            // --- Step 1: Perform a one-time check and maintenance operation ---
+            const runMaintenance = async () => {
+                if (maintenanceCheckPerformed.current) return;
+                maintenanceCheckPerformed.current = true;
+
+                try {
+                    const docSnap = await getDoc(datesDocRef);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    let currentSprints = [];
+                    let currentAccelerators = [];
+                    let needsUpdate = false;
+
+                    if (!docSnap.exists()) {
+                        console.log("No cohort document. Will create one.");
+                        needsUpdate = true;
+                    } else {
+                        const data = docSnap.data();
+                        currentSprints = data.sprint ? data.sprint.map(d => d.toDate()) : [];
+                        currentAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [];
+                    }
+
+                    // Prune past dates
+                    const prunedSprints = currentSprints.filter(d => d >= today);
+                    if (prunedSprints.length !== currentSprints.length) needsUpdate = true;
+
+                    const prunedAccelerators = currentAccelerators.filter(c => c.start >= today);
+                    if (prunedAccelerators.length !== currentAccelerators.length) needsUpdate = true;
+
+                    // Extend dates if calendar is running short
+                    let finalSprints = [...prunedSprints];
+                    let finalAccelerators = [...prunedAccelerators];
+                    const fiveYearsFromNow = new Date();
+                    fiveYearsFromNow.setFullYear(fiveYearsFromNow.getFullYear() + 5);
+
+                    const lastSprint = finalSprints.length > 0 ? finalSprints[finalSprints.length - 1] : new Date(0);
+                    if (lastSprint < fiveYearsFromNow) {
+                        const nextDayToGenerate = lastSprint > new Date(0) ? new Date(lastSprint) : today;
+                        if (lastSprint > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
+                        
+                        const newSprints = getNextSprintDates(nextDayToGenerate, 5);
+                        finalSprints.push(...newSprints);
+                        needsUpdate = true;
+                    }
+                    
+                    const lastAcceleratorStart = finalAccelerators.length > 0 ? finalAccelerators[finalAccelerators.length - 1].start : new Date(0);
+                    if (lastAcceleratorStart < fiveYearsFromNow) {
+                        const nextDayToGenerate = lastAcceleratorStart > new Date(0) ? new Date(lastAcceleratorStart) : today;
+                        if (lastAcceleratorStart > new Date(0)) nextDayToGenerate.setDate(nextDayToGenerate.getDate() + 1);
+
+                        const newAccelerators = getNextAcceleratorDates(nextDayToGenerate, 5);
+                        finalAccelerators.push(...newAccelerators);
+                        needsUpdate = true;
+                    }
+
+                    if (needsUpdate) {
+                        console.log("Performing DB maintenance: creating/pruning/extending dates.");
+                        const uniqueSprints = [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b);
+                        const uniqueAccelerators = [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start);
+                        
+                        await setDoc(datesDocRef, { sprint: uniqueSprints, accelerator: uniqueAccelerators });
+                    }
+                } catch (error) {
+                    console.error("Error during date maintenance:", error);
+                }
+            };
+
+            // --- Step 2: Attach the real-time listener ---
+            const unsubscribe = onSnapshot(datesDocRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    const liveDates = {
+                        sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
+                        accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : []
+                    };
+                    setCohortDates(liveDates);
+                }
+            }, (error) => {
+                console.error("Error listening to cohort dates:", error);
+            });
+
+            runMaintenance(); // Run maintenance once, then the listener will handle real-time changes.
+            return unsubscribe;
         };
 
-        const authUnsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-                const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
-
-                const dbUnsubscribe = onSnapshot(datesDocRef, (docSnap) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize to the beginning of the day
-
-                    // If the document doesn't exist, create it and populate the local state.
-                    if (!docSnap.exists()) {
-                        // Prevent this block from running in a loop if there's an issue.
-                        if (maintenanceCheckPerformed.current) return;
-                        maintenanceCheckPerformed.current = true;
-                        
-                        console.log("No cohort dates document found. Creating one with dates for the next 5 years.");
-                        const initialDates = {
-                            sprint: getNextSprintDates(today, 5),
-                            accelerator: getNextAcceleratorDates(today, 5),
-                        };
-                        
-                        // Set local state immediately for a fast UI response.
-                        setCohortDates(initialDates); 
-                        // Asynchronously write the new dates to the database.
-                        setDoc(datesDocRef, initialDates).catch(e => console.error("Error creating initial dates doc:", e));
-                        return;
-                    }
-
-                    // If the document exists, parse the dates.
-                    const data = docSnap.data();
-                    const firestoreDates = {
-                        sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
-                        accelerator: data.accelerator ? data.accelerator.map(c => ({
-                            start: c.start.toDate(),
-                            end: c.end.toDate()
-                        })) : []
-                    };
-                    
-                    setCohortDates(firestoreDates);
-
-                    // --- Database Maintenance Logic ---
-                    if (!maintenanceCheckPerformed.current) {
-                        maintenanceCheckPerformed.current = true;
-                        let needsUpdate = false;
-
-                        // 1. Prune past dates
-                        const prunedSprints = firestoreDates.sprint.filter(d => d >= today);
-                        const prunedAccelerators = firestoreDates.accelerator.filter(c => c.start >= today);
-
-                        if (prunedSprints.length !== firestoreDates.sprint.length || prunedAccelerators.length !== firestoreDates.accelerator.length) {
-                            needsUpdate = true;
-                        }
-
-                        // 2. Extend dates if the calendar is running short
-                        const fiveYearsFromNow = new Date();
-                        fiveYearsFromNow.setFullYear(fiveYearsFromNow.getFullYear() + 5);
-                        
-                        let finalSprints = [...prunedSprints];
-                        let finalAccelerators = [...prunedAccelerators];
-
-                        const lastSprint = finalSprints.length > 0 ? finalSprints[finalSprints.length - 1] : today;
-                        if (lastSprint < fiveYearsFromNow) {
-                            const newSprints = getNextSprintDates(lastSprint, 5);
-                            finalSprints.push(...newSprints.filter(d => d > lastSprint));
-                            needsUpdate = true;
-                        }
-
-                        const lastAccelerator = finalAccelerators.length > 0 ? finalAccelerators[finalAccelerators.length - 1].start : today;
-                        if (lastAccelerator < fiveYearsFromNow) {
-                            const newAccelerators = getNextAcceleratorDates(lastAccelerator, 5);
-                            finalAccelerators.push(...newAccelerators.filter(c => c.start > lastAccelerator));
-                            needsUpdate = true;
-                        }
-
-                        if (needsUpdate) {
-                             const updatedDates = { 
-                                sprint: [...new Map(finalSprints.map(item => [item.getTime(), item])).values()].sort((a,b) => a-b), 
-                                accelerator: [...new Map(finalAccelerators.map(item => [item.start.getTime(), item])).values()].sort((a,b) => a.start - b.start)
-                            };
-                            console.log("DB Maintenance: Pruning past dates and extending future dates.");
-                            setDoc(datesDocRef, updatedDates).catch(e => console.error("Error updating dates doc:", e));
-                        }
-                    }
-
-                }, (error) => {
-                    console.error("Error listening to cohort dates:", error);
-                });
-
-                return () => dbUnsubscribe();
-            }
-        });
-
-        signInAndListen();
-        return () => authUnsubscribe();
+        // Main authentication flow
+        let unsubscribe = () => {};
+        if (auth.currentUser) {
+            unsubscribe = manageAndListenForDates(auth.currentUser);
+        } else {
+            const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+                signInAnonymously(auth).then(cred => {
+                    unsubscribe = manageAndListenForDates(cred.user);
+                }).catch(error => console.error("Anonymous sign-in failed:", error));
+                authUnsubscribe(); // We only need this to run once to get a user
+            });
+        }
+        
+        return () => unsubscribe();
 
     }, [db, auth]);
 
+    // This effect correctly sets the default selected cohort whenever the main date list changes.
     useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -164,16 +161,13 @@ const App = () => {
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
 
         setSelectedCohorts({
-            sprint: futureSprints.length > 0 ? futureSprints[0] : null,
-            accelerator: futureAccelerators.length > 0 ? futureAccelerators[0] : null,
+            sprint: futureSprints[0] || null,
+            accelerator: futureAccelerators[0] || null,
         });
     }, [cohortDates]);
 
     useEffect(() => {
         document.title = "The AI Way";
-    }, []);
-
-    useEffect(() => {
         const scrollElements = document.querySelectorAll('.animate-on-scroll');
         if (!scrollElements.length) return;
         const observer = new IntersectionObserver((entries) => {
@@ -193,6 +187,7 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
+    // This function for admin saves remains the same, as it was correct.
     const handleSaveDates = async (newDates) => {
         if (!db) {
             console.error("Firestore is not initialized. Cannot save dates.");
@@ -211,10 +206,7 @@ const App = () => {
 
     const handleOpenCalendar = (e, courseType) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setCalendarPosition({
-            top: rect.bottom + 8,
-            left: rect.left,
-        });
+        setCalendarPosition({ top: rect.bottom + 8, left: rect.left });
         setCalendarFor(courseType);
     };
 
