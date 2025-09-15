@@ -1,93 +1,41 @@
+// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/components/Layout.jsx
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from './common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
 
-const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => {
-    return (
-        <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
-            <nav className="flex items-center justify-between h-16 md:h-20">
-                <a
-                    href="#"
-                    aria-label="The AI Way — Home"
-                    onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }}
-                    className="group flex items-center gap-3 md:gap-4"
-                >
-                    <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16">
-                        <img
-                            src="/brand/aiway-mark.png"
-                            alt="The AI Way logo"
-                            className="object-contain w-full h-full"
-                        />
-                    </span>
-                    <span className="inline-block font-poppins-medium text-white leading-none tracking-tight text-[18px] md:text-[21px] lg:text-[22px]">
-                        The AI Way
-                    </span>
-                </a>
-                <div className="hidden md:flex items-center space-x-8">
-                    <button
-                        onClick={handleExploreCourses}
-                        className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
-                    >
-                        Courses
-                    </button>
-                    {[{ name: 'Mentors', ref: 'mentors' }, { name: 'Testimonials', ref: 'testimonials' }].map((section) => (
-                        <button
-                            key={section.ref}
-                            onClick={() => scrollToSection(section.ref)}
-                            className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2"
-                        >
-                            {section.name}
-                        </button>
-                    ))}
-                    <a
-                        href={WHATSAPP_COMMUNITY_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[16px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full"
-                    >
-                        Join Community
-                    </a>
-                </div>
-                <div className="md:hidden">
-                    <button
-                        onClick={() => setIsMenuOpen(true)}
-                        className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        aria-label="Open menu"
-                    >
-                        <Icon name="menu" size={30} className="text-white" />
-                    </button>
-                </div>
-            </nav>
-        </header>
-    );
-};
+const Header = ({ scrollToSection, setShowCoursesPage, setIsMenuOpen, handleExploreCourses }) => (
+    <header className="fixed top-0 z-40 w-full backdrop-blur-md bg-gray-950/70 py-3 md:py-4 px-6 md:px-12 rounded-b-xl shadow-lg">
+        <nav className="flex items-center justify-between h-16 md:h-20">
+            <a href="#" aria-label="The AI Way — Home" onClick={(e) => { e.preventDefault(); setShowCoursesPage(false); window.scrollTo(0, 0); }} className="group flex items-center gap-3 md:gap-4">
+                <span className="relative block h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"><img src="/brand/aiway-mark.png" alt="The AI Way logo" className="object-contain w-full h-full"/></span>
+                <span className="inline-block font-poppins-medium text-white leading-none tracking-tight text-[18px] md:text-[21px] lg:text-[22px]">The AI Way</span>
+            </a>
+            <div className="hidden md:flex items-center space-x-8">
+                <button onClick={handleExploreCourses} className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2">Courses</button>
+                {[{ name: 'Mentors', ref: 'mentors' }, { name: 'Testimonials', ref: 'testimonials' }].map((section) => (
+                    <button key={section.ref} onClick={() => scrollToSection(section.ref)} className="text-[16px] md:text-[17px] font-semibold hover:text-purple-300 transition-colors rounded-lg px-3 py-2">{section.name}</button>
+                ))}
+                <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="text-[16px] md:text-[17px] font-semibold bg-[#0A472E] text-white hover:bg-[#0D573A] transition-colors px-5 py-2.5 rounded-full">Join Community</a>
+            </div>
+            <div className="md:hidden">
+                <button onClick={() => setIsMenuOpen(true)} className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Open menu"><Icon name="menu" size={30} className="text-white" /></button>
+            </div>
+        </nav>
+    </header>
+);
 
 const MobileMenu = ({ isMenuOpen, setIsMenuOpen, scrollToSection, handleExploreCourses }) => (
     <AnimatePresence>
         {isMenuOpen && (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="md:hidden fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6"
-            >
-                <button onClick={() => setIsMenuOpen(false)} className="absolute top-4 right-4 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Close menu">
-                    <Icon name="x" size={32} className="text-white" />
-                </button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="md:hidden fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6">
+                <button onClick={() => setIsMenuOpen(false)} className="absolute top-4 right-4 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Close menu"><Icon name="x" size={32} className="text-white" /></button>
                 <div className="flex flex-col items-center space-y-8 text-center">
-                    <button onClick={() => { setIsMenuOpen(false); handleExploreCourses(); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
-                        Courses
-                    </button>
+                    <button onClick={() => { setIsMenuOpen(false); handleExploreCourses(); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">Courses</button>
                     {[{ name: 'Mentors', ref: 'mentors' }, { name: 'Testimonials', ref: 'testimonials' }].map(section => (
-                        <button key={section.ref} onClick={() => { setIsMenuOpen(false); scrollToSection(section.ref); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
-                            {section.name}
-                        </button>
+                        <button key={section.ref} onClick={() => { setIsMenuOpen(false); scrollToSection(section.ref); }} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">{section.name}</button>
                     ))}
-                    <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">
-                        Join Community
-                    </a>
+                    <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-3xl font-semibold text-white hover:text-purple-400 transition-colors">Join Community</a>
                 </div>
             </motion.div>
         )}
@@ -99,50 +47,23 @@ const Footer = ({ onAdminClick, isAdmin }) => (
         <div className="container mx-auto px-6">
             <div className="flex flex-col md:flex-row justify-between items-center mb-6">
                 <div className="mb-6 md:mb-0 flex items-center gap-3 md:gap-4">
-                    <span className="relative block h-10 w-10 md:h-12 md:w-12">
-                        <img
-                            src="/brand/aiway-mark.png"
-                            alt="The AI Way logo"
-                            className="object-contain w-full h-full"
-                        />
-                    </span>
-                    <span className="font-poppins-medium text-white text-xl md:text-2xl leading-none">
-                        The AI Way
-                    </span>
+                    <span className="relative block h-10 w-10 md:h-12 md:w-12"><img src="/brand/aiway-mark.png" alt="The AI Way logo" className="object-contain w-full h-full"/></span>
+                    <span className="font-poppins-medium text-white text-xl md:text-2xl leading-none">The AI Way</span>
                 </div>
                 <div className="flex space-x-6">
-                    <a
-                        href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true"
-                        aria-label="LinkedIn Profile"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"
-                    >
-                        <Icon name="linkedin" size={24} />
-                    </a>
-                    <a
-                        href="https://www.instagram.com/theaiway.official/"
-                        aria-label="Instagram Profile"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"
-                    >
-                        <Icon name="instagram" size={24} />
-                    </a>
+                    <a href="https://www.linkedin.com/company/the-ai-way/?viewAsMember=true" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"><Icon name="linkedin" size={24} /></a>
+                    <a href="https://www.instagram.com/theaiway.official/" aria-label="Instagram Profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-500 transition-colors rounded-full p-2"><Icon name="instagram" size={24} /></a>
                 </div>
             </div>
             <div className="text-center text-gray-500 text-sm space-y-1">
                 <p>&copy; {new Date().getFullYear()} The AI Way. All Rights Reserved.</p>
                 <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
-                <button onClick={onAdminClick} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">
-                    {isAdmin ? 'Admin Logout' : 'Admin Panel'}
-                </button>
+                <button onClick={onAdminClick} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">{isAdmin ? 'Admin Logout' : 'Admin Panel'}</button>
             </div>
         </div>
     </footer>
 );
 
-// FIX: The AdminModal logic is updated for robust state management.
 const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
@@ -176,13 +97,8 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
         }
     };
 
-    const handleRemoveSprintDate = (indexToRemove) => {
-        setSprintDates(sprintDates.filter((_, index) => index !== indexToRemove));
-    };
-
-    const handleRemoveAcceleratorDate = (indexToRemove) => {
-        setAcceleratorDates(acceleratorDates.filter((_, index) => index !== indexToRemove));
-    };
+    const handleRemoveSprintDate = (indexToRemove) => setSprintDates(sprintDates.filter((_, index) => index !== indexToRemove));
+    const handleRemoveAcceleratorDate = (indexToRemove) => setAcceleratorDates(acceleratorDates.filter((_, index) => index !== indexToRemove));
 
     const handleSave = () => {
         onSave({ sprint: sprintDates, accelerator: acceleratorDates });
@@ -192,26 +108,12 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-                >
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col"
-                    >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 25 }} className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
                         <div className="flex justify-between items-center p-4 border-b border-gray-700">
                              <h3 className="text-xl font-bold text-white">Admin: Manage Cohort Dates</h3>
-                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
-                                <Icon name="x" size={20} />
-                            </button>
+                            <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors"><Icon name="x" size={20} /></button>
                         </div>
-                        
                         <div className="p-6 grid md:grid-cols-2 gap-6 overflow-y-auto">
                             <div className="bg-gray-900/50 p-4 rounded-lg">
                                 <h4 className="font-bold text-white text-lg mb-3">Champion Sprint</h4>
@@ -245,7 +147,6 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
                                  <p className="text-xs text-gray-500 mt-2">Note: Select the start date (Saturday) for the weekend cohort.</p>
                             </div>
                         </div>
-
                          <div className="p-4 border-t border-gray-700 mt-auto flex justify-end gap-3">
                             <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
                             <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm bg-purple-600 hover:bg-purple-500 font-semibold">Save Changes</button>
@@ -266,12 +167,15 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         e.preventDefault();
         const adminUser = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
         const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+        
+        if (!adminUser || !adminPass) {
+            setError('Admin credentials not configured. Please check environment variables.');
+            return;
+        }
 
         if (username === adminUser && password === adminPass) {
             onLoginSuccess();
-            setUsername('');
-            setPassword('');
-            setError('');
+            handleClose();
         } else {
             setError('Invalid credentials. Please try again.');
         }
@@ -287,48 +191,17 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-                    onClick={handleClose}
-                >
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm"
-                        onClick={e => e.stopPropagation()}
-                    >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={handleClose}>
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 25 }} className="bg-gray-800 border border-purple-800/50 rounded-2xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center p-4 border-b border-gray-700">
                              <h3 className="text-xl font-bold text-white">Admin Login</h3>
-                            <button onClick={handleClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
-                                <Icon name="x" size={20} />
-                            </button>
+                            <button onClick={handleClose} className="p-2 rounded-full hover:bg-gray-700 transition-colors"><Icon name="x" size={20} /></button>
                         </div>
                         <form onSubmit={handleLogin} className="p-6 space-y-4">
-                            <input
-                                type="email"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                required
-                            />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                required
-                            />
+                            <input type="email" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
+                            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
                             {error && <p className="text-red-400 text-sm">{error}</p>}
-                            <button type="submit" className="w-full p-3 bg-purple-600 rounded-lg text-white font-semibold hover:bg-purple-500 transition-colors">
-                                Login
-                            </button>
+                            <button type="submit" className="w-full p-3 bg-purple-600 rounded-lg text-white font-semibold hover:bg-purple-500 transition-colors">Login</button>
                         </form>
                     </motion.div>
                 </motion.div>
@@ -364,76 +237,25 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
                 html, body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
                 body { font-family: 'Inter', sans-serif; }
                 .font-poppins-medium { font-family: 'Poppins', sans-serif; font-weight: 500; }
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-                .animate-fade-in { animation: fadeIn 1s ease-out; }
                 .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
                 .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
-                .animated-testimonials-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150%; padding-top: 150%; background-image: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 50%); animation: rotate-background 30s linear infinite; z-index: 0; }
-                @keyframes rotate-background { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-                .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: #4a0e70; border-radius: 10px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #5e118f; }
-                .marquee { --gap: 2.25rem; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
-                @media (min-width: 768px) { .marquee { --gap: 2.75rem; } }
-                .marquee__track { display: inline-flex; align-items: center; gap: var(--gap); width: max-content; white-space: nowrap; will-change: transform; animation: companies-belt var(--dur, 52s) linear infinite; transform: translate3d(0,0,0); }
-                @keyframes companies-belt { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-                .scrolling-column-up { animation: scroll-up 15s linear infinite; }
-                .scrolling-column-down { animation: scroll-up 15s linear infinite reverse; }
-                @keyframes scroll-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+                .marquee { --gap: 2.25rem; overflow: hidden; }
+                .marquee__track { display: flex; gap: var(--gap); animation: marquee var(--dur, 52s) linear infinite; }
+                @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-50% - var(--gap) / 2)); } }
             `}</style>
-
             <AnimatePresence>
                 {isAdmin && (
-                    <motion.div
-                        initial={{y: '-100%'}}
-                        animate={{y: '0%'}}
-                        exit={{y: '-100%'}}
-                        className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-50"
-                    >
+                    <motion.div initial={{y: '-100%'}} animate={{y: '0%'}} exit={{y: '-100%'}} className="fixed top-0 left-0 right-0 bg-yellow-400 text-black text-center p-2 text-sm font-bold z-50">
                        Admin Mode is Active. <button onClick={() => setShowAdminModal(true)} className="underline hover:text-purple-800">Edit Cohort Dates</button>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            <Header
-                scrollToSection={scrollToSection}
-                setShowCoursesPage={setShowCoursesPage}
-                setIsMenuOpen={setIsMenuOpen}
-                handleExploreCourses={handleExploreCourses}
-            />
-            <MobileMenu
-                isMenuOpen={isMenuOpen}
-                setIsMenuOpen={setIsMenuOpen}
-                scrollToSection={scrollToSection}
-                handleExploreCourses={handleExploreCourses}
-            />
-
-            <main className="pt-16 md:pt-20">
-                {children}
-            </main>
-
+            <Header scrollToSection={scrollToSection} setShowCoursesPage={setShowCoursesPage} setIsMenuOpen={setIsMenuOpen} handleExploreCourses={handleExploreCourses} />
+            <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} handleExploreCourses={handleExploreCourses} />
+            <main className="pt-16 md:pt-20">{children}</main>
             <Footer onAdminClick={handleAdminClick} isAdmin={isAdmin} />
-
-            <AdminModal
-                isOpen={showAdminModal}
-                onClose={() => setShowAdminModal(false)}
-                currentDates={cohortDates}
-                onSave={onSaveDates}
-                formatSprintDate={formatSprintDate}
-                formatAcceleratorDate={formatAcceleratorDate}
-            />
-
-            <LoginModal
-                isOpen={showLoginModal}
-                onClose={() => setShowLoginModal(false)}
-                onLoginSuccess={() => {
-                    setIsAdmin(true);
-                    setShowLoginModal(false);
-                }}
-            />
+            <AdminModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} currentDates={cohortDates} onSave={onSaveDates} formatSprintDate={formatSprintDate} formatAcceleratorDate={formatAcceleratorDate} />
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onLoginSuccess={() => { setIsAdmin(true); setShowLoginModal(false); }} />
         </div>
     );
 };
-
-export default Layout;
