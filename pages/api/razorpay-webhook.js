@@ -1,0 +1,61 @@
+import { db } from '../../lib/firebaseClient';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import crypto from 'crypto';
+
+// IMPORTANT: Use environment variables for the webhook secret
+const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  const razorpaySignature = req.headers['x-razorpay-signature'];
+  const hmac = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET);
+  hmac.update(JSON.stringify(req.body));
+  const digest = hmac.digest('hex');
+
+  if (digest !== razorpaySignature) {
+    return res.status(400).json({ message: 'Invalid signature' });
+  }
+
+  if (req.body.event === 'payment.captured') {
+    const payment = req.body.payload.payment.entity;
+    const { id, order_id, notes, created_at } = payment;
+
+    // Extract all details from the notes field
+    const { courseType, cohort, name, email, phone } = notes;
+    
+    let parsedCohort;
+    if (courseType === 'sprint') {
+        parsedCohort = new Date(JSON.parse(cohort));
+    } else if (courseType === 'accelerator') {
+        parsedCohort = JSON.parse(cohort);
+        parsedCohort.start = new Date(parsedCohort.start);
+        parsedCohort.end = new Date(parsedCohort.end);
+    }
+    
+    const registrationData = {
+      paymentId: id,
+      orderId: order_id,
+      customerName: name,
+      customerEmail: email,
+      customerPhone: phone,
+      courseType: courseType,
+      cohortDate: parsedCohort,
+      timestamp: serverTimestamp(),
+      paymentStatus: 'captured',
+    };
+    
+    try {
+      await addDoc(collection(db, 'registrations'), registrationData);
+      console.log(`Successfully saved registration for payment ID: ${id}`);
+      return res.status(200).json({ message: 'Success' });
+    } catch (error) {
+      console.error(`Error saving registration for payment ID ${id}:`, error);
+      return res.status(500).json({ message: 'Failed to save data' });
+    }
+  }
+
+  res.status(200).json({ message: 'Event received, but not handled.' });
+}
