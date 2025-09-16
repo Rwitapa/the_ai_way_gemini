@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     };
     
     try {
-      // *** FIX: Use the correct environment variable for the App ID ***
+      // Use the correct environment variable for the App ID
       const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
       if (!appId) {
           throw new Error("NEXT_PUBLIC_FIREBASE_APP_ID is not defined.");
