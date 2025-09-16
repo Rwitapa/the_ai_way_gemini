@@ -2,10 +2,59 @@
 
 import { motion } from "framer-motion";
 import React from 'react';
+import { useRouter } from 'next/router';
 import Icon from './common/Icon.jsx';
-import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
+import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_KEY_ID } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, selectedCohorts, formatSprintDate, formatAcceleratorDate }) => {
+    const router = useRouter();
+    
+    const handlePayment = async (e, course) => {
+        e.preventDefault();
+        
+        // 1. Call API to create a Razorpay order
+        const orderResponse = await fetch('/api/create-razorpay-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100, // Amount in paise
+            courseType: course.mascot,
+            cohort: selectedCohorts[course.mascot],
+            customerName: '',
+            customerEmail: '',
+            customerPhone: '',
+          }),
+        });
+        
+        const order = await orderResponse.json();
+    
+        const options = {
+          key: RAZORPAY_KEY_ID,
+          amount: order.amount,
+          currency: order.currency,
+          name: 'The AI Way',
+          description: course.title,
+          order_id: order.id,
+          handler: function (response) {
+            // This handler is called on successful payment
+            router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
+          },
+          prefill: {
+            name: '',
+            email: '',
+            contact: '',
+          },
+          theme: {
+            color: '#8B5CF6'
+          }
+        };
+        
+        if (typeof window !== 'undefined') {
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        }
+    };
+
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
             <div className="container mx-auto px-6">
@@ -48,9 +97,9 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
                                 <p className="text-green-400 font-semibold text-sm mt-1">{courseData.sprint.bonus}</p>
                             </div>
                         </div>
-                        <motion.a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <motion.button onClick={(e) => handlePayment(e, courseData.sprint)} className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             Enroll Now
-                        </motion.a>
+                        </motion.button>
                     </motion.div>
                     <motion.div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-2xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }} transition={{ type: 'spring', stiffness: 300 }}>
                         <div className="absolute top-0 right-0 -mt-3 -mr-3 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">Popular</div>
@@ -76,9 +125,9 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
                                 <p className="text-green-400 font-semibold text-sm mt-1">{courseData.accelerator.bonus}</p>
                             </div>
                         </div>
-                        <motion.a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <motion.button onClick={(e) => handlePayment(e, courseData.accelerator)} className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             Enroll Now
-                        </motion.a>
+                        </motion.button>
                     </motion.div>
                 </div>
                 <div className="text-center mt-12">
