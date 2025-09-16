@@ -21,7 +21,7 @@ import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
 import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
-import CheckoutForm from '../components/CheckoutForm'; //
+import CheckoutForm from '../components/CheckoutForm';
 
 const App = () => {
     const router = useRouter();
@@ -33,7 +33,6 @@ const App = () => {
 
     const [showCheckoutForm, setShowCheckoutForm] = useState(false);
     const [checkoutCourse, setCheckoutCourse] = useState(null);
-    const [checkoutDetails, setCheckoutDetails] = useState({ name: '', email: '', phone: '' });
     
     const sectionRefs = {
         courses: useRef(null),
@@ -42,61 +41,44 @@ const App = () => {
         testimonials: useRef(null),
     };
 
-    // This effect handles authentication and fetching data for all users.
     useEffect(() => {
         let unsubscribe = () => {};
-
         const authUnsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // A user is signed in (either as admin or anonymously).
-                // We have permission to read the dates document.
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
-
                 unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
-
                         const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
                         const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
-                        
                         setCohortDates({ sprint: futureSprints, accelerator: futureAccelerators });
                     } else {
-                        // Document doesn't exist. Clear local dates. The admin must create it.
                         setCohortDates({ sprint: [], accelerator: [] });
                     }
                 }, (error) => console.error("Error in onSnapshot listener:", error));
             } else {
-                // No user. Attempt to sign in anonymously to get read permissions.
                 signInAnonymously(auth).catch((error) => {
-                    console.error("CRITICAL: Anonymous sign-in is failing. This must be fixed in the Firebase project settings.", error);
+                    console.error("CRITICAL: Anonymous sign-in is failing.", error);
                 });
             }
         });
-        
-        return () => {
-            authUnsubscribe();
-            unsubscribe();
-        };
+        return () => { authUnsubscribe(); unsubscribe(); };
     }, []);
 
-    // This effect sets the default selected date when the cohort dates are loaded.
     useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
         const futureSprints = cohortDates.sprint.filter(d => d >= today);
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
-
         setSelectedCohorts({
             sprint: futureSprints[0] || null,
             accelerator: futureAccelerators[0] || null,
         });
     }, [cohortDates]);
 
-    // This effect handles animations.
     useEffect(() => {
         document.title = "The AI Way";
         const scrollElements = document.querySelectorAll('.animate-on-scroll');
@@ -118,16 +100,13 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
-    // This function is for the admin to save manual edits from the modal.
     const handleSaveDates = async (newDates) => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
             alert('You must be logged in as an admin to save changes.');
             return;
         }
-        
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
-
         try {
             const firestoreReadyDates = {
                 sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
@@ -136,7 +115,6 @@ const App = () => {
                     end: Timestamp.fromDate(new Date(c.end))
                 }))
             };
-
             await setDoc(datesDocRef, firestoreReadyDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
@@ -145,18 +123,13 @@ const App = () => {
         }
     };
 
-    // **THE HACK**: This function is self-contained and works only for the admin.
     const forceSyncDates = async () => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
             alert('You must be logged in as an admin to force sync.');
             return;
         }
-
-        const confirmation = confirm("Are you sure? This will overwrite existing dates with the default schedule for the next 5 years.");
-        if (!confirmation) return;
-
+        if (!confirm("Are you sure? This will overwrite existing dates.")) return;
         try {
-            // 1. Generate the new dates
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const newSprints = getNextSprintDates(tomorrow, 60);
@@ -168,20 +141,14 @@ const App = () => {
                     end: Timestamp.fromDate(c.end)
                 }))
             };
-            
-            // 2. Save them directly to Firestore
             const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
             const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
             await setDoc(datesDocRef, newDatesForDb);
-
-            // 3. Update the local state to show the changes immediately
             setCohortDates({ sprint: newSprints, accelerator: newAccelerators });
-
             alert('Default dates have been successfully synced!');
-
         } catch (error) {
-            console.error("FORCE SYNC: Error generating or saving dates:", error);
-            alert('An error occurred during the sync. Please check the console.');
+            console.error("FORCE SYNC: Error:", error);
+            alert('An error occurred during the sync.');
         }
     };
 
@@ -215,22 +182,23 @@ const App = () => {
     const handlePayment = async (customerDetails) => {
         setShowCheckoutForm(false);
         const course = checkoutCourse;
+        // *** FIX: Use the correct key for the selected cohort ***
+        const cohortTypeKey = course.mascot === 'champion' ? 'sprint' : 'accelerator';
+        const selectedCohort = selectedCohorts[cohortTypeKey];
 
         const orderResponse = await fetch('/api/create-razorpay-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
-                courseType: course.mascot,
-                cohort: selectedCohorts[course.mascot],
+                courseType: course.title, // Send the full title for clarity
+                cohort: selectedCohort,
                 customerName: customerDetails.customerName,
                 customerEmail: customerDetails.customerEmail,
                 customerPhone: customerDetails.customerPhone,
             }),
         });
-
         const order = await orderResponse.json();
-
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: order.amount,
@@ -239,7 +207,6 @@ const App = () => {
             description: course.title,
             order_id: order.id,
             handler: function (response) {
-                // This handler is called on successful payment
                 router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
             },
             prefill: {
@@ -247,11 +214,8 @@ const App = () => {
                 email: customerDetails.customerEmail,
                 contact: customerDetails.customerPhone,
             },
-            theme: {
-                color: '#8B5CF6'
-            }
+            theme: { color: '#8B5CF6' }
         };
-
         if (typeof window !== 'undefined') {
             const rzp = new window.Razorpay(options);
             rzp.open();
