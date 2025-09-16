@@ -1,8 +1,61 @@
 import { motion } from "framer-motion";
 import Icon from '../components/common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { db } from '../lib/firebaseClient';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const ThankYouPage = () => {
+  const router = useRouter();
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, courseType, cohort } = router.query;
+  const [status, setStatus] = useState('Processing your registration...');
+  const [showPaymentInfo, setShowPaymentInfo] = useState(false);
+
+  useEffect(() => {
+    const savePaymentData = async () => {
+        if (!razorpay_payment_id) {
+            // No payment ID in the URL, so this is a manual visit.
+            setStatus('Registration complete! You will receive a confirmation email shortly.');
+            setShowPaymentInfo(false);
+            return;
+        }
+
+        try {
+            // Parse the cohort data from the URL
+            let parsedCohort;
+            if (courseType === 'sprint') {
+                parsedCohort = new Date(decodeURIComponent(cohort));
+            } else if (courseType === 'accelerator') {
+                const cohortObj = JSON.parse(decodeURIComponent(cohort));
+                parsedCohort = {
+                    start: new Date(cohortObj.start),
+                    end: new Date(cohortObj.end),
+                };
+            }
+
+            const registrationData = {
+                paymentId: razorpay_payment_id,
+                orderId: razorpay_order_id,
+                courseType,
+                cohort: parsedCohort,
+                timestamp: serverTimestamp(),
+            };
+
+            await addDoc(collection(db, 'registrations'), registrationData);
+            setStatus('Payment successful and registration complete! You will receive a confirmation email shortly.');
+            setShowPaymentInfo(true);
+
+        } catch (error) {
+            console.error('Error saving payment data:', error);
+            setStatus('Payment was successful, but there was an error with registration. Please contact support with your payment ID.');
+            setShowPaymentInfo(true);
+        }
+    };
+
+    savePaymentData();
+  }, [razorpay_payment_id, cohort, courseType]);
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col justify-center items-center p-6">
         <motion.div
@@ -24,8 +77,15 @@ const ThankYouPage = () => {
             You're All Set!
           </h1>
           <p className="text-gray-300 text-lg md:text-xl mb-8">
-            Thank you for registering. We've sent a confirmation to your email. Get ready to start your AI journey!
+            {status}
           </p>
+
+          {showPaymentInfo && (
+            <div className="mb-8 p-4 bg-gray-800/50 rounded-lg text-sm text-gray-400 max-w-sm mx-auto">
+                <p>Payment ID: <span className="font-mono text-white break-all">{razorpay_payment_id}</span></p>
+                <p>Order ID: <span className="font-mono text-white break-all">{razorpay_order_id}</span></p>
+            </div>
+          )}
 
           <motion.a
             href={WHATSAPP_COMMUNITY_URL}
