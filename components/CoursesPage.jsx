@@ -1,10 +1,11 @@
+// components/CoursesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/router';
 import Icon from './common/Icon.jsx';
 import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_KEY_ID } from '../lib/constants';
 
-const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
+const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutForm }) => {
   const [openModule, setOpenModule] = useState(null);
   const router = useRouter();
   
@@ -15,51 +16,8 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
   
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    
-    // 1. Call API to create a Razorpay order
-    const orderResponse = await fetch('/api/create-razorpay-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100, // Amount in paise
-        courseType: course.mascot,
-        cohort: selectedCohort,
-        customerName: '',
-        customerEmail: '',
-        customerPhone: '',
-      }),
-    });
-    
-    const order = await orderResponse.json();
-
-    const options = {
-      key: RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: 'The AI Way',
-      description: course.title,
-      order_id: order.id,
-      handler: function (response) {
-        router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
-      },
-      prefill: {
-        name: '',
-        email: '',
-        contact: '',
-      },
-      theme: {
-        color: '#8B5CF6'
-      }
-    };
-    
-    if (typeof window !== 'undefined') {
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    }
-  };
-
+  // The handlePayment function is no longer needed here as it's been moved to pages/index.jsx
+  
   return (
       <motion.div
           key={course.mascot}
@@ -104,7 +62,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
                               <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
                               <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
                           </div>
-                          <motion.button onClick={handlePayment} className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <motion.button onClick={() => openCheckoutForm(course)} className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                               Enroll for {course.price}
                           </motion.button>
                           <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
@@ -162,7 +120,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
   );
 };
 
-const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts }) => {
+const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts, openCheckoutForm }) => {
     const [activeCourseId, setActiveCourseId] = useState('sprint');
     const videoRef = useRef(null);
 
@@ -226,6 +184,7 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts 
                         course={activeCourseData}
                         selectedCohort={selectedCohorts[activeCourseId]}
                         onOpenCalendar={(e) => handleOpenCalendar(e, activeCourseId)}
+                        openCheckoutForm={openCheckoutForm}
                     />
                 </AnimatePresence>
             </div>
