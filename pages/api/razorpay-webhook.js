@@ -1,5 +1,5 @@
 // pages/api/razorpay-webhook.js
-import { adminDb } from '@/lib/firebaseAdmin';
+import { adminDb } from '../../lib/firebaseAdmin';
 import getRawBody from 'raw-body';
 import crypto from 'crypto';
 
