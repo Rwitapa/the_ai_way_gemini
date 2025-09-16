@@ -68,8 +68,8 @@ export default async function handler(req, res) {
     // You have FIREBASE_APP_ID set in Vercel; we’ll nest under artifacts/{appId}/private/registrations
     const appId = process.env.FIREBASE_APP_ID;
     const colPath = appId
-      ? `artifacts/${appId}/private/registrations`
-      : 'registrations'; // fallback if not set
+      ? `artifacts/${appId}/registrations`
+      : 'registrations';
 
     await adminDb.collection(colPath).doc(orderId).set(registration, { merge: true });
 
