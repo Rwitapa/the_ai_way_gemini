@@ -1,5 +1,5 @@
 // pages/thank-you.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react'; // Import useRef
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
 import Icon from '../components/common/Icon.jsx';
@@ -10,9 +10,19 @@ const ThankYouPage = () => {
   const [registration, setRegistration] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { razorpay_order_id } = router.query;
+  const videoRef = useRef(null); // Create a ref for the video element
+
+  // Effect to programmatically play the video to ensure autoplay
+  useEffect(() => {
+    if (videoRef.current) {
+        videoRef.current.play().catch(error => {
+            // Autoplay was prevented, which is common. Muted videos usually work.
+            console.log("Thank you page video autoplay was prevented:", error);
+        });
+    }
+  }, [isLoading, registration]); // Re-run if the video element appears after loading
 
   useEffect(() => {
-    // If there's no order ID, stop loading and show an error state.
     if (!router.isReady) return;
     if (!razorpay_order_id) {
         setIsLoading(false);
@@ -26,18 +36,17 @@ const ThankYouPage = () => {
           throw new Error('Failed to fetch registration details');
         }
         const data = await response.json();
-        const regData = data.data; // The data is nested under a 'data' key
+        const regData = data.data;
         
-        // Convert date strings from API back to Date objects
         if (regData.cohort && typeof regData.cohort === 'string') {
             try {
                 const parsedCohort = JSON.parse(regData.cohort);
-                if (parsedCohort.start) { // Accelerator
+                if (parsedCohort.start) {
                     regData.cohortDate = {
                         start: new Date(parsedCohort.start),
                         end: new Date(parsedCohort.end)
                     };
-                } else { // Sprint (assuming it's just the date string)
+                } else {
                      regData.cohortDate = new Date(parsedCohort);
                 }
             } catch(e) {
@@ -84,10 +93,16 @@ const ThankYouPage = () => {
                 transition={{ delay: 0.2, type: 'spring', stiffness: 260, damping: 20 }}
                 className="mx-auto rounded-full h-24 w-24 mb-6 flex items-center justify-center border-2 border-purple-500/30 overflow-hidden"
               >
-                <img
-                    src="/Rwitapa.png"
-                    alt="Rwitapa Mitra"
+                {/* Use the video with the ref and all necessary attributes */}
+                <video
+                    ref={videoRef}
+                    src="/Rwitapa.mp4"
+                    poster="/Rwitapa.png"
                     className="block w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                 />
               </motion.div>
 
