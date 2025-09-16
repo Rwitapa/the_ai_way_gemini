@@ -6,7 +6,6 @@ import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_
 
 const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
   const [openModule, setOpenModule] = useState(null);
-  const [paymentUrl, setPaymentUrl] = useState('');
   const router = useRouter();
   
   const toggleModule = (moduleTitle) => {
@@ -16,19 +15,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar }) => {
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
   
-  useEffect(() => {
-    // This code now only runs on the client-side
-    let cohortForUrl = '';
-    if (selectedCohort) {
-        if (course.mascot === 'sprint') {
-            cohortForUrl = selectedCohort.toISOString();
-        } else {
-            cohortForUrl = JSON.stringify(selectedCohort);
-        }
-    }
-    setPaymentUrl(`/api/create-razorpay-order?cohort=${encodeURIComponent(cohortForUrl)}&courseType=${course.mascot}`);
-  }, [course.mascot, selectedCohort]);
-
   const handlePayment = async (e) => {
     e.preventDefault();
     
