@@ -1,6 +1,6 @@
 // pages/api/razorpay-webhook.js
-import { db } from '../../lib/firebaseClient';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../../lib/firebaseAdmin'; // <-- UPDATED IMPORT
+import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Use Timestamp from 'firebase/firestore' for compatibility
 import crypto from 'crypto';
 
 // IMPORTANT: Use environment variables for the webhook secret
@@ -10,6 +10,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
+
+  // ... (Signature verification code remains the same)
 
   const razorpaySignature = req.headers['x-razorpay-signature'];
   const hmac = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET);
@@ -24,7 +26,6 @@ export default async function handler(req, res) {
     const payment = req.body.payload.payment.entity;
     const { id, order_id, notes, created_at } = payment;
 
-    // Extract all details from the notes field
     const { courseType, cohort, name, email, phone } = notes;
     
     let parsedCohort;
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
       customerPhone: phone,
       courseType: courseType,
       cohortDate: parsedCohort,
-      timestamp: serverTimestamp(),
+      timestamp: Timestamp.now(), // Use Admin SDK's Timestamp
       paymentStatus: 'captured',
     };
     
