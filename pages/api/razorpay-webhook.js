@@ -59,13 +59,18 @@ export default async function handler(req, res) {
     };
     
     try {
-      // Use the correct environment variable for the App ID
-      const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+      // *** FIX APPLIED: Using a server-side environment variable ***
+      // This now uses FIREBASE_APP_ID, which is safe for server-side execution on Vercel.
+      const appId = process.env.FIREBASE_APP_ID;
+      
       if (!appId) {
-          throw new Error("NEXT_PUBLIC_FIREBASE_APP_ID is not defined.");
+          // This error will now correctly trigger if the new variable is missing.
+          throw new Error("FIREBASE_APP_ID environment variable is not defined.");
       }
+      
       const registrationPath = `/artifacts/${appId}/private/registrations`;
       await addDoc(collection(db, registrationPath), registrationData);
+      
       return res.status(200).json({ message: 'Success' });
     } catch (error) {
       console.error(`Firestore write error for Order ID ${order_id}:`, error);
