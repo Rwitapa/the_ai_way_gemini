@@ -34,15 +34,14 @@ const App = () => {
         testimonials: useRef(null),
     };
 
-    // This effect runs only once to set up the authentication listener.
+    // This effect handles authentication and fetching data for all users.
     useEffect(() => {
         let unsubscribe = () => {};
 
-        // Listen for changes in authentication state (e.g., login, logout, anonymous sign-in)
         const authUnsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in (either as admin or anonymously)
-                // Now, set up the Firestore listener with the correct user permissions.
+                // A user is signed in (either as admin or anonymously).
+                // We have permission to read the dates document.
                 const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
                 const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
@@ -55,32 +54,27 @@ const App = () => {
                         const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
                         const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
                         
-                        setCohortDates({
-                            sprint: futureSprints,
-                            accelerator: futureAccelerators
-                        });
+                        setCohortDates({ sprint: futureSprints, accelerator: futureAccelerators });
                     } else {
-                        // Document doesn't exist. Clear the local state.
+                        // Document doesn't exist. Clear local dates. The admin must create it.
                         setCohortDates({ sprint: [], accelerator: [] });
-                        console.log("Dates document not found. Admin can now use Force Sync to create it.");
                     }
                 }, (error) => console.error("Error in onSnapshot listener:", error));
             } else {
-                // No user is signed in, try to sign in anonymously.
+                // No user. Attempt to sign in anonymously to get read permissions.
                 signInAnonymously(auth).catch((error) => {
-                    console.error("Anonymous sign-in failed:", error);
+                    console.error("CRITICAL: Anonymous sign-in is failing. This must be fixed in the Firebase project settings.", error);
                 });
             }
         });
         
-        // Cleanup function for both listeners when the component unmounts.
         return () => {
             authUnsubscribe();
             unsubscribe();
         };
+    }, []);
 
-    }, []); // Empty dependency array ensures this runs only once.
-
+    // This effect sets the default selected date when the cohort dates are loaded.
     useEffect(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -94,6 +88,7 @@ const App = () => {
         });
     }, [cohortDates]);
 
+    // This effect handles animations.
     useEffect(() => {
         document.title = "The AI Way";
         const scrollElements = document.querySelectorAll('.animate-on-scroll');
@@ -115,12 +110,13 @@ const App = () => {
         window.scrollTo(0, 0);
     };
 
+    // This function is for the admin to save manual edits from the modal.
     const handleSaveDates = async (newDates) => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
             alert('You must be logged in as an admin to save changes.');
             return;
         }
-
+        
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
 
@@ -134,7 +130,6 @@ const App = () => {
             };
 
             await setDoc(datesDocRef, firestoreReadyDates);
-            // The onSnapshot listener will automatically update the UI.
             alert('Cohort dates updated successfully!');
         } catch (error) {
             console.error("Error saving dates to Firestore:", error);
@@ -142,28 +137,39 @@ const App = () => {
         }
     };
 
+    // **THE HACK**: This function is self-contained and works only for the admin.
     const forceSyncDates = async () => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
             alert('You must be logged in as an admin to force sync.');
             return;
         }
 
-        const confirmation = confirm("Are you sure? This will generate and save the default dates for the next 3 months.");
+        const confirmation = confirm("Are you sure? This will overwrite existing dates with the default schedule for the next 3 months.");
         if (!confirmation) return;
 
         try {
+            // 1. Generate the new dates
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const newSprints = getNextSprintDates(tomorrow, 3);
             const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
+            const newDatesForDb = {
+                sprint: newSprints.map(d => Timestamp.fromDate(d)),
+                accelerator: newAccelerators.map(c => ({
+                    start: Timestamp.fromDate(c.start),
+                    end: Timestamp.fromDate(c.end)
+                }))
+            };
             
-            const newDates = { sprint: newSprints, accelerator: newAccelerators };
-            
-            // First, save the new dates to Firestore
-            await handleSaveDates(newDates);
-            
-            // Then, immediately update the local state to refresh the UI
-            setCohortDates(newDates);
+            // 2. Save them directly to Firestore
+            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+            const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+            await setDoc(datesDocRef, newDatesForDb);
+
+            // 3. Update the local state to show the changes immediately
+            setCohortDates({ sprint: newSprints, accelerator: newAccelerators });
+
+            alert('Default dates have been successfully synced!');
 
         } catch (error) {
             console.error("FORCE SYNC: Error generating or saving dates:", error);
