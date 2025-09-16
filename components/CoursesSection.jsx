@@ -8,10 +8,10 @@ import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_
 const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, selectedCohorts, formatSprintDate, formatAcceleratorDate }) => {
     // New logic to include cohort data in the payment URLs
     const sprintCohortForUrl = selectedCohorts.sprint ? encodeURIComponent(selectedCohorts.sprint.toISOString()) : '';
-    const sprintPaymentUrl = `${RAZORPAY_PAYMENT_URL}?cohort=${sprintCohortForUrl}&courseType=sprint`;
+    const sprintPaymentUrl = `${RAZORPAY_PAYMENT_URL}?cohort=${sprintCohortForUrl}&courseType=sprint&redirect_url=${window.location.origin}/thank-you`;
 
     const acceleratorCohortForUrl = selectedCohorts.accelerator ? encodeURIComponent(JSON.stringify(selectedCohorts.accelerator)) : '';
-    const acceleratorPaymentUrl = `${SUPERSTAR_ACCELERATOR_URL}?cohort=${acceleratorCohortForUrl}&courseType=accelerator`;
+    const acceleratorPaymentUrl = `${SUPERSTAR_ACCELERATOR_URL}?cohort=${acceleratorCohortForUrl}&courseType=accelerator&redirect_url=${window.location.origin}/thank-you`;
 
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
