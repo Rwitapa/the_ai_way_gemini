@@ -1,5 +1,5 @@
 // pages/api/get-registration.js
-import { db } from '../../lib/firebaseClient';
+import { db } from '../../lib/firebaseAdmin'; // <-- UPDATED IMPORT
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default async function handler(req, res) {
@@ -25,7 +25,10 @@ export default async function handler(req, res) {
 
     const registration = querySnapshot.docs[0].data();
     
-    // Ensure cohortDate is a serializable format (string) for the API response
+    // Convert Firestore Timestamp to a serializable format (ISO string) for the API response
+    if (registration.timestamp && registration.timestamp.toDate) {
+      registration.timestamp = registration.timestamp.toDate().toISOString();
+    }
     if (registration.cohortDate && registration.cohortDate.toDate) {
       registration.cohortDate = registration.cohortDate.toDate().toISOString();
     } else if (registration.cohortDate && registration.cohortDate.start && registration.cohortDate.start.toDate) {
