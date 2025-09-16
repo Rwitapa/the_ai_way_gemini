@@ -6,6 +6,13 @@ import Icon from './common/Icon.jsx';
 import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, selectedCohorts, formatSprintDate, formatAcceleratorDate }) => {
+    // New logic to include cohort data in the payment URLs
+    const sprintCohortForUrl = selectedCohorts.sprint ? encodeURIComponent(selectedCohorts.sprint.toISOString()) : '';
+    const sprintPaymentUrl = `${RAZORPAY_PAYMENT_URL}?cohort=${sprintCohortForUrl}&courseType=sprint`;
+
+    const acceleratorCohortForUrl = selectedCohorts.accelerator ? encodeURIComponent(JSON.stringify(selectedCohorts.accelerator)) : '';
+    const acceleratorPaymentUrl = `${SUPERSTAR_ACCELERATOR_URL}?cohort=${acceleratorCohortForUrl}&courseType=accelerator`;
+
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
             <div className="container mx-auto px-6">
@@ -48,7 +55,7 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
                                 <p className="text-green-400 font-semibold text-sm mt-1">{courseData.sprint.bonus}</p>
                             </div>
                         </div>
-                        <motion.a href={RAZORPAY_PAYMENT_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <motion.a href={sprintPaymentUrl} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             Enroll Now
                         </motion.a>
                     </motion.div>
@@ -76,7 +83,7 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
                                 <p className="text-green-400 font-semibold text-sm mt-1">{courseData.accelerator.bonus}</p>
                             </div>
                         </div>
-                        <motion.a href={SUPERSTAR_ACCELERATOR_URL} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <motion.a href={acceleratorPaymentUrl} target="_blank" rel="noopener noreferrer" className="mt-auto block w-full py-3 px-6 text-center rounded-full bg-white text-gray-950 font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             Enroll Now
                         </motion.a>
                     </motion.div>
