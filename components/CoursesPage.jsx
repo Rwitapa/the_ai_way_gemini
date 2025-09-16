@@ -13,6 +13,17 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
   };
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
+  
+  // New logic to include cohort data in the payment URL
+  let cohortForUrl = '';
+  if (selectedCohort) {
+      if (course.mascot === 'sprint') {
+          cohortForUrl = selectedCohort.toISOString();
+      } else {
+          cohortForUrl = JSON.stringify(selectedCohort);
+      }
+  }
+  const finalPaymentUrl = `${paymentUrl}?cohort=${encodeURIComponent(cohortForUrl)}&courseType=${course.mascot}`;
 
   return (
       <motion.div
@@ -58,7 +69,7 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
                               <p className="text-gray-400 line-through inline-block">{course.originalPrice}</p>
                               <p className="text-green-400 font-semibold text-sm mt-1">{course.bonus}</p>
                           </div>
-                          <motion.a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <motion.a href={finalPaymentUrl} target="_blank" rel="noopener noreferrer" className="w-full block py-3 px-6 text-center rounded-full bg-purple-600 text-white font-semibold" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                               Enroll for {course.price}
                           </motion.a>
                           <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5"><Icon name="shield-check" size={14}/> {course.guarantee}</p>
