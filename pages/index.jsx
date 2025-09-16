@@ -157,7 +157,14 @@ const App = () => {
             const newSprints = getNextSprintDates(tomorrow, 3);
             const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
             
-            await handleSaveDates({ sprint: newSprints, accelerator: newAccelerators });
+            const newDates = { sprint: newSprints, accelerator: newAccelerators };
+            
+            // First, save the new dates to Firestore
+            await handleSaveDates(newDates);
+            
+            // Then, immediately update the local state to refresh the UI
+            setCohortDates(newDates);
+
         } catch (error) {
             console.error("FORCE SYNC: Error generating or saving dates:", error);
             alert('An error occurred during the sync. Please check the console.');
