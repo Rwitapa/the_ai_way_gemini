@@ -1,82 +1,81 @@
 // pages/api/razorpay-webhook.js
-import { db } from '../../lib/firebaseAdmin';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebaseAdmin';
+import getRawBody from 'raw-body';
 import crypto from 'crypto';
 
-const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
+export const config = {
+  api: { bodyParser: false }, // raw body needed for signature verification
+};
+
+function verifyRazorpaySignature(rawBody, receivedSig, secret) {
+  const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (!receivedSig || typeof receivedSig !== 'string') return false;
+  // timing-safe compare
+  const a = Buffer.from(expected, 'utf8');
+  const b = Buffer.from(receivedSig, 'utf8');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 
 export default async function handler(req, res) {
-  if (!db) {
-    console.error('FATAL: Firestore Admin DB is not initialized. Check firebaseAdmin.js and environment variables.');
-    return res.status(500).json({ message: 'Server configuration error: Database connection failed.' });
-  }
+  if (req.method !== 'POST') return res.status(405).end('Method Not Allowed');
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!secret) return res.status(500).json({ error: 'RAZORPAY_WEBHOOK_SECRET missing' });
 
-  const razorpaySignature = req.headers['x-razorpay-signature'];
-  const hmac = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET);
-  hmac.update(JSON.stringify(req.body));
-  const digest = hmac.digest('hex');
+  try {
+    const raw = await getRawBody(req);
+    const sig = req.headers['x-razorpay-signature'];
 
-  if (digest !== razorpaySignature) {
-    return res.status(400).json({ message: 'Invalid signature' });
-  }
-
-  if (req.body.event === 'payment.captured') {
-    const payment = req.body.payload.payment.entity;
-    const { id, order_id, notes, amount } = payment;
-    const { courseType, cohort, name, email, phone } = notes;
-    
-    let parsedCohort;
-    try {
-        if (courseType === 'sprint' || courseType === '3-Hour Champion Sprint') {
-            parsedCohort = new Date(JSON.parse(cohort));
-        } else if (courseType === 'accelerator' || courseType === '16-Hour Superstar Accelerator') {
-            const cohortObj = JSON.parse(cohort);
-            parsedCohort = {
-                start: new Date(cohortObj.start),
-                end: new Date(cohortObj.end)
-            };
-        }
-    } catch (e) {
-        console.error("Error parsing cohort date from notes.", e);
-        parsedCohort = null;
+    if (!verifyRazorpaySignature(raw, sig, secret)) {
+      return res.status(400).json({ error: 'Invalid signature' });
     }
-    
-    const registrationData = {
-      paymentId: id,
-      orderId: order_id,
-      customerName: name,
-      customerEmail: email,
-      customerPhone: phone,
-      courseType: courseType,
-      cohortDate: parsedCohort,
-      amount: amount / 100,
-      timestamp: Timestamp.now(),
-      paymentStatus: 'captured',
+
+    const event = JSON.parse(raw.toString('utf8'));
+    const type = event?.event || 'unknown';
+
+    // Pull payment/order safely
+    const pay = event?.payload?.payment?.entity || {};
+    const ord = event?.payload?.order?.entity || {};
+
+    const orderId = pay.order_id || ord.id;
+    const paymentId = pay.id || null;
+    if (!orderId) return res.status(400).json({ error: 'orderId missing' });
+
+    // Only persist on useful events
+    const shouldPersist = ['payment.captured', 'order.paid'].includes(type);
+    if (!shouldPersist) return res.status(200).json({ ok: true, ignored: type });
+
+    // Notes you set while creating the Razorpay order
+    const notes = pay.notes || {};
+    const registration = {
+      orderId,
+      paymentId,
+      courseType: notes.courseType ?? null,
+      cohort: notes.cohort ?? null, // keep raw; parse later if you want
+      customerName: notes.name ?? null,
+      customerEmail: notes.email ?? null,
+      customerPhone: notes.phone ?? null,
+      amount: typeof pay.amount === 'number' ? pay.amount / 100 : null,
+      currency: pay.currency || 'INR',
+      paymentStatus: pay.status || 'captured',
+      lastEventType: type,
+      lastEventAt: new Date(),
+      // keep a lightweight trace
+      _trace: { receivedAt: new Date().toISOString() },
     };
-    
-    try {
-      // *** FIX APPLIED: Using a server-side environment variable ***
-      // This now uses FIREBASE_APP_ID, which is safe for server-side execution on Vercel.
-      const appId = process.env.FIREBASE_APP_ID;
-      
-      if (!appId) {
-          // This error will now correctly trigger if the new variable is missing.
-          throw new Error("FIREBASE_APP_ID environment variable is not defined.");
-      }
-      
-      const registrationPath = `/artifacts/${appId}/private/registrations`;
-      await addDoc(collection(db, registrationPath), registrationData);
-      
-      return res.status(200).json({ message: 'Success' });
-    } catch (error) {
-      console.error(`Firestore write error for Order ID ${order_id}:`, error);
-      return res.status(500).json({ message: 'Failed to save data' });
-    }
-  }
 
-  res.status(200).json({ message: 'Event received, but not the "payment.captured" event.' });
+    // IMPORTANT: No leading slash in path; Admin SDK uses strings
+    // You have FIREBASE_APP_ID set in Vercel; we’ll nest under artifacts/{appId}/private/registrations
+    const appId = process.env.FIREBASE_APP_ID;
+    const colPath = appId
+      ? `artifacts/${appId}/private/registrations`
+      : 'registrations'; // fallback if not set
+
+    await adminDb.collection(colPath).doc(orderId).set(registration, { merge: true });
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('Webhook error:', err);
+    return res.status(500).json({ error: err?.message || 'Unknown error' });
+  }
 }
