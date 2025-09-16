@@ -1,6 +1,5 @@
 import React from 'react';
-import { testimonials, TestimonialCard } from '../lib/constants';
-// Testimonials
+import { testimonials, TestimonialCard } from '../lib/constants'; // This is now correct because we added TestimonialCard back to constants.js
 
 const TestimonialsSection = ({ sectionRef }) => {
     const middleIndex = Math.ceil(testimonials.length / 2);
@@ -17,6 +16,7 @@ const TestimonialsSection = ({ sectionRef }) => {
                             {column1Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col1-${index}`} testimonial={testimonial} />
                             ))}
+                            {/* Duplicate for seamless scroll */}
                             {column1Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col1-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
@@ -25,13 +25,14 @@ const TestimonialsSection = ({ sectionRef }) => {
                             {column2Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col2-${index}`} testimonial={testimonial} />
                             ))}
+                            {/* Duplicate for seamless scroll */}
                             {column2Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col2-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
                         </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                    <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent"></div>
+                     <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                     <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent"></div>
                 </div>
             </div>
         </section>
