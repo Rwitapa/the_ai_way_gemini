@@ -1,3 +1,4 @@
+// pages/index.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
@@ -19,6 +20,7 @@ import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
 import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
+import CheckoutForm from '../components/CheckoutForm'; //
 
 const App = () => {
     const [showCoursesPage, setShowCoursesPage] = useState(false);
@@ -26,6 +28,10 @@ const App = () => {
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
+
+    const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+    const [checkoutCourse, setCheckoutCourse] = useState(null);
+    const [checkoutDetails, setCheckoutDetails] = useState({ name: '', email: '', phone: '' });
     
     const sectionRefs = {
         courses: useRef(null),
@@ -199,6 +205,57 @@ const App = () => {
         }
     };
 
+    const openCheckoutForm = (course) => {
+        setCheckoutCourse(course);
+        setShowCheckoutForm(true);
+    };
+
+    const handlePayment = async (customerDetails) => {
+        setShowCheckoutForm(false);
+        const course = checkoutCourse;
+
+        const orderResponse = await fetch('/api/create-razorpay-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
+                courseType: course.mascot,
+                cohort: selectedCohorts[course.mascot],
+                customerName: customerDetails.customerName,
+                customerEmail: customerDetails.customerEmail,
+                customerPhone: customerDetails.customerPhone,
+            }),
+        });
+
+        const order = await orderResponse.json();
+
+        const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: order.amount,
+            currency: order.currency,
+            name: 'The AI Way',
+            description: course.title,
+            order_id: order.id,
+            handler: function (response) {
+                // This handler is called on successful payment
+                router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
+            },
+            prefill: {
+                name: customerDetails.customerName,
+                email: customerDetails.customerEmail,
+                contact: customerDetails.customerPhone,
+            },
+            theme: {
+                color: '#8B5CF6'
+            }
+        };
+
+        if (typeof window !== 'undefined') {
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        }
+    };
+
     return (
         <Layout
             scrollToSection={scrollToSection}
@@ -218,6 +275,7 @@ const App = () => {
                     cohortDates={cohortDates}
                     handleOpenCalendar={handleOpenCalendar}
                     selectedCohorts={selectedCohorts}
+                    openCheckoutForm={openCheckoutForm}
                   />
                 </motion.div>
               ) : (
@@ -230,6 +288,7 @@ const App = () => {
                       handleExploreCourses={handleExploreCourses}
                       handleOpenCalendar={handleOpenCalendar}
                       selectedCohorts={selectedCohorts}
+                      openCheckoutForm={openCheckoutForm}
                       formatSprintDate={formatSprintDate}
                       formatAcceleratorDate={formatAcceleratorDate}
                   />
@@ -252,6 +311,15 @@ const App = () => {
                 courseType={calendarFor}
                 position={calendarPosition}
             />
+            {showCheckoutForm && checkoutCourse && (
+                <CheckoutForm
+                    isOpen={showCheckoutForm}
+                    onClose={() => setShowCheckoutForm(false)}
+                    onCheckout={handlePayment}
+                    courseTitle={checkoutCourse.title}
+                    price={checkoutCourse.price}
+                />
+            )}
         </Layout>
     );
 };
