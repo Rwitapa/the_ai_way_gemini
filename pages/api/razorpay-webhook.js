@@ -1,18 +1,21 @@
 // pages/api/razorpay-webhook.js
-import { db } from '../../lib/firebaseAdmin'; // <-- UPDATED IMPORT
-import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Use Timestamp from 'firebase/firestore' for compatibility
+import { db } from '../../lib/firebaseAdmin';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import crypto from 'crypto';
 
-// IMPORTANT: Use environment variables for the webhook secret
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
 export default async function handler(req, res) {
+  if (!db) {
+    console.error('FATAL: Firestore Admin DB is not initialized. Check firebaseAdmin.js and environment variables.');
+    return res.status(500).json({ message: 'Server configuration error: Database connection failed.' });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // ... (Signature verification code remains the same)
-
+  // ... (rest of the file is the same)
   const razorpaySignature = req.headers['x-razorpay-signature'];
   const hmac = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET);
   hmac.update(JSON.stringify(req.body));
@@ -45,7 +48,7 @@ export default async function handler(req, res) {
       customerPhone: phone,
       courseType: courseType,
       cohortDate: parsedCohort,
-      timestamp: Timestamp.now(), // Use Admin SDK's Timestamp
+      timestamp: Timestamp.now(),
       paymentStatus: 'captured',
     };
     
