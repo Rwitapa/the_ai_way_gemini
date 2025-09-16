@@ -1,5 +1,6 @@
 // pages/index.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
@@ -23,6 +24,7 @@ import CoursesPage from '../components/CoursesPage';
 import CheckoutForm from '../components/CheckoutForm'; //
 
 const App = () => {
+    const router = useRouter();
     const [showCoursesPage, setShowCoursesPage] = useState(false);
     const [cohortDates, setCohortDates] = useState({ sprint: [], accelerator: [] });
     const [calendarFor, setCalendarFor] = useState(null);
