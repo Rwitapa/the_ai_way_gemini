@@ -1,11 +1,42 @@
-// rwitapa/the_ai_way_gemini/the_ai_way_gemini-staging/components/CoursesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
-import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
+import { courseData, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants'; // Removed 'mascots'
 
 const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
   const [openModule, setOpenModule] = useState(null);
+
+  // --- ADD THIS MASCOTS OBJECT ---
+  const mascots = {
+    champion: (
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <defs>
+                <linearGradient id="grad1_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
+                </linearGradient>
+            </defs>
+            <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1_page)" strokeWidth="4" />
+            <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
+            <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+            <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
+        </svg>
+    ),
+    accelerator: (
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <defs>
+                <linearGradient id="grad2_page" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
+                </linearGradient>
+            </defs>
+            <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2_page)" />
+            <circle cx="50" cy="50" r="10" fill="white" />
+            <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
+        </svg>
+    )
+  };
+  // --- END OF ADDED CODE ---
 
   const toggleModule = (moduleTitle) => {
       const identifier = `${course.title}-${moduleTitle}`;
@@ -101,7 +132,7 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
                           </button>
                           <AnimatePresence>
                               {openModule === `${course.title}-${module.title}` && (
-                                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden">
+                                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                       <div className="px-5 pb-5">
                                       <p className="text-gray-400">{module.summary}</p>
                                       </div>
