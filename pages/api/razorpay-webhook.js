@@ -31,9 +31,9 @@ export default async function handler(req, res) {
     
     let parsedCohort;
     try {
-        if (courseType === 'sprint') {
+        if (courseType === 'sprint' || courseType === '3-Hour Champion Sprint') {
             parsedCohort = new Date(JSON.parse(cohort));
-        } else if (courseType === 'accelerator') {
+        } else if (courseType === 'accelerator' || courseType === '16-Hour Superstar Accelerator') {
             const cohortObj = JSON.parse(cohort);
             parsedCohort = {
                 start: new Date(cohortObj.start),
@@ -53,13 +53,17 @@ export default async function handler(req, res) {
       customerPhone: phone,
       courseType: courseType,
       cohortDate: parsedCohort,
-      amount: amount / 100, // Amount is in paise, convert to rupees
+      amount: amount / 100,
       timestamp: Timestamp.now(),
       paymentStatus: 'captured',
     };
     
     try {
-      const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+      // *** FIX: Use the correct environment variable for the App ID ***
+      const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+      if (!appId) {
+          throw new Error("NEXT_PUBLIC_FIREBASE_APP_ID is not defined.");
+      }
       const registrationPath = `/artifacts/${appId}/private/registrations`;
       await addDoc(collection(db, registrationPath), registrationData);
       return res.status(200).json({ message: 'Success' });
