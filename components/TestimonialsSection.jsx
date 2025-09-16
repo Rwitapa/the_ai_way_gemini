@@ -1,5 +1,6 @@
 import React from 'react';
-import { testimonials, TestimonialCard } from '../lib/constants'; // This is now correct because we added TestimonialCard back to constants.js
+// This import is now correct because TestimonialCard is exported from constants.js
+import { testimonials, TestimonialCard } from '../lib/constants';
 
 const TestimonialsSection = ({ sectionRef }) => {
     const middleIndex = Math.ceil(testimonials.length / 2);
