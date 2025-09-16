@@ -1,49 +1,23 @@
 // pages/api/get-registration.js
-import { db } from '../../lib/firebaseAdmin';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebaseAdmin';
 
 export default async function handler(req, res) {
-  if (!db) {
-    console.error('FATAL: Firestore Admin DB is not initialized. Check firebaseAdmin.js and environment variables.');
-    return res.status(500).json({ message: 'Server configuration error: Database connection failed.' });
-  }
+  if (req.method !== 'GET') return res.status(405).end('Method Not Allowed');
 
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-  
-  // ... (rest of the file is the same)
   const { orderId } = req.query;
-
-  if (!orderId) {
-    return res.status(400).json({ message: 'Order ID is required' });
-  }
+  if (!orderId) return res.status(400).json({ error: 'orderId is required' });
 
   try {
-    const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-    const registrationPath = `/artifacts/${appId}/private/registrations`;
-    const q = query(collection(db, registrationPath), where('orderId', '==', orderId));
-    const querySnapshot = await getDocs(q);
+    const appId = process.env.FIREBASE_APP_ID;
+    const colPath = appId ? `artifacts/${appId}/private/registrations` : 'registrations';
 
-    if (querySnapshot.empty) {
-      return res.status(404).json({ message: 'Registration not found' });
-    }
+    const snap = await adminDb.collection(colPath).doc(orderId).get();
+    if (!snap.exists) return res.status(404).json({ error: 'Not found' });
 
-    const registration = querySnapshot.docs[0].data();
-    
-    if (registration.timestamp && registration.timestamp.toDate) {
-      registration.timestamp = registration.timestamp.toDate().toISOString();
-    }
-    if (registration.cohortDate && registration.cohortDate.toDate) {
-      registration.cohortDate = registration.cohortDate.toDate().toISOString();
-    } else if (registration.cohortDate && registration.cohortDate.start && registration.cohortDate.start.toDate) {
-      registration.cohortDate.start = registration.cohortDate.start.toDate().toISOString();
-      registration.cohortDate.end = registration.cohortDate.end.toDate().toISOString();
-    }
-
-    res.status(200).json(registration);
-  } catch (error) {
-    console.error('Error fetching registration:', error);
-    res.status(500).json({ message: 'Failed to fetch registration data' });
+    const data = snap.data();
+    return res.status(200).json({ data });
+  } catch (e) {
+    console.error('get-registration error:', e);
+    return res.status(500).json({ error: e?.message || 'Unknown error' });
   }
 }
