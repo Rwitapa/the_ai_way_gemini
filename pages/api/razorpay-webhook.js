@@ -1,3 +1,4 @@
+// pages/api/razorpay-webhook.js
 import { db } from '../../lib/firebaseClient';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import crypto from 'crypto';
@@ -48,7 +49,9 @@ export default async function handler(req, res) {
     };
     
     try {
-      await addDoc(collection(db, 'registrations'), registrationData);
+      const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+      const registrationPath = `/artifacts/${appId}/private/registrations`;
+      await addDoc(collection(db, registrationPath), registrationData);
       console.log(`Successfully saved registration for payment ID: ${id}`);
       return res.status(200).json({ message: 'Success' });
     } catch (error) {
