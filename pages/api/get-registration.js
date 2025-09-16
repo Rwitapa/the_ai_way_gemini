@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   try {
     const appId = process.env.FIREBASE_APP_ID;
-    const colPath = appId ? `artifacts/${appId}/private/registrations` : 'registrations';
+    const colPath = appId ? `artifacts/${appId}/registrations` : 'registrations';
 
     const snap = await adminDb.collection(colPath).doc(orderId).get();
     if (!snap.exists) return res.status(404).json({ error: 'Not found' });
