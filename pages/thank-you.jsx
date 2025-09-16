@@ -2,44 +2,40 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
-import { db } from '../lib/firebaseClient';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import Icon from '../components/common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL, formatSprintDate, formatAcceleratorDate } from '../lib/constants.js';
 
 const ThankYouPage = () => {
   const router = useRouter();
   const [registration, setRegistration] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { razorpay_order_id } = router.query;
 
   useEffect(() => {
-    if (!razorpay_order_id || !db) return;
+    if (!razorpay_order_id) return;
 
     const fetchRegistration = async () => {
-        try {
-            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-            const registrationPath = `/artifacts/${appId}/private/registrations`;
-            const q = query(collection(db, registrationPath), where('orderId', '==', razorpay_order_id));
-            const querySnapshot = await getDocs(q);
-            
-            if (!querySnapshot.empty) {
-                const docData = querySnapshot.docs[0].data();
-                
-                // Convert Firestore Timestamps to JavaScript Date objects
-                if (docData.cohortDate && docData.cohortDate.toDate) { // Check for sprint
-                    docData.cohortDate = docData.cohortDate.toDate();
-                } else if (docData.cohortDate && docData.cohortDate.start && docData.cohortDate.start.toDate) { // Check for accelerator
-                    docData.cohortDate.start = docData.cohortDate.start.toDate();
-                    docData.cohortDate.end = docData.cohortDate.end.toDate();
-                }
-                
-                setRegistration(docData);
-            } else {
-                console.log("No registration found for this order ID.");
-            }
-        } catch (error) {
-            console.error("Error fetching registration:", error);
+      try {
+        const response = await fetch(`/api/get-registration?orderId=${razorpay_order_id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch registration details');
         }
+        const data = await response.json();
+        
+        // Convert date strings from API back to Date objects
+        if (data.cohortDate && typeof data.cohortDate === 'string') {
+            data.cohortDate = new Date(data.cohortDate);
+        } else if (data.cohortDate && data.cohortDate.start && typeof data.cohortDate.start === 'string') {
+            data.cohortDate.start = new Date(data.cohortDate.start);
+            data.cohortDate.end = new Date(data.cohortDate.end);
+        }
+
+        setRegistration(data);
+      } catch (error) {
+        console.error("Error fetching registration:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchRegistration();
@@ -62,7 +58,11 @@ const ThankYouPage = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="bg-gray-900/50 border border-purple-800/30 backdrop-blur-lg rounded-2xl shadow-2xl text-center p-8 md:p-12 max-w-2xl w-full"
         >
-          {registration ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-lg">Loading your confirmation...</p>
+            </div>
+          ) : registration ? (
             <>
               <motion.div
                 initial={{ scale: 0 }}
@@ -108,9 +108,7 @@ const ThankYouPage = () => {
               </p>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center">
-              <p className="text-lg">Loading your confirmation...</p>
-            </div>
+             <p className="text-lg text-red-400">Could not find your registration details. Please check your email for confirmation.</p>
           )}
 
           <div className="mt-10 text-center">
