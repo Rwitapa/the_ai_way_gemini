@@ -1,3 +1,4 @@
+// pages/thank-you.jsx
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
@@ -16,7 +17,9 @@ const ThankYouPage = () => {
 
     const fetchRegistration = async () => {
         try {
-            const q = query(collection(db, 'registrations'), where('orderId', '==', razorpay_order_id));
+            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
+            const registrationPath = `/artifacts/${appId}/private/registrations`;
+            const q = query(collection(db, registrationPath), where('orderId', '==', razorpay_order_id));
             const querySnapshot = await getDocs(q);
             
             if (!querySnapshot.empty) {
