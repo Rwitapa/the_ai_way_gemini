@@ -1,12 +1,18 @@
 // pages/api/get-registration.js
-import { db } from '../../lib/firebaseAdmin'; // <-- UPDATED IMPORT
+import { db } from '../../lib/firebaseAdmin';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default async function handler(req, res) {
+  if (!db) {
+    console.error('FATAL: Firestore Admin DB is not initialized. Check firebaseAdmin.js and environment variables.');
+    return res.status(500).json({ message: 'Server configuration error: Database connection failed.' });
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
-
+  
+  // ... (rest of the file is the same)
   const { orderId } = req.query;
 
   if (!orderId) {
@@ -25,7 +31,6 @@ export default async function handler(req, res) {
 
     const registration = querySnapshot.docs[0].data();
     
-    // Convert Firestore Timestamp to a serializable format (ISO string) for the API response
     if (registration.timestamp && registration.timestamp.toDate) {
       registration.timestamp = registration.timestamp.toDate().toISOString();
     }
