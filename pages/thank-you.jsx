@@ -1,16 +1,6 @@
 import { motion } from "framer-motion";
-
-// FIX: Corrected the import paths to be relative to the current file's location.
-// The previous absolute paths ('components/...') were failing because the build environment
-// isn't configured for them. These updated relative paths ('../components/...') correctly
-// navigate from the 'pages' directory up to the root and then into the 'components' and 'lib' directories,
-// which will resolve the "Could not resolve" errors.
 import Icon from '../components/common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants.js';
-
-// --- THANK YOU PAGE ---
-// This page is shown after a user successfully signs up.
-// It confirms their registration and provides a clear next step: joining the community.
 
 const ThankYouPage = () => {
   return (
