@@ -144,14 +144,14 @@ const App = () => {
             return;
         }
 
-        const confirmation = confirm("Are you sure? This will overwrite existing dates with the default schedule for the next 3 months.");
+        const confirmation = confirm("Are you sure? This will overwrite existing dates with the default schedule for the next 5 years.");
         if (!confirmation) return;
 
         try {
             // 1. Generate the new dates
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            const newSprints = getNextSprintDates(tomorrow, 3);
+            const newSprints = getNextSprintDates(tomorrow, 60);
             const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
             const newDatesForDb = {
                 sprint: newSprints.map(d => Timestamp.fromDate(d)),
