@@ -1,42 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
-import { courseData, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants'; // Removed 'mascots'
+// Import 'mascots' again from constants
+import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_PAYMENT_URL, SUPERSTAR_ACCELERATOR_URL } from '../lib/constants';
 
 const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) => {
   const [openModule, setOpenModule] = useState(null);
-
-  // --- ADD THIS MASCOTS OBJECT ---
-  const mascots = {
-    champion: (
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <defs>
-                <linearGradient id="grad1_page" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style={{stopColor: 'rgb(168, 85, 247)', stopOpacity: 1}} />
-                    <stop offset="100%" style={{stopColor: 'rgb(236, 72, 153)', stopOpacity: 1}} />
-                </linearGradient>
-            </defs>
-            <path d="M15 30 L50 10 L85 30 L80 70 L50 90 L20 70 Z" stroke="url(#grad1_page)" strokeWidth="4" />
-            <path d="M50 35 V 65 M 35 50 H 65" stroke="white" strokeWidth="4" />
-            <path d="M15 30 C 5 50, 5 70, 20 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
-            <path d="M85 30 C 95 50, 95 70, 80 70" fill="none" stroke="url(#grad1_page)" strokeWidth="3" strokeDasharray="5,5" />
-        </svg>
-    ),
-    accelerator: (
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <defs>
-                <linearGradient id="grad2_page" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style={{stopColor: 'rgb(139, 92, 246)', stopOpacity: 1}} />
-                    <stop offset="100%" style={{stopColor: 'rgb(34, 211, 238)', stopOpacity: 1}} />
-                </linearGradient>
-            </defs>
-            <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" fill="url(#grad2_page)" />
-            <circle cx="50" cy="50" r="10" fill="white" />
-            <path d="M20 80 L30 70 M70 70 L80 80 M50 20 L50 30" stroke="white" strokeWidth="3" />
-        </svg>
-    )
-  };
-  // --- END OF ADDED CODE ---
 
   const toggleModule = (moduleTitle) => {
       const identifier = `${course.title}-${moduleTitle}`;
@@ -44,9 +13,9 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
   };
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
- 
+
   return (
-      <motion.div 
+      <motion.div
           key={course.mascot}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,16 +32,16 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
                               <p className="text-lg text-purple-300 mt-2">{course.subtitle}</p>
                           </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                           <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
                           <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
                       </div>
-                      
+
                       <div className="mb-6">
                           <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
-                          <button 
-                              onClick={onOpenCalendar} 
+                          <button
+                              onClick={onOpenCalendar}
                               className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
                           >
                                <div className="flex items-center gap-3">
@@ -171,7 +140,7 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts 
                 playsInline muted autoPlay loop preload="auto" aria-hidden="true"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/80 to-gray-950"></div>
-          
+
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-16">
                 <button onClick={onBack} className="flex items-center text-purple-400 hover:text-purple-300 transition-colors mb-8 group">
                     <Icon name="arrow-left" size={20} className="mr-2 transition-transform group-hover:-translate-x-1" /> Back to Home
@@ -180,7 +149,7 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts 
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your Path to AI Mastery</h1>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
                 </div>
-                
+
                 <div className="flex justify-center mb-12">
                     <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full p-1.5">
                         <button
