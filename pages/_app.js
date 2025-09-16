@@ -9,6 +9,9 @@ export default function MyApp({ Component, pageProps }) {
         {/* Title shown in browser tab */}
         <title>The AI Way</title>
 
+        {/* Razorpay script added here */}
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
         {/* Standard favicon for browsers */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="shortcut icon" href="/favicon.ico" />
@@ -27,4 +30,3 @@ export default function MyApp({ Component, pageProps }) {
     </>
   );
 }
-
