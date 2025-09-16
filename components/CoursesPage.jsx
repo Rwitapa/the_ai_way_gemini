@@ -14,7 +14,6 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
   
-  // New logic to include cohort data in the payment URL
   let cohortForUrl = '';
   if (selectedCohort) {
       if (course.mascot === 'sprint') {
@@ -23,7 +22,7 @@ const CourseContent = ({ course, paymentUrl, selectedCohort, onOpenCalendar }) =
           cohortForUrl = JSON.stringify(selectedCohort);
       }
   }
-  const finalPaymentUrl = `${paymentUrl}?cohort=${encodeURIComponent(cohortForUrl)}&courseType=${course.mascot}`;
+  const finalPaymentUrl = `${paymentUrl}?cohort=${encodeURIComponent(cohortForUrl)}&courseType=${course.mascot}&redirect_url=${window.location.origin}/thank-you`;
 
   return (
       <motion.div
