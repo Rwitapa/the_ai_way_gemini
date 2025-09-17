@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
 import { WHATSAPP_COMMUNITY_URL, formatSprintDate, formatAcceleratorDate } from '../lib/constants.js';
-import Icon from '../components/common/Icon.jsx'; // Assuming Icon component is available
 
 const ThankYouPage = () => {
   const router = useRouter();
@@ -33,20 +32,26 @@ const ThankYouPage = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch registration details');
         }
-        const data = await response.json();
-        const regData = data.data;
-        
-        // Safely parse cohort date
-        if (regData.cohort && typeof regData.cohort === 'string') {
-            try {
-                const parsedCohort = JSON.parse(regData.cohort);
-                regData.cohortDate = parsedCohort.start 
-                    ? { start: new Date(parsedCohort.start), end: new Date(parsedCohort.end) }
-                    : new Date(parsedCohort);
-            } catch(e) {
-                 regData.cohortDate = new Date(regData.cohort);
+        const result = await response.json();
+        const regData = result.data;
+
+        // --- START OF THE FIX ---
+        // This block correctly converts Firestore Timestamps (sent as JSON) back into JS Date objects
+        if (regData && regData.cohort) {
+            // Check if it's an Accelerator (an object with a 'start' field)
+            if (regData.cohort.start && regData.cohort.start._seconds) {
+                regData.cohortDate = {
+                    start: new Date(regData.cohort.start._seconds * 1000),
+                    end: new Date(regData.cohort.end._seconds * 1000)
+                };
+            } 
+            // Check if it's a Sprint (a direct timestamp object)
+            else if (regData.cohort._seconds) {
+                regData.cohortDate = new Date(regData.cohort._seconds * 1000);
             }
         }
+        // --- END OF THE FIX ---
+        
         setRegistration(regData);
       } catch (error) {
         console.error("Error fetching registration:", error);
@@ -57,13 +62,12 @@ const ThankYouPage = () => {
 
     fetchRegistration();
   }, [razorpay_order_id, router.isReady]);
-  
-  // Local date formatting function to only show the start time for the Sprint
+
   const getFormattedDate = () => {
     if (!registration || !registration.cohortDate) return '';
-    if (registration.courseType.includes('Sprint')) {
-        const fullDateString = formatSprintDate(registration.cohortDate);
-        return fullDateString.split(' - ')[0]; // Keeps only the part before " - "
+    // Use the courseType from the registration data to decide which date formatter to use
+    if (registration.courseType && registration.courseType.includes('Sprint')) {
+        return formatSprintDate(registration.cohortDate);
     } else {
         return formatAcceleratorDate(registration.cohortDate);
     }
@@ -93,7 +97,7 @@ const ThankYouPage = () => {
                     ref={videoRef}
                     src="/Rwitapa.mp4"
                     poster="/Rwitapa.png"
-                    className="block w-full h-full object-cover scale-[1.05]"
+                    className="block w-full h-full object-cover"
                     autoPlay
                     loop
                     muted
@@ -101,17 +105,25 @@ const ThankYouPage = () => {
                 />
               </motion.div>
 
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+              <p className="text-xl md:text-2xl text-gray-200 mb-2 font-medium">
+                Hey {registration.customerName}! Awesome news!
+              </p>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
                 You're All Set!
               </h1>
-              <p className="text-lg text-gray-300 mb-8 max-w-sm mx-auto">
-                Hey {registration.customerName}, thank you for registering for the {registration.courseType}.
+              <p className="text-gray-300 text-base md:text-lg mb-4 leading-relaxed max-w-sm mx-auto">
+                Thank you for successfully registering for the {registration.courseType}.
               </p>
-
-              <div className="text-left space-y-3 bg-gray-800/50 p-5 rounded-lg border border-gray-700 mb-8">
-                  <p className="flex items-start gap-3"><Icon name="check-circle" size={20} className="text-green-400 mt-0.5 flex-shrink-0" /><span>A detailed confirmation has been sent to your email.</span></p>
-                  <p className="flex items-start gap-3"><Icon name="calendar" size={20} className="text-purple-400 mt-0.5 flex-shrink-0" /><span>Your exclusive joining link will be shared one hour before the session begins.</span></p>
-              </div>
+               <div className="space-y-4 text-left max-w-sm mx-auto bg-gray-800/50 p-4 rounded-lg mb-8">
+                    <div className="flex items-start gap-3">
+                        <Icon name="check-circle" size={20} className="text-green-400 mt-1 flex-shrink-0"/>
+                        <p className="text-gray-300 text-base">A detailed confirmation and receipt have been sent to your email.</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                        <Icon name="calendar" size={20} className="text-purple-400 mt-1 flex-shrink-0"/>
+                        <p className="text-gray-300 text-base">Your exclusive joining link will be shared one hour before the session begins.</p>
+                    </div>
+               </div>
 
               <motion.a
                 href={WHATSAPP_COMMUNITY_URL}
@@ -124,7 +136,7 @@ const ThankYouPage = () => {
                 Join Our WhatsApp Community
               </motion.a>
 
-              <p className="font-bold text-xl md:text-2xl mt-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 whitespace-nowrap">
+              <p className="font-bold text-xl md:text-2xl mt-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
                 See you on {getFormattedDate()}!
               </p>
             </>
