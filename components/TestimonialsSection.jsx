@@ -40,7 +40,6 @@ const TestimonialsSection = ({ sectionRef }) => {
         const yTarget = direction === 'up' ? -height : height;
         const currentY = controls.get('y');
         
-        // Calculate remaining distance and duration to maintain consistent speed
         const remainingDistance = direction === 'up' ? Math.abs(yTarget - currentY) : Math.abs(currentY - yTarget);
         const remainingDuration = (remainingDistance / height) * 40;
 
@@ -50,7 +49,6 @@ const TestimonialsSection = ({ sectionRef }) => {
                 ease: 'linear',
                 duration: remainingDuration,
                 repeat: Infinity,
-                // Adjust the repeat starting point for the 'down' column
                 repeatType: 'loop',
                 ...(direction === 'down' && { from: -height })
             }
@@ -67,6 +65,7 @@ const TestimonialsSection = ({ sectionRef }) => {
                         <motion.div
                             ref={containerRef1}
                             className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6 cursor-grab active:cursor-grabbing"
+                            style={{ userSelect: 'none' }} // Prevents text selection
                             drag="y"
                             dragConstraints={{ top: 0, bottom: 0 }}
                             dragElastic={0.1}
@@ -82,7 +81,8 @@ const TestimonialsSection = ({ sectionRef }) => {
                         {/* Column 2 */}
                         <motion.div
                             ref={containerRef2}
-                            className="hidden md:flex w-full md:w-1/2 lg:w-1/3 flex-col space-y-6 cursor-grab active:cursor-grabbing"
+                            className="md:flex w-full md:w-1/2 lg:w-1/3 flex-col space-y-6 cursor-grab active:cursor-grabbing" // Removed 'hidden' class
+                            style={{ userSelect: 'none' }} // Prevents text selection
                             drag="y"
                             dragConstraints={{ top: 0, bottom: 0 }}
                             dragElastic={0.1}
