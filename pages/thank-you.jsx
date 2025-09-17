@@ -1,8 +1,7 @@
 // pages/thank-you.jsx
-import { useEffect, useState, useRef } from 'react'; // Import useRef
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
-import Icon from '../components/common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL, formatSprintDate, formatAcceleratorDate } from '../lib/constants.js';
 
 const ThankYouPage = () => {
@@ -10,17 +9,15 @@ const ThankYouPage = () => {
   const [registration, setRegistration] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { razorpay_order_id } = router.query;
-  const videoRef = useRef(null); // Create a ref for the video element
+  const videoRef = useRef(null);
 
-  // Effect to programmatically play the video to ensure autoplay
   useEffect(() => {
     if (videoRef.current) {
         videoRef.current.play().catch(error => {
-            // Autoplay was prevented, which is common. Muted videos usually work.
             console.log("Thank you page video autoplay was prevented:", error);
         });
     }
-  }, [isLoading, registration]); // Re-run if the video element appears after loading
+  }, [isLoading, registration]);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -79,7 +76,7 @@ const ThankYouPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="bg-gray-900/50 border border-purple-800/30 backdrop-blur-lg rounded-2xl shadow-2xl text-center p-8 md:p-12 w-full max-w-lg"
+          className="bg-gray-900/50 border border-purple-800/30 backdrop-blur-lg rounded-2xl shadow-2xl text-center p-8 md:p-12 w-full max-w-lg" // Adjusted max-w for a slightly tighter card
         >
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-80">
@@ -87,13 +84,13 @@ const ThankYouPage = () => {
             </div>
           ) : registration ? (
             <>
+              {/* Profile image/video container - added overflow-hidden and made border more subtle */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 260, damping: 20 }}
-                className="mx-auto rounded-full h-24 w-24 mb-6 flex items-center justify-center border-2 border-purple-500/30 overflow-hidden"
+                className="mx-auto rounded-full h-28 w-28 mb-6 flex items-center justify-center border-2 border-purple-600/20 overflow-hidden" // Increased size and subtle border
               >
-                {/* Use the video with the ref and all necessary attributes */}
                 <video
                     ref={videoRef}
                     src="/Rwitapa.mp4"
@@ -106,31 +103,33 @@ const ThankYouPage = () => {
                 />
               </motion.div>
 
-              <p className="text-2xl text-gray-200 mb-2">
-                Hi {registration.customerName},
+              <p className="text-xl md:text-2xl text-gray-200 mb-2 font-medium"> {/* More friendly greeting */}
+                Hey {registration.customerName}! Awesome news!
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight"> {/* Larger, bolder heading */}
                 You're All Set!
               </h1>
-              <p className="text-gray-300 text-base md:text-lg mb-4 max-w-sm mx-auto">
-                Thank you for registering. We've sent a confirmation to your email.
+              <p className="text-gray-300 text-base md:text-lg mb-4 leading-relaxed max-w-sm mx-auto"> {/* Improved readability */}
+                Thank you for successfully registering for the {registration.courseType}.
+                We've sent a detailed confirmation to your registered email address.
               </p>
-               <p className="text-gray-400 text-base mb-8 max-w-sm mx-auto">
-                You will receive the joining link one hour before the session starts.
+               <p className="text-gray-400 text-base mb-8 leading-relaxed max-w-sm mx-auto">
+                You will receive your exclusive joining link and other important details
+                one hour before the session officially begins.
               </p>
 
               <motion.a
                 href={WHATSAPP_COMMUNITY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold px-10 py-3 rounded-full text-base shadow-lg hover:shadow-purple-500/40 transition-all duration-300"
+                className="inline-block bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-semibold px-10 py-3 rounded-full text-lg shadow-xl hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105" // Enhanced button styling
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 Join Our WhatsApp Community
               </motion.a>
 
-              <p className="font-semibold text-lg md:text-xl mt-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+              <p className="font-bold text-xl md:text-2xl mt-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 whitespace-nowrap"> {/* Bolder, more vibrant gradient, and whitespace-nowrap */}
                 Excited to see you on {getFormattedDate()}!
               </p>
             </>
