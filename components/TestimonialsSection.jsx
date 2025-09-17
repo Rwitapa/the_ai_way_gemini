@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, useAnimation } from "framer-motion";
 import { testimonials, TestimonialCard } from '../lib/constants';
 
 const TestimonialsSection = ({ sectionRef }) => {
@@ -7,16 +7,51 @@ const TestimonialsSection = ({ sectionRef }) => {
     const column1Testimonials = testimonials.slice(0, middleIndex);
     const column2Testimonials = testimonials.slice(middleIndex);
 
-    // We'll use motion values to track the y-position of the columns
-    const y1 = useMotionValue(0);
-    const y2 = useMotionValue(0);
+    const containerRef1 = useRef(null);
+    const containerRef2 = useRef(null);
 
-    // You can adjust this value to change the scrolling speed
-    const scrollSpeed = -20;
+    const controls1 = useAnimation();
+    const controls2 = useAnimation();
 
-    // Use the `useTransform` hook to create a repeating animation
-    const transformedY1 = useTransform(y1, (value) => value % (y1.getVelocity() || scrollSpeed));
-    const transformedY2 = useTransform(y2, (value) => value % (y2.getVelocity() || -scrollSpeed));
+    useEffect(() => {
+        const animateColumn = async (controls, containerRef, direction) => {
+            if (!containerRef.current) return;
+            const height = containerRef.current.offsetHeight / 2;
+            const y = direction === 'up' ? -height : height;
+
+            await controls.start({
+                y: [0, y],
+                transition: {
+                    ease: 'linear',
+                    duration: 40,
+                    repeat: Infinity,
+                }
+            });
+        };
+
+        animateColumn(controls1, containerRef1, 'up');
+        animateColumn(controls2, containerRef2, 'down');
+
+    }, [controls1, controls2]);
+
+    const handleDrag = (controls) => {
+        controls.stop();
+    };
+
+    const handleDragEnd = (controls, containerRef, direction) => {
+        if (!containerRef.current) return;
+        const height = containerRef.current.offsetHeight / 2;
+        const y = direction === 'up' ? -height : height;
+
+        controls.start({
+            y: [controls.get('y'), y],
+            transition: {
+                ease: 'linear',
+                duration: 40,
+                repeat: Infinity,
+            }
+        });
+    };
 
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 overflow-hidden animate-on-scroll">
@@ -25,40 +60,42 @@ const TestimonialsSection = ({ sectionRef }) => {
                 <div className="relative h-[450px] overflow-hidden">
                     <div className="absolute inset-0 flex justify-center gap-6">
                         <motion.div
+                            ref={containerRef1}
                             className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6"
-                            style={{ y: transformedY1 }}
                             drag="y"
-                            dragConstraints={{ top: -100, bottom: 100 }}
-                            animate={{ y: [0, -1080] }}
-                            transition={{ ease: "linear", duration: 40, repeat: Infinity }}
+                            dragConstraints={{ top: 0, bottom: 0 }}
+                            dragElastic={0.1}
+                            onDragStart={() => handleDrag(controls1)}
+                            onDragEnd={() => handleDragEnd(controls1, containerRef1, 'up')}
+                            animate={controls1}
                         >
                             {column1Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col1-${index}`} testimonial={testimonial} />
                             ))}
-                            {/* Duplicate for seamless scroll */}
                             {column1Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col1-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
                         </motion.div>
                         <motion.div
+                            ref={containerRef2}
                             className="hidden md:flex w-full md:w-1/2 lg:w-1/3 flex-col space-y-6"
-                            style={{ y: transformedY2 }}
                             drag="y"
-                            dragConstraints={{ top: -100, bottom: 100 }}
-                            animate={{ y: [0, 1080] }}
-                            transition={{ ease: "linear", duration: 40, repeat: Infinity }}
+                            dragConstraints={{ top: 0, bottom: 0 }}
+                            dragElastic={0.1}
+                            onDragStart={() => handleDrag(controls2)}
+                            onDragEnd={() => handleDragEnd(controls2, containerRef2, 'down')}
+                            animate={controls2}
                         >
                             {column2Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col2-${index}`} testimonial={testimonial} />
                             ))}
-                            {/* Duplicate for seamless scroll */}
                             {column2Testimonials.map((testimonial, index) => (
                                 <TestimonialCard key={`col2-${index}-clone`} testimonial={testimonial} aria-hidden="true" />
                             ))}
                         </motion.div>
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                    <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent"></div>
+                     <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none"></div>
+                     <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent pointer-events-none"></div>
                 </div>
             </div>
         </section>
