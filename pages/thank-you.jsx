@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from "framer-motion";
+import Icon from '../components/common/Icon.jsx';
 import { WHATSAPP_COMMUNITY_URL, formatSprintDate, formatAcceleratorDate } from '../lib/constants.js';
 
 const ThankYouPage = () => {
@@ -35,23 +36,23 @@ const ThankYouPage = () => {
         const result = await response.json();
         const regData = result.data;
 
-        // --- START OF THE FIX ---
-        // This block correctly converts Firestore Timestamps (sent as JSON) back into JS Date objects
+        // --- DEFINITIVE FIX ---
+        // This block correctly converts Firestore Timestamps (sent as JSON from your API) back into JS Date objects
         if (regData && regData.cohort) {
-            // Check if it's an Accelerator (an object with a 'start' field)
+            // Check if it's an Accelerator (an object with a 'start' field and '_seconds')
             if (regData.cohort.start && regData.cohort.start._seconds) {
                 regData.cohortDate = {
                     start: new Date(regData.cohort.start._seconds * 1000),
                     end: new Date(regData.cohort.end._seconds * 1000)
                 };
-            } 
-            // Check if it's a Sprint (a direct timestamp object)
+            }
+            // Check if it's a Sprint (a direct timestamp object with '_seconds')
             else if (regData.cohort._seconds) {
                 regData.cohortDate = new Date(regData.cohort._seconds * 1000);
             }
         }
-        // --- END OF THE FIX ---
-        
+        // --- END OF FIX ---
+
         setRegistration(regData);
       } catch (error) {
         console.error("Error fetching registration:", error);
@@ -65,7 +66,6 @@ const ThankYouPage = () => {
 
   const getFormattedDate = () => {
     if (!registration || !registration.cohortDate) return '';
-    // Use the courseType from the registration data to decide which date formatter to use
     if (registration.courseType && registration.courseType.includes('Sprint')) {
         return formatSprintDate(registration.cohortDate);
     } else {
