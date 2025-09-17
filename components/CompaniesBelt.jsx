@@ -9,25 +9,49 @@ const CompaniesBelt = () => {
     const controls = useAnimation();
 
     useEffect(() => {
-        if (containerRef.current) {
-            const scrollWidth = containerRef.current.scrollWidth;
-            const containerWidth = containerRef.current.offsetWidth;
-            setWidth(scrollWidth / 2); // We divide by 2 because we have two sets of logos
-        }
+        // This function calculates the total width of the logos
+        const calculateWidth = () => {
+            if (containerRef.current) {
+                // We use scrollWidth to get the full width of the content, and divide by 2 because we have a cloned set of logos for the seamless loop
+                const scrollWidth = containerRef.current.scrollWidth;
+                setWidth(scrollWidth / 2);
+            }
+        };
+
+        calculateWidth();
+        // Recalculate on window resize to handle responsiveness
+        window.addEventListener('resize', calculateWidth);
+        return () => window.removeEventListener('resize', calculateWidth);
     }, [LOGOS]);
 
     useEffect(() => {
+        // This effect starts the animation once the width is calculated
         if (width > 0) {
             controls.start({
                 x: [0, -width],
                 transition: {
                     ease: 'linear',
-                    duration: 52, // Keep the duration consistent
+                    duration: 52, // Adjust duration as needed
                     repeat: Infinity,
                 }
             });
         }
     }, [width, controls]);
+
+    const handleDragEnd = (event, info) => {
+        if (width > 0) {
+            // After dragging, get the current position and restart the animation from there
+            const currentX = controls.get('x');
+            controls.start({
+                x: [currentX, -width],
+                transition: {
+                    ease: 'linear',
+                    duration: ((-width - currentX) / -width) * 52, // Calculate remaining duration to maintain speed
+                    repeat: Infinity,
+                }
+            });
+        }
+    };
 
 
     return (
@@ -38,29 +62,19 @@ const CompaniesBelt = () => {
 
             <motion.div
                 ref={containerRef}
-                className="flex"
+                className="flex cursor-grab active:cursor-grabbing" // Add cursor styles for better UX
                 drag="x"
                 dragConstraints={{ left: -width, right: 0 }}
                 dragElastic={0.05}
                 onDragStart={() => controls.stop()}
-                onDragEnd={() => {
-                    if (width > 0) {
-                        controls.start({
-                            x: [controls.get('x'), -width],
-                            transition: {
-                                ease: 'linear',
-                                duration: 52,
-                                repeat: Infinity,
-                            }
-                        });
-                    }
-                }}
+                onDragEnd={handleDragEnd}
                 animate={controls}
             >
-                {LOGOS.map((logo, i) => (
-                    <li key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4">
+                {/* We need two sets of logos for the seamless loop effect */}
+                {[...LOGOS, ...LOGOS].map((logo, i) => (
+                    <div key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4" aria-hidden={i >= LOGOS.length}>
                         <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
-                            <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" aria-hidden="true" />
+                            <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" />
                             <Image
                                 src={logo.src}
                                 alt={logo.name}
@@ -69,21 +83,7 @@ const CompaniesBelt = () => {
                                 className="relative z-10 w-auto object-contain max-h-9 md:max-h-10"
                             />
                         </div>
-                    </li>
-                ))}
-                {LOGOS.map((logo, i) => (
-                    <li key={`${logo.name}-${i}-clone`} className="shrink-0 list-none mx-4" aria-hidden="true">
-                        <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
-                            <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" aria-hidden="true" />
-                             <Image
-                                 src={logo.src}
-                                 alt={logo.name}
-                                 width={120}
-                                 height={40}
-                                 className="relative z-10 w-auto object-contain max-h-9 md:max-h-10"
-                             />
-                        </div>
-                    </li>
+                    </div>
                 ))}
             </motion.div>
         </section>
