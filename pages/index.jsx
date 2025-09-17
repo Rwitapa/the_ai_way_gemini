@@ -1,6 +1,7 @@
 // pages/index.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
@@ -16,12 +17,12 @@ import CoursesSection from '../components/CoursesSection';
 import MentorSection from '../components/MentorSection';
 import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
-import WhatYouLearnSection from '../components/WhatYouLearnSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
-import CohortCalendarModal from '../components/CourseCalendar';
 import CoursesPage from '../components/CoursesPage';
-import CheckoutForm from '../components/CheckoutForm';
+
+const CohortCalendarModal = dynamic(() => import('../components/CourseCalendar'));
+const CheckoutForm = dynamic(() => import('../components/CheckoutForm'));
 
 const App = () => {
     const router = useRouter();
@@ -260,7 +261,6 @@ const App = () => {
                   <MentorSection sectionRef={sectionRefs.mentors} />
                   <CourseFinderQuiz scrollToSection={scrollToSection} />
                   <TestimonialsSection sectionRef={sectionRefs.testimonials} />
-                  <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
                   <FAQSection />
                   <FinalCTASection handleExploreCourses={handleExploreCourses} />
                 </div>
