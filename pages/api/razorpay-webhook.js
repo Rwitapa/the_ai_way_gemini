@@ -2,15 +2,15 @@
 import { adminDb } from '../../lib/firebaseAdmin';
 import getRawBody from 'raw-body';
 import crypto from 'crypto';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export const config = {
-  api: { bodyParser: false }, // raw body needed for signature verification
+  api: { bodyParser: false },
 };
 
 function verifyRazorpaySignature(rawBody, receivedSig, secret) {
   const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
   if (!receivedSig || typeof receivedSig !== 'string') return false;
-  // timing-safe compare
   const a = Buffer.from(expected, 'utf8');
   const b = Buffer.from(receivedSig, 'utf8');
   return a.length === b.length && crypto.timingSafeEqual(a, b);
@@ -32,26 +32,47 @@ export default async function handler(req, res) {
 
     const event = JSON.parse(raw.toString('utf8'));
     const type = event?.event || 'unknown';
-
-    // Pull payment/order safely
     const pay = event?.payload?.payment?.entity || {};
     const ord = event?.payload?.order?.entity || {};
-
     const orderId = pay.order_id || ord.id;
     const paymentId = pay.id || null;
     if (!orderId) return res.status(400).json({ error: 'orderId missing' });
 
-    // Only persist on useful events
     const shouldPersist = ['payment.captured', 'order.paid'].includes(type);
     if (!shouldPersist) return res.status(200).json({ ok: true, ignored: type });
 
-    // Notes you set while creating the Razorpay order
     const notes = pay.notes || {};
+
+    // --- START OF THE DEFINITIVE FIX ---
+    // This block parses the cohort data before saving it
+    let finalCohortData = null;
+    if (notes.cohort) {
+      try {
+        const parsedCohort = JSON.parse(notes.cohort);
+        
+        // Check if it's an Accelerator (an object with a 'start' key)
+        if (parsedCohort && typeof parsedCohort === 'object' && parsedCohort.start) {
+          finalCohortData = {
+            start: Timestamp.fromDate(new Date(parsedCohort.start)),
+            end: Timestamp.fromDate(new Date(parsedCohort.end))
+          };
+        } 
+        // Otherwise, it's a Sprint (a single date string)
+        else if (typeof parsedCohort === 'string') {
+          finalCohortData = Timestamp.fromDate(new Date(parsedCohort));
+        }
+      } catch (e) {
+        console.error('Error parsing cohort data:', e);
+        finalCohortData = notes.cohort; // Fallback
+      }
+    }
+    // --- END OF THE DEFINITIVE FIX ---
+
     const registration = {
       orderId,
       paymentId,
       courseType: notes.courseType ?? null,
-      cohort: notes.cohort ?? null, // keep raw; parse later if you want
+      cohort: finalCohortData, // Use the new, clean data
       customerName: notes.name ?? null,
       customerEmail: notes.email ?? null,
       customerPhone: notes.phone ?? null,
@@ -60,16 +81,11 @@ export default async function handler(req, res) {
       paymentStatus: pay.status || 'captured',
       lastEventType: type,
       lastEventAt: new Date(),
-      // keep a lightweight trace
       _trace: { receivedAt: new Date().toISOString() },
     };
 
-    // IMPORTANT: No leading slash in path; Admin SDK uses strings
-    // You have FIREBASE_APP_ID set in Vercel; we’ll nest under artifacts/{appId}/private/registrations
     const appId = process.env.FIREBASE_APP_ID;
-    const colPath = appId
-      ? `artifacts/${appId}/registrations`
-      : 'registrations';
+    const colPath = appId ? `artifacts/${appId}/registrations` : 'registrations';
 
     await adminDb.collection(colPath).doc(orderId).set(registration, { merge: true });
 
