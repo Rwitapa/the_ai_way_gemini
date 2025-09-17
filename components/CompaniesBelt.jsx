@@ -9,29 +9,25 @@ const CompaniesBelt = () => {
     const controls = useAnimation();
 
     useEffect(() => {
-        // This function calculates the total width of the logos
         const calculateWidth = () => {
             if (containerRef.current) {
-                // We use scrollWidth to get the full width of the content, and divide by 2 because we have a cloned set of logos for the seamless loop
                 const scrollWidth = containerRef.current.scrollWidth;
                 setWidth(scrollWidth / 2);
             }
         };
 
         calculateWidth();
-        // Recalculate on window resize to handle responsiveness
         window.addEventListener('resize', calculateWidth);
         return () => window.removeEventListener('resize', calculateWidth);
     }, [LOGOS]);
 
     useEffect(() => {
-        // This effect starts the animation once the width is calculated
         if (width > 0) {
             controls.start({
                 x: [0, -width],
                 transition: {
                     ease: 'linear',
-                    duration: 52, // Adjust duration as needed
+                    duration: 52,
                     repeat: Infinity,
                 }
             });
@@ -40,13 +36,12 @@ const CompaniesBelt = () => {
 
     const handleDragEnd = (event, info) => {
         if (width > 0) {
-            // After dragging, get the current position and restart the animation from there
             const currentX = controls.get('x');
             controls.start({
                 x: [currentX, -width],
                 transition: {
                     ease: 'linear',
-                    duration: ((-width - currentX) / -width) * 52, // Calculate remaining duration to maintain speed
+                    duration: ((-width - currentX) / -width) * 52,
                     repeat: Infinity,
                 }
             });
@@ -62,7 +57,8 @@ const CompaniesBelt = () => {
 
             <motion.div
                 ref={containerRef}
-                className="flex cursor-grab active:cursor-grabbing" // Add cursor styles for better UX
+                className="flex cursor-grab active:cursor-grabbing"
+                style={{ userSelect: 'none' }} // This prevents text selection on drag
                 drag="x"
                 dragConstraints={{ left: -width, right: 0 }}
                 dragElastic={0.05}
@@ -70,7 +66,6 @@ const CompaniesBelt = () => {
                 onDragEnd={handleDragEnd}
                 animate={controls}
             >
-                {/* We need two sets of logos for the seamless loop effect */}
                 {[...LOGOS, ...LOGOS].map((logo, i) => (
                     <div key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4" aria-hidden={i >= LOGOS.length}>
                         <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
