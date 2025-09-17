@@ -1,52 +1,38 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { motion, useAnimation } from "framer-motion";
+import React from 'react';
+import { motion, useAnimationFrame, useMotionValue, useScroll, useSpring, useTransform, useVelocity, wrap } from "framer-motion";
 import { LOGOS } from '../lib/constants';
 import Image from 'next/image';
 
 const CompaniesBelt = () => {
-    const [width, setWidth] = useState(0);
-    const containerRef = useRef(null);
-    const controls = useAnimation();
+    // Base velocity for the automatic scroll
+    const baseX = useMotionValue(0);
 
-    useEffect(() => {
-        const calculateWidth = () => {
-            if (containerRef.current) {
-                const scrollWidth = containerRef.current.scrollWidth;
-                setWidth(scrollWidth / 2);
-            }
-        };
+    // Get scroll velocity to pause animation when scrolling page
+    const { scrollY } = useScroll();
+    const scrollVelocity = useVelocity(scrollY);
+    const smoothVelocity = useSpring(scrollVelocity, {
+        damping: 50,
+        stiffness: 400
+    });
 
-        calculateWidth();
-        window.addEventListener('resize', calculateWidth);
-        return () => window.removeEventListener('resize', calculateWidth);
-    }, [LOGOS]);
+    // Transform velocity to scale the animation speed
+    const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
+        clamp: false
+    });
 
-    useEffect(() => {
-        if (width > 0) {
-            controls.start({
-                x: [0, -width],
-                transition: {
-                    ease: 'linear',
-                    duration: 52,
-                    repeat: Infinity,
-                }
-            });
+    // This creates the repeating (wrapping) animation effect
+    const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
+
+    // This is the core animation logic that runs on every frame
+    useAnimationFrame((t, delta) => {
+        let moveBy = 2 * (delta / 1000); // Adjust this number to change speed
+
+        // Slow down the animation if the user is scrolling the page
+        if (velocityFactor.get() < 0) {
+            moveBy *= -1;
         }
-    }, [width, controls]);
-
-    const handleDragEnd = (event, info) => {
-        if (width > 0) {
-            const currentX = controls.get('x');
-            controls.start({
-                x: [currentX, -width],
-                transition: {
-                    ease: 'linear',
-                    duration: ((-width - currentX) / -width) * 52,
-                    repeat: Infinity,
-                }
-            });
-        }
-    };
+        baseX.set(baseX.get() + moveBy);
+    });
 
 
     return (
@@ -56,17 +42,16 @@ const CompaniesBelt = () => {
             </h3>
 
             <motion.div
-                ref={containerRef}
-                className="flex cursor-grab active:cursor-grabbing"
-                style={{ userSelect: 'none' }} // This prevents text selection on drag
+                className="flex whitespace-nowrap"
+                style={{ x }} // Apply the transformed x value
                 drag="x"
-                dragConstraints={{ left: -width, right: 0 }}
+                dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.05}
-                onDragStart={() => controls.stop()}
-                onDragEnd={handleDragEnd}
-                animate={controls}
+                onDragStart={() => { baseX.stop() }}
+                onDragEnd={() => { baseX.start() }}
             >
-                {[...LOGOS, ...LOGOS].map((logo, i) => (
+                {/* We render 4 sets of logos to ensure it's always seamless */}
+                {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((logo, i) => (
                     <div key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4" aria-hidden={i >= LOGOS.length}>
                         <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
                             <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" />
