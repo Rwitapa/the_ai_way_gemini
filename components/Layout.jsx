@@ -166,7 +166,7 @@ const Footer = ({ onAdminClick, isAdmin }) => (
   </footer>
 );
 
-// --- LOGIN MODAL (No visual changes, but included for completeness) ---
+// --- LOGIN MODAL ---
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -220,8 +220,8 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     );
 };
 
-// --- ADMIN MODAL (No visual changes, but included for completeness) ---
-const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate, onForceSync }) => {
+// --- ADMIN MODAL ---
+const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, formatAcceleratorDate }) => {
     const [sprintDates, setSprintDates] = useState([]);
     const [acceleratorDates, setAcceleratorDates] = useState([]);
     const [newSprintDate, setNewSprintDate] = useState('');
@@ -305,13 +305,15 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
                                  <p className="text-xs text-gray-500 mt-2">Note: Select the start date (Saturday) for the weekend cohort.</p>
                             </div>
                         </div>
-                         <div className="p-4 border-t border-gray-700 mt-auto flex justify-between items-center">
-                            <button onClick={onForceSync} className="px-4 py-2 rounded-lg text-sm bg-red-600 hover:bg-red-500 font-semibold">Force Sync Dates</button>
-                            <div className="flex justify-end gap-3">
+                         {/* --- START OF THE CHANGE --- */}
+                         {/* Removed the div that contained the Force Sync button */}
+                         <div className="p-4 border-t border-gray-700 mt-auto flex justify-end items-center">
+                            <div className="flex gap-3">
                                 <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-gray-600 hover:bg-gray-500">Cancel</button>
                                 <button onClick={handleSave} className="px-4 py-2 rounded-lg text-sm bg-purple-600 hover:bg-purple-500 font-semibold">Save Changes</button>
                             </div>
                         </div>
+                         {/* --- END OF THE CHANGE --- */}
                     </motion.div>
                 </motion.div>
             )}
@@ -320,7 +322,7 @@ const AdminModal = ({ isOpen, onClose, currentDates, onSave, formatSprintDate, f
 };
 
 // --- MAIN LAYOUT COMPONENT ---
-export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate, forceSync }) => {
+export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleExploreCourses, cohortDates, onSaveDates, formatSprintDate, formatAcceleratorDate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -364,7 +366,7 @@ export const Layout = ({ children, scrollToSection, setShowCoursesPage, handleEx
             <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} scrollToSection={scrollToSection} handleExploreCourses={handleExploreCourses} />
             <main className="pt-16 md:pt-20">{children}</main>
             <Footer onAdminClick={handleAdminClick} isAdmin={isAdmin} />
-            <AdminModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} currentDates={cohortDates} onSave={onSaveDates} formatSprintDate={formatSprintDate} formatAcceleratorDate={formatAcceleratorDate} onForceSync={forceSync} />
+            <AdminModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} currentDates={cohortDates} onSave={onSaveDates} formatSprintDate={formatSprintDate} formatAcceleratorDate={formatAcceleratorDate} />
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onLoginSuccess={() => { setIsAdmin(true); setShowLoginModal(false); }} />
         </div>
     );
