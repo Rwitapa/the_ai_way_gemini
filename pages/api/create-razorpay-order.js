@@ -13,6 +13,13 @@ export default async function handler(req, res) {
 
   const { amount, courseType, cohort, customerName, customerEmail, customerPhone } = req.body;
 
+  // --- START OF THE CHANGE ---
+  // Server-side validation to ensure data integrity
+  if (!customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) || !/^[6-9]\d{9}$/.test(customerPhone)) {
+    return res.status(400).json({ message: 'Invalid input data.' });
+  }
+  // --- END OF THE CHANGE ---
+
   try {
     const order = await razorpay.orders.create({
       amount, // Amount in paise
