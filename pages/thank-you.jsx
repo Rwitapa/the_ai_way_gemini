@@ -97,7 +97,7 @@ const ThankYouPage = () => {
                     ref={videoRef}
                     src="/Rwitapa.mp4"
                     poster="/Rwitapa.png"
-                    className="block w-full h-full object-cover"
+                    className="block w-full h-full object-cover scale-[1.04]" // Added scale to zoom in
                     autoPlay
                     loop
                     muted
