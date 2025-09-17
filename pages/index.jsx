@@ -33,7 +33,7 @@ const App = () => {
 
     const [showCheckoutForm, setShowCheckoutForm] = useState(false);
     const [checkoutCourse, setCheckoutCourse] = useState(null);
-    
+
     const sectionRefs = {
         courses: useRef(null),
         whatYouGet: useRef(null),
@@ -182,7 +182,6 @@ const App = () => {
     const handlePayment = async (customerDetails) => {
         setShowCheckoutForm(false);
         const course = checkoutCourse;
-        // *** FIX: Use the correct key for the selected cohort ***
         const cohortTypeKey = course.mascot === 'champion' ? 'sprint' : 'accelerator';
         const selectedCohort = selectedCohorts[cohortTypeKey];
 
@@ -191,7 +190,7 @@ const App = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
-                courseType: course.title, // Send the full title for clarity
+                courseType: course.title,
                 cohort: selectedCohort,
                 customerName: customerDetails.customerName,
                 customerEmail: customerDetails.customerEmail,
@@ -245,7 +244,7 @@ const App = () => {
                   />
                 </motion.div>
               ) : (
-                <motion.div key="main-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
+                <div key="main-page">
                   <HeroSection handleExploreCourses={handleExploreCourses} />
                   <CompaniesBelt />
                   <PersonasSection />
@@ -264,7 +263,7 @@ const App = () => {
                   <WhatYouLearnSection sectionRef={sectionRefs.whatYouGet} />
                   <FAQSection />
                   <FinalCTASection handleExploreCourses={handleExploreCourses} />
-                </motion.div>
+                </div>
               )}
             </AnimatePresence>
             
