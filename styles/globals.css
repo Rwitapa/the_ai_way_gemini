@@ -3,51 +3,7 @@
 @tailwind utilities;
 
 /* Optional: smooth fonts */
-html,
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@keyframes scrollUp {
-  from {
-    transform: translateY(0%);
-  }
-  to {
-    transform: translateY(-50%);
-  }
-}
-
-@keyframes scrollDown {
-  from {
-    transform: translateY(-50%);
-  }
-  to {
-    transform: translateY(0%);
-  }
-}
-
-.scrolling-column-up {
-  animation: scrollUp 40s linear infinite;
-  will-change: transform; /* Add this line */
-}
-
-.scrolling-column-down {
-  animation: scrollDown 40s linear infinite;
-  will-change: transform; /* Add this line */
-}
-
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-/* Add this new rule for the marquee track */
-.marquee__track {
-  will-change: transform;
+html, body { 
+  -webkit-font-smoothing: antialiased; 
+  -moz-osx-font-smoothing: grayscale; 
 }
