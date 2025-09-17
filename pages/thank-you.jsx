@@ -36,23 +36,18 @@ const ThankYouPage = () => {
         const result = await response.json();
         const regData = result.data;
 
-        // --- DEFINITIVE FIX ---
-        // This block correctly converts Firestore Timestamps (sent as JSON from your API) back into JS Date objects
         if (regData && regData.cohort) {
-            // Check if it's an Accelerator (an object with a 'start' field and '_seconds')
             if (regData.cohort.start && regData.cohort.start._seconds) {
                 regData.cohortDate = {
                     start: new Date(regData.cohort.start._seconds * 1000),
                     end: new Date(regData.cohort.end._seconds * 1000)
                 };
             }
-            // Check if it's a Sprint (a direct timestamp object with '_seconds')
             else if (regData.cohort._seconds) {
                 regData.cohortDate = new Date(regData.cohort._seconds * 1000);
             }
         }
-        // --- END OF FIX ---
-
+        
         setRegistration(regData);
       } catch (error) {
         console.error("Error fetching registration:", error);
@@ -97,7 +92,7 @@ const ThankYouPage = () => {
                     ref={videoRef}
                     src="/Rwitapa.mp4"
                     poster="/Rwitapa.png"
-                    className="block w-full h-full object-cover scale-[1.04]" // Added scale to zoom in
+                    className="block w-full h-full object-cover scale-[1.04]"
                     autoPlay
                     loop
                     muted
@@ -136,9 +131,16 @@ const ThankYouPage = () => {
                 Join Our WhatsApp Community
               </motion.a>
 
-              <p className="font-bold text-xl md:text-2xl mt-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-                See you on {getFormattedDate()}!
-              </p>
+              {/* --- START OF THE CHANGE --- */}
+              <div className="mt-8">
+                <p className="font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                  See you on
+                </p>
+                <p className="font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mt-1">
+                  {getFormattedDate()}!
+                </p>
+              </div>
+              {/* --- END OF THE CHANGE --- */}
             </>
           ) : (
              <div className="flex flex-col items-center justify-center h-80">
