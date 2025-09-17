@@ -5,6 +5,26 @@
 /* Optional: smooth fonts */
 html, body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+/* --- FIX FOR TESTIMONIALS SCROLLING --- */
+@keyframes scrollUp {
+  from { transform: translateY(0%); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes scrollDown {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0%); }
+}
+
+.scrolling-column-up {
+  animation: scrollUp 40s linear infinite;
+}
+
+.scrolling-column-down {
+  animation: scrollDown 40s linear infinite;
+}
+/* --- END OF FIX --- */
+
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
