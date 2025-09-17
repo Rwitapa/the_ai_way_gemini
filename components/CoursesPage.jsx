@@ -16,8 +16,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
 
   const formattedDate = course.mascot === 'champion' ? formatSprintDate(selectedCohort) : formatAcceleratorDate(selectedCohort);
   
-  // The handlePayment function is no longer needed here as it's been moved to pages/index.jsx
-  
   return (
       <motion.div
           key={course.mascot}
@@ -145,11 +143,12 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts,
             />
             <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/80 to-gray-950"></div>
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-28 md:pt-36 pb-16">
-                <button onClick={onBack} className="flex items-center text-purple-400 hover:text-purple-300 transition-colors mb-8 group">
-                    <Icon name="arrow-left" size={20} className="mr-2 transition-transform group-hover:-translate-x-1" /> Back to Home
-                </button>
+            {/* --- START OF THE CHANGE --- */}
+            {/* Reduced top padding from pt-28 md:pt-36 to pt-12 md:pt-16 */}
+            <div className="relative z-10 container mx-auto px-6 md:px-12 pt-12 md:pt-16 pb-16">
+                {/* Removed the Back to Home button */}
                 <div className="text-center mb-12">
+            {/* --- END OF THE CHANGE --- */}
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your Path to AI Mastery</h1>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
                 </div>
