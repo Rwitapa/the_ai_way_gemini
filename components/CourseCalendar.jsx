@@ -8,8 +8,6 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
-    // This function now correctly initializes the calendar to the first day of the
-    // month of the next available cohort, ensuring consistent state.
     const getInitialDate = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -26,7 +24,6 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         
         const firstCohortDate = courseType === 'sprint' ? futureDates[0] : futureDates[0]?.start;
 
-        // Always return the first day of the month for consistency
         return new Date(firstCohortDate.getFullYear(), firstCohortDate.getMonth(), 1);
     };
 
@@ -40,7 +37,6 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     }, []);
 
     useEffect(() => {
-        // This effect now correctly re-initializes the calendar view when it's opened
         if (isOpen) {
             setCurrentDate(getInitialDate());
         }
@@ -150,21 +146,15 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                     cohortData = displayableCohorts.find(d => (courseType === 'sprint' ? d : d.start).toDateString() === dayString);
                 }
 
-                // --- START OF THE FIX ---
-                // This logic ensures that all non-selectable dates are styled correctly,
-                // while all selectable dates (purple buttons) are always clearly visible.
-                let dayClass = 'text-gray-200';
-                if (!isCurrentMonth) {
-                    dayClass = 'text-gray-600';
-                }
-                // --- END OF THE FIX ---
+                let dayClass = !isCurrentMonth ? 'text-gray-600' : 'text-gray-200';
 
                 days.push(
                     <div
                         key={dayKey}
                         className={`p-1 flex items-center justify-center h-10 w-10`}
                     >
-                        {isCohortStart ? (
+                        {/* --- START OF THE DEFINITIVE FIX --- */}
+                        {isCohortStart && isCurrentMonth ? (
                              <button
                                 onClick={() => onDateSelect(courseType, cohortData)}
                                 className="w-full h-full rounded-full bg-purple-600 text-white font-bold hover:bg-purple-500 transition-colors flex items-center justify-center shadow-lg"
@@ -174,6 +164,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                         ) : (
                             <span className={dayClass}>{dayOfMonth}</span>
                         )}
+                        {/* --- END OF THE DEFINITIVE FIX --- */}
                     </div>
                 );
                 day.setDate(day.getDate() + 1);
