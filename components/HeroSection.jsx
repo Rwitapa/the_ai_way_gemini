@@ -1,20 +1,10 @@
+// components/HeroSection.jsx
 import { motion } from "framer-motion";
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants';
+import Link from 'next/link';
 
-// Hero Section
-
-export const HeroSection = ({ handleExploreCourses }) => {
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.play().catch(error => {
-                console.log("Hero video autoplay was prevented:", error);
-            });
-        }
-    }, []);
-
+export const HeroSection = () => {
     return (
         <section className="relative overflow-hidden flex items-center bg-gray-950">
             <video
@@ -44,18 +34,19 @@ export const HeroSection = ({ handleExploreCourses }) => {
                     </h1>
 
                     <p className="mt-5 max-w-3xl text-base md:text-xl text-gray-200">
-                        Automate reporting, turn dashboards into narratives, and solve business problems with AI.
+                        Launch an AI KPI agent that keeps data fresh, flags anomalies, and pushes insights to Slack or email.
                     </p>
 
                     <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <motion.button
-                            onClick={handleExploreCourses}
-                            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            Explore Courses
-                        </motion.button>
+                        <Link href="/courses" passHref>
+                            <motion.a
+                                className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                Explore Courses
+                            </motion.a>
+                        </Link>
 
                         <motion.a
                             href={WHATSAPP_COMMUNITY_URL}
