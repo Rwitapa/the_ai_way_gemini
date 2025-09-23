@@ -1,5 +1,10 @@
 // pages/api/debug-secret.js
 export default function handler(req, res) {
+  // --- START OF THE CHANGE ---
+  // Log all incoming headers for debugging
+  console.log('Incoming Headers:', req.headers);
+  // --- END OF THE CHANGE ---
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
@@ -8,7 +13,11 @@ export default function handler(req, res) {
   const clientSecret = req.headers.authorization?.split(' ')[1];
 
   if (!clientSecret) {
-    return res.status(400).json({ message: 'Error: No secret was sent in the request.' });
+    return res.status(400).json({ 
+        message: 'Error: No secret was sent in the request.',
+        // Add a hint for debugging
+        hasAuthHeader: !!req.headers.authorization,
+    });
   }
 
   if (clientSecret === serverSecret) {
