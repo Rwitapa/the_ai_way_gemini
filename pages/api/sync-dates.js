@@ -15,8 +15,9 @@ export default async function handler(req, res) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     
-    const newSprints = getNextSprintDates(tomorrow, 60); // Get dates for the next 60 days
-    const newAccelerators = getNextAcceleratorDates(tomorrow, 5); // Get dates for the next 5 years
+    // Corrected to fetch dates for the next 2 months (approx 60 days)
+    const newSprints = getNextSprintDates(tomorrow, 2);
+    const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
 
     const newDatesForDb = {
         sprint: newSprints.map(d => Timestamp.fromDate(d)),
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
     await datesDocRef.set(newDatesForDb);
     
     console.log('Successfully synced cohort dates.');
-    return res.status(200).json({ message: 'Cohort dates synced successfully.' });
+    return res.status(200).json({ message: 'Cohort dates synced successfully with Mon/Wed/Fri schedule.' });
   } catch (error) {
     console.error("Error in /api/sync-dates:", error);
     return res.status(500).json({ message: `Error syncing dates: ${error.message}` });
