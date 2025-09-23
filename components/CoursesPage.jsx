@@ -1,13 +1,11 @@
 // components/CoursesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from 'next/router';
 import Icon from './common/Icon.jsx';
-import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_KEY_ID } from '../lib/constants';
+import { courseData, mascots, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
 const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutForm }) => {
   const [openModule, setOpenModule] = useState(null);
-  const router = useRouter();
   
   const toggleModule = (moduleTitle) => {
       const identifier = `${course.title}-${moduleTitle}`;
@@ -118,7 +116,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
   );
 };
 
-const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts, openCheckoutForm }) => {
+const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openCheckoutForm }) => {
     const [activeCourseId, setActiveCourseId] = useState('sprint');
     const videoRef = useRef(null);
 
@@ -143,12 +141,8 @@ const CoursesPage = ({ onBack, cohortDates, handleOpenCalendar, selectedCohorts,
             />
             <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/80 to-gray-950"></div>
 
-            {/* --- START OF THE CHANGE --- */}
-            {/* Reduced top padding from pt-28 md:pt-36 to pt-12 md:pt-16 */}
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-12 md:pt-16 pb-16">
-                {/* Removed the Back to Home button */}
                 <div className="text-center mb-12">
-            {/* --- END OF THE CHANGE --- */}
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your Path to AI Mastery</h1>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
                 </div>
