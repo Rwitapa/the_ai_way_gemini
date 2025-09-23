@@ -43,21 +43,17 @@ export default async function handler(req, res) {
 
     const notes = pay.notes || {};
 
-    // --- START OF THE DEFINITIVE FIX ---
-    // This block parses the cohort data before saving it
     let finalCohortData = null;
     if (notes.cohort) {
       try {
         const parsedCohort = JSON.parse(notes.cohort);
         
-        // Check if it's an Accelerator (an object with a 'start' key)
         if (parsedCohort && typeof parsedCohort === 'object' && parsedCohort.start) {
           finalCohortData = {
             start: Timestamp.fromDate(new Date(parsedCohort.start)),
             end: Timestamp.fromDate(new Date(parsedCohort.end))
           };
         } 
-        // Otherwise, it's a Sprint (a single date string)
         else if (typeof parsedCohort === 'string') {
           finalCohortData = Timestamp.fromDate(new Date(parsedCohort));
         }
@@ -66,13 +62,12 @@ export default async function handler(req, res) {
         finalCohortData = notes.cohort; // Fallback
       }
     }
-    // --- END OF THE DEFINITIVE FIX ---
 
     const registration = {
       orderId,
       paymentId,
       courseType: notes.courseType ?? null,
-      cohort: finalCohortData, // Use the new, clean data
+      cohort: finalCohortData,
       customerName: notes.name ?? null,
       customerEmail: notes.email ?? null,
       customerPhone: notes.phone ?? null,
