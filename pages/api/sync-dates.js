@@ -4,17 +4,17 @@ import { Timestamp } from 'firebase-admin/firestore';
 import { getNextSprintDates, getNextAcceleratorDates } from '../../lib/constants';
 
 export default async function handler(req, res) {
-  // --- START OF THE CHANGE ---
-  // Enforce POST method for security
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
-  // --- END OF THE CHANGE ---
 
-  const authHeader = req.headers.authorization;
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // --- START OF THE CHANGE ---
+  // Get the secret from the request body
+  const { secret } = req.body;
+  if (secret !== process.env.CRON_SECRET) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
+  // --- END OF THE CHANGE ---
 
   try {
     const tomorrow = new Date();
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     
     await datesDocRef.set(newDatesForDb);
     
-    console.log('Successfully synced cohort dates.');
+    console.log('Successfully synced cohort dates via request body.');
     return res.status(200).json({ message: 'Cohort dates synced successfully.' });
   } catch (error) {
     console.error("Error in /api/sync-dates:", error);
