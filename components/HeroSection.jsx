@@ -29,7 +29,7 @@ export const HeroSection = () => {
                     <h1 className="mt-6 text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white max-w-5xl">
                         Manual reports = Slow decisions?
                         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
-                            Let AI handle the grunt work.
+                            Build AI agents and workflows that answer instantly.
                         </span>
                     </h1>
 
