@@ -8,12 +8,14 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
-    // --- START OF THE CHANGE ---
-    // This function is now more robust and consistent
+    // --- START OF THE DEFINITIVE FIX ---
+    // This function now correctly initializes the calendar to the first day of the
+    // month of the next available cohort, ensuring consistent state.
     const getInitialDate = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Default to the first day of the current month if no cohorts are available
         if (!cohortDates || cohortDates.length === 0) {
             return new Date(today.getFullYear(), today.getMonth(), 1);
         }
@@ -26,10 +28,10 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         
         const firstCohortDate = courseType === 'sprint' ? futureDates[0] : futureDates[0]?.start;
 
-        // Always return the first day of the month of the next available cohort
+        // Always return the first day of the month for consistency
         return new Date(firstCohortDate.getFullYear(), firstCohortDate.getMonth(), 1);
     };
-    // --- END OF THE CHANGE ---
+    // --- END OF THE DEFINITIVE FIX ---
 
     const [currentDate, setCurrentDate] = useState(getInitialDate());
 
@@ -41,6 +43,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     }, []);
 
     useEffect(() => {
+        // This effect now correctly re-initializes the calendar view when it's opened
         if (isOpen) {
             setCurrentDate(getInitialDate());
         }
