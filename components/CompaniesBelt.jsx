@@ -1,21 +1,18 @@
+// components/CompaniesBelt.jsx
 import React from 'react';
-import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
+import { motion, useAnimationFrame, useMotionValue, useTransform, wrap } from "framer-motion";
 import { LOGOS } from '../lib/constants';
 import Image from 'next/image';
 
 const CompaniesBelt = () => {
     const baseX = useMotionValue(0);
 
-    // This is the core animation logic that runs on every frame
+    // Use Framer Motion's `wrap` function for a seamless, looping animation
+    const x = useTransform(baseX, (v) => `${wrap(-25, 0, v)}%`);
+
     useAnimationFrame((t, delta) => {
-        // This calculates the distance to move per frame to maintain a consistent speed
-        let moveBy = -0.5 * (delta / 1000);
-
-        // This handles the looping logic
-        if (baseX.get() <= -25) {
-            baseX.set(0);
-        }
-
+        // This calculates the distance to move per frame for a consistent speed
+        let moveBy = -2 * (delta / 1000); // Speed can be adjusted here
         baseX.set(baseX.get() + moveBy);
     });
 
@@ -27,10 +24,10 @@ const CompaniesBelt = () => {
 
             <motion.div
                 className="flex whitespace-nowrap"
-                style={{ x: `${baseX.get()}%` }} // Apply the x value directly
+                style={{ x }} // Use the transformed `x` value for smooth looping
             >
-                {/* We render 8 sets of logos to ensure it's always seamless, even on very wide screens */}
-                {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((logo, i) => (
+                {/* We render 4 sets of logos, which is sufficient for the wrapping logic */}
+                {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((logo, i) => (
                     <div key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4" aria-hidden={i >= LOGOS.length}>
                         <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
                             <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" />
