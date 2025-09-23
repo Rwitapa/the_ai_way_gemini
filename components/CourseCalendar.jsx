@@ -14,7 +14,6 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Default to the first day of the current month if no cohorts are available
         if (!cohortDates || cohortDates.length === 0) {
             return new Date(today.getFullYear(), today.getMonth(), 1);
         }
@@ -155,7 +154,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                 // This logic ensures that all non-selectable dates are styled correctly,
                 // while all selectable dates (purple buttons) are always clearly visible.
                 let dayClass = 'text-gray-200';
-                if (!isCurrentMonth && !isCohortStart) {
+                if (!isCurrentMonth) {
                     dayClass = 'text-gray-600';
                 }
                 // --- END OF THE FIX ---
@@ -163,7 +162,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                 days.push(
                     <div
                         key={dayKey}
-                        className={`p-1 flex items-center justify-center h-10 w-10 ${dayClass}`}
+                        className={`p-1 flex items-center justify-center h-10 w-10`}
                     >
                         {isCohortStart ? (
                              <button
@@ -173,7 +172,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                                 {dayOfMonth}
                             </button>
                         ) : (
-                            <span>{dayOfMonth}</span>
+                            <span className={dayClass}>{dayOfMonth}</span>
                         )}
                     </div>
                 );
