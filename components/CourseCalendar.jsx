@@ -8,10 +8,13 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
+    // This function now correctly initializes the calendar to the first day of the
+    // month of the next available cohort, ensuring consistent state.
     const getInitialDate = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Default to the first day of the current month if no cohorts are available
         if (!cohortDates || cohortDates.length === 0) {
             return new Date(today.getFullYear(), today.getMonth(), 1);
         }
@@ -23,6 +26,8 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         }
         
         const firstCohortDate = courseType === 'sprint' ? futureDates[0] : futureDates[0]?.start;
+
+        // Always return the first day of the month for consistency
         return new Date(firstCohortDate.getFullYear(), firstCohortDate.getMonth(), 1);
     };
 
@@ -36,6 +41,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     }, []);
 
     useEffect(() => {
+        // This effect now correctly re-initializes the calendar view when it's opened
         if (isOpen) {
             setCurrentDate(getInitialDate());
         }
@@ -146,6 +152,8 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                 }
 
                 // --- START OF THE FIX ---
+                // This logic ensures that all non-selectable dates are styled correctly,
+                // while all selectable dates (purple buttons) are always clearly visible.
                 let dayClass = 'text-gray-200';
                 if (!isCurrentMonth && !isCohortStart) {
                     dayClass = 'text-gray-600';
