@@ -1,3 +1,4 @@
+// components/CourseCalendar.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -7,17 +8,28 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
     const [style, setStyle] = useState({});
     const [isMobile, setIsMobile] = useState(false);
 
+    // --- START OF THE CHANGE ---
+    // This function is now more robust and consistent
     const getInitialDate = () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        if (!cohortDates || cohortDates.length === 0) return today;
+        if (!cohortDates || cohortDates.length === 0) {
+            return new Date(today.getFullYear(), today.getMonth(), 1);
+        }
+
         const futureDates = cohortDates.filter(d => (courseType === 'sprint' ? d : d.start) >= today);
-        if (futureDates.length === 0) return today;
+
+        if (futureDates.length === 0) {
+            return new Date(today.getFullYear(), today.getMonth(), 1);
+        }
         
-        const firstCohort = futureDates[0];
-        return courseType === 'sprint' ? firstCohort : firstCohort?.start;
+        const firstCohortDate = courseType === 'sprint' ? futureDates[0] : futureDates[0]?.start;
+
+        // Always return the first day of the month of the next available cohort
+        return new Date(firstCohortDate.getFullYear(), firstCohortDate.getMonth(), 1);
     };
+    // --- END OF THE CHANGE ---
 
     const [currentDate, setCurrentDate] = useState(getInitialDate());
 
