@@ -8,7 +8,7 @@ const CompaniesBelt = () => {
     const baseX = useMotionValue(0);
 
     // Use Framer Motion's `wrap` function for a seamless, looping animation
-    const x = useTransform(baseX, (v) => `${wrap(-25, 0, v)}%`);
+    const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
 
     useAnimationFrame((t, delta) => {
         // This calculates the distance to move per frame for a consistent speed
@@ -24,10 +24,10 @@ const CompaniesBelt = () => {
 
             <motion.div
                 className="flex whitespace-nowrap"
-                style={{ x }} // Use the transformed `x` value for smooth looping
+                style={{ x, willChange: 'transform' }} // Use the transformed `x` value for smooth looping
             >
-                {/* We render 4 sets of logos, which is sufficient for the wrapping logic */}
-                {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((logo, i) => (
+                {/* We only need to render 2 sets of logos for the wrapping logic to work */}
+                {[...LOGOS, ...LOGOS].map((logo, i) => (
                     <div key={`${logo.name}-${i}`} className="shrink-0 list-none mx-4" aria-hidden={i >= LOGOS.length}>
                         <div className="relative flex items-center justify-center rounded-xl ring-1 ring-black/6 shadow-sm bg-[#F3F4F6] w-[156px] md:w-[168px] h-[58px] md:h-[64px]">
                             <div className="absolute inset-0 rounded-xl bg-black/12 z-0 pointer-events-none" />
