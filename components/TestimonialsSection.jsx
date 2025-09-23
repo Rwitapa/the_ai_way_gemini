@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useAnimationFrame, useMotionValue, useScroll, useSpring, useTransform, useVelocity, wrap } from 'framer-motion';
 import { testimonials, TestimonialCard } from '../lib/constants';
 
-const TestimonialColumn = ({ testimonials, direction = 'up' }) => {
+const TestimonialColumn = ({ testimonials, direction = 'up', className }) => {
     const baseY = useMotionValue(0);
     const { scrollY } = useScroll();
     const scrollVelocity = useVelocity(scrollY);
@@ -28,7 +28,7 @@ const TestimonialColumn = ({ testimonials, direction = 'up' }) => {
 
     return (
         <motion.div
-            className="w-full md:w-1/2 lg:w-1/3 flex flex-col space-y-6"
+            className={`w-full md:w-1/2 flex flex-col space-y-6 ${className || ''}`}
             style={{ y, userSelect: 'none' }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
@@ -57,9 +57,7 @@ const TestimonialsSection = ({ sectionRef }) => {
                 <div className="relative h-[450px] overflow-hidden">
                     <div className="absolute inset-0 flex justify-center gap-6">
                         <TestimonialColumn testimonials={column1Testimonials} direction="up" />
-                        <div className="md:flex hidden"> {/* This ensures the column is hidden on small screens but visible on medium and up */}
-                           <TestimonialColumn testimonials={column2Testimonials} direction="down" />
-                        </div>
+                        <TestimonialColumn testimonials={column2Testimonials} direction="down" className="hidden md:flex" />
                     </div>
                      <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none"></div>
                      <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-gray-900 to-transparent pointer-events-none"></div>
