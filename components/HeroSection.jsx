@@ -26,7 +26,7 @@ export const HeroSection = () => {
                         Gen AI for Analysts
                     </span>
 
-                    <h1 className="mt-6 text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white max-w-5xl">
+                    <h1 className="mt-6 text-3xl md:text-6xl lg:text-6xl font-extrabold leading-tight text-white max-w-5xl">
                         Reports slow. Decisions slower?
                         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
                             Build AI agents for faster insights.
