@@ -1,4 +1,3 @@
-// components/CourseCalendar.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -152,10 +151,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
                                 {dayOfMonth}
                             </button>
                         ) : (
-                            // --- START OF THE CHANGE ---
-                            // Always render the day number, regardless of the month
                             <span>{dayOfMonth}</span>
-                            // --- END OF THE CHANGE ---
                         )}
                     </div>
                 );
