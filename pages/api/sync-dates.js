@@ -8,7 +8,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // Get the secret from the request body for more reliability
   const { secret } = req.body;
   if (secret !== process.env.CRON_SECRET) {
     return res.status(401).json({ message: 'Unauthorized' });
@@ -18,7 +17,10 @@ export default async function handler(req, res) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     
+    // --- START OF THE CHANGE ---
+    // Changed from 60 to 2 for a more reasonable 2-month lookahead
     const newSprints = getNextSprintDates(tomorrow, 2);
+    // --- END OF THE CHANGE ---
     const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
 
     const newDatesForDb = {
