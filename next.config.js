@@ -19,6 +19,9 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  // --- START OF THE CHANGE ---
+  trailingSlash: false,
+  // --- END OF THE CHANGE ---
   async headers() {
     return [
       {
