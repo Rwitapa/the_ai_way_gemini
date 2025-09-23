@@ -99,10 +99,18 @@ const ThankYouPage = () => {
                     playsInline
                 />
               </motion.div>
+              
+              {/* --- START OF THE CHANGE --- */}
+              <div className="mb-2">
+                <p className="text-xl md:text-2xl text-gray-200 font-medium">
+                  Hey {registration.customerName}!
+                </p>
+                <p className="text-xl md:text-2xl text-gray-200 font-medium">
+                  Awesome news!
+                </p>
+              </div>
+              {/* --- END OF THE CHANGE --- */}
 
-              <p className="text-xl md:text-2xl text-gray-200 mb-2 font-medium">
-                Hey {registration.customerName}! Awesome news!
-              </p>
               <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
                 You're All Set!
               </h1>
@@ -131,7 +139,6 @@ const ThankYouPage = () => {
                 Join Our WhatsApp Community
               </motion.a>
 
-              {/* --- START OF THE CHANGE --- */}
               <div className="mt-8">
                 <p className="font-bold text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
                   See you on
@@ -140,7 +147,6 @@ const ThankYouPage = () => {
                   {getFormattedDate()}!
                 </p>
               </div>
-              {/* --- END OF THE CHANGE --- */}
             </>
           ) : (
              <div className="flex flex-col items-center justify-center h-80">
