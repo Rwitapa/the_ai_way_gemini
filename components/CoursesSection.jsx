@@ -1,15 +1,11 @@
 // components/CoursesSection.jsx
 import { motion } from "framer-motion";
 import React from 'react';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Icon from './common/Icon.jsx';
-import { courseData, mascots, formatSprintDate, formatAcceleratorDate, RAZORPAY_KEY_ID } from '../lib/constants';
+import { courseData } from '../lib/constants';
 
-const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
-    const router = useRouter();
-
-    // The handlePayment function is no longer needed here as it's been moved to pages/index.jsx
-    
+const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
             <div className="container mx-auto px-6">
@@ -86,9 +82,11 @@ const CoursesSection = ({ sectionRef, handleExploreCourses, handleOpenCalendar, 
                     </motion.div>
                 </div>
                 <div className="text-center mt-12">
-                    <motion.button onClick={handleExploreCourses} className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        Explore All Courses
-                    </motion.button>
+                    <Link href="/courses" passHref>
+                        <motion.a className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            Explore All Courses
+                        </motion.a>
+                    </Link>
                 </div>
             </div>
         </section>
