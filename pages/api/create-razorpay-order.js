@@ -13,16 +13,19 @@ export default async function handler(req, res) {
 
   const { amount, courseType, cohort, customerName, customerEmail, customerPhone } = req.body;
 
-  // --- START OF THE CHANGE ---
-  // Server-side validation to ensure data integrity
-  if (!customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) || !/^[6-9]\d{9}$/.test(customerPhone)) {
-    return res.status(400).json({ message: 'Invalid input data.' });
+  if (!customerName) {
+    return res.status(400).json({ message: 'Customer name is required.' });
   }
-  // --- END OF THE CHANGE ---
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+    return res.status(400).json({ message: 'A valid email is required.' });
+  }
+  if (!/^[6-9]\d{9}$/.test(customerPhone)) {
+    return res.status(400).json({ message: 'A valid 10-digit phone number is required.' });
+  }
 
   try {
     const order = await razorpay.orders.create({
-      amount, // Amount in paise
+      amount,
       currency: 'INR',
       receipt: `receipt_${Date.now()}`,
       notes: {
