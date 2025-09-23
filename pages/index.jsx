@@ -2,13 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { AnimatePresence, motion } from "framer-motion";
 import { auth, db } from "../lib/firebaseClient";
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
-
-import { getNextSprintDates, getNextAcceleratorDates, formatSprintDate, formatAcceleratorDate } from '../lib/constants';
-
+import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 import { Layout } from '../components/Layout';
 import { HeroSection } from '../components/HeroSection';
 import CompaniesBelt from '../components/CompaniesBelt';
@@ -19,25 +16,21 @@ import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
-import CoursesPage from '../components/CoursesPage';
 
 const CohortCalendarModal = dynamic(() => import('../components/CourseCalendar'));
 const CheckoutForm = dynamic(() => import('../components/CheckoutForm'));
 
 const App = () => {
     const router = useRouter();
-    const [showCoursesPage, setShowCoursesPage] = useState(false);
     const [cohortDates, setCohortDates] = useState({ sprint: [], accelerator: [] });
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
-
     const [showCheckoutForm, setShowCheckoutForm] = useState(false);
     const [checkoutCourse, setCheckoutCourse] = useState(null);
 
     const sectionRefs = {
         courses: useRef(null),
-        whatYouGet: useRef(null),
         mentors: useRef(null),
         testimonials: useRef(null),
     };
@@ -56,14 +49,10 @@ const App = () => {
                         const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
                         const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
                         setCohortDates({ sprint: futureSprints, accelerator: futureAccelerators });
-                    } else {
-                        setCohortDates({ sprint: [], accelerator: [] });
                     }
-                }, (error) => console.error("Error in onSnapshot listener:", error));
-            } else {
-                signInAnonymously(auth).catch((error) => {
-                    console.error("CRITICAL: Anonymous sign-in is failing.", error);
                 });
+            } else {
+                signInAnonymously(auth).catch((error) => console.error("Anonymous sign-in failed.", error));
             }
         });
         return () => { authUnsubscribe(); unsubscribe(); };
@@ -81,9 +70,7 @@ const App = () => {
     }, [cohortDates]);
 
     useEffect(() => {
-        document.title = "The AI Way";
         const scrollElements = document.querySelectorAll('.animate-on-scroll');
-        if (!scrollElements.length) return;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -94,16 +81,11 @@ const App = () => {
         }, { threshold: 0.1 });
         scrollElements.forEach(el => observer.observe(el));
         return () => observer.disconnect();
-    }, [showCoursesPage]);
-
-    const handleExploreCourses = () => {
-        setShowCoursesPage(true);
-        window.scrollTo(0, 0);
-    };
-
+    }, []);
+    
     const handleSaveDates = async (newDates) => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
-            alert('You must be logged in as an admin to save changes.');
+            alert('Admin access required to save changes.');
             return;
         }
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
@@ -119,8 +101,8 @@ const App = () => {
             await setDoc(datesDocRef, firestoreReadyDates);
             alert('Cohort dates updated successfully!');
         } catch (error) {
-            console.error("Error saving dates to Firestore:", error);
-            alert(`Error saving dates: ${error.message}`);
+            console.error("Error saving dates:", error);
+            alert(`Error: ${error.message}`);
         }
     };
 
@@ -136,11 +118,9 @@ const App = () => {
     };
 
     const scrollToSection = (sectionName) => {
-        if (showCoursesPage) {
-            setShowCoursesPage(false);
-            setTimeout(() => {
-                sectionRefs[sectionName]?.current?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
+        // Special case for quiz button to navigate to the new page
+        if (sectionName === 'courses') {
+            router.push('/courses');
         } else {
             sectionRefs[sectionName]?.current?.scrollIntoView({ behavior: 'smooth' });
         }
@@ -156,7 +136,10 @@ const App = () => {
         const course = checkoutCourse;
         const cohortTypeKey = course.mascot === 'champion' ? 'sprint' : 'accelerator';
         const selectedCohort = selectedCohorts[cohortTypeKey];
-
+        if (!selectedCohort) {
+            alert('Please select a cohort date before enrolling.');
+            return;
+        }
         const orderResponse = await fetch('/api/create-razorpay-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -164,9 +147,7 @@ const App = () => {
                 amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
                 courseType: course.title,
                 cohort: selectedCohort,
-                customerName: customerDetails.customerName,
-                customerEmail: customerDetails.customerEmail,
-                customerPhone: customerDetails.customerPhone,
+                ...customerDetails,
             }),
         });
         const order = await orderResponse.json();
@@ -177,65 +158,40 @@ const App = () => {
             name: 'The AI Way',
             description: course.title,
             order_id: order.id,
-            handler: function (response) {
+            handler: (response) => {
                 router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
             },
-            prefill: {
-                name: customerDetails.customerName,
-                email: customerDetails.customerEmail,
-                contact: customerDetails.customerPhone,
-            },
+            prefill: { ...customerDetails },
             theme: { color: '#8B5CF6' }
         };
-        if (typeof window !== 'undefined') {
-            const rzp = new window.Razorpay(options);
-            rzp.open();
-        }
+        const rzp = new window.Razorpay(options);
+        rzp.open();
     };
 
     return (
         <Layout
             scrollToSection={scrollToSection}
-            setShowCoursesPage={setShowCoursesPage}
-            handleExploreCourses={handleExploreCourses}
             cohortDates={cohortDates}
             onSaveDates={handleSaveDates}
             formatSprintDate={formatSprintDate}
             formatAcceleratorDate={formatAcceleratorDate}
         >
-            <AnimatePresence mode="wait">
-              {showCoursesPage ? (
-                <motion.div key="courses-page" initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
-                  <CoursesPage
-                    onBack={() => setShowCoursesPage(false)}
-                    cohortDates={cohortDates}
-                    handleOpenCalendar={handleOpenCalendar}
-                    selectedCohorts={selectedCohorts}
-                    openCheckoutForm={openCheckoutForm}
-                  />
-                </motion.div>
-              ) : (
-                <div key="main-page">
-                  <HeroSection handleExploreCourses={handleExploreCourses} />
-                  <CompaniesBelt />
-                  <PersonasSection />
-                  <CoursesSection
-                      sectionRef={sectionRefs.courses}
-                      handleExploreCourses={handleExploreCourses}
-                      handleOpenCalendar={handleOpenCalendar}
-                      selectedCohorts={selectedCohorts}
-                      openCheckoutForm={openCheckoutForm}
-                      formatSprintDate={formatSprintDate}
-                      formatAcceleratorDate={formatAcceleratorDate}
-                  />
-                  <MentorSection sectionRef={sectionRefs.mentors} />
-                  <CourseFinderQuiz scrollToSection={scrollToSection} />
-                  <TestimonialsSection sectionRef={sectionRefs.testimonials} />
-                  <FAQSection />
-                  <FinalCTASection handleExploreCourses={handleExploreCourses} />
-                </div>
-              )}
-            </AnimatePresence>
+            <HeroSection />
+            <CompaniesBelt />
+            <PersonasSection />
+            <CoursesSection
+                sectionRef={sectionRefs.courses}
+                handleOpenCalendar={handleOpenCalendar}
+                selectedCohorts={selectedCohorts}
+                openCheckoutForm={openCheckoutForm}
+                formatSprintDate={formatSprintDate}
+                formatAcceleratorDate={formatAcceleratorDate}
+            />
+            <MentorSection sectionRef={sectionRefs.mentors} />
+            <CourseFinderQuiz scrollToSection={scrollToSection} />
+            <TestimonialsSection sectionRef={sectionRefs.testimonials} />
+            <FAQSection />
+            <FinalCTASection />
             
             <CohortCalendarModal 
                 isOpen={!!calendarFor}
