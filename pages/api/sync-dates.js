@@ -4,18 +4,22 @@ import { Timestamp } from 'firebase-admin/firestore';
 import { getNextSprintDates, getNextAcceleratorDates } from '../../lib/constants';
 
 export default async function handler(req, res) {
-  // 1. Secure the endpoint with a secret key
+  // --- START OF THE CHANGE ---
+  // Enforce POST method for security
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+  // --- END OF THE CHANGE ---
+
   const authHeader = req.headers.authorization;
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  // 2. The same logic from your "Force Sync" button
   try {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     
-    // Corrected to fetch dates for the next 2 months (approx 60 days)
     const newSprints = getNextSprintDates(tomorrow, 2);
     const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
 
@@ -36,7 +40,7 @@ export default async function handler(req, res) {
     await datesDocRef.set(newDatesForDb);
     
     console.log('Successfully synced cohort dates.');
-    return res.status(200).json({ message: 'Cohort dates synced successfully with Mon/Wed/Fri schedule.' });
+    return res.status(200).json({ message: 'Cohort dates synced successfully.' });
   } catch (error) {
     console.error("Error in /api/sync-dates:", error);
     return res.status(500).json({ message: `Error syncing dates: ${error.message}` });
