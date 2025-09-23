@@ -34,7 +34,7 @@ export const HeroSection = () => {
                     </h1>
 
                     <p className="mt-5 max-w-3xl text-base md:text-xl text-gray-200">
-                        Automate reporting, turn dashboards into narratives, and solve business problems with AI.
+                        Automate reporting, turn dashboards into narratives, solve real problems with AI.
                     </p>
 
                     <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
