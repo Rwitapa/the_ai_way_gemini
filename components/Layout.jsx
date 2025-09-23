@@ -156,7 +156,7 @@ const Footer = ({ onAdminClick, isAdmin }) => (
       </div>
 
       <div className="text-center text-gray-500 text-sm space-y-1">
-        <p>&copy; 2025 The AI Way. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} The AI Way. All Rights Reserved.</p>
         <p>For support, please email: <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a></p>
          <button onClick={onAdminClick} className="text-xs text-gray-700 hover:text-gray-500 transition-colors mt-2">
             {isAdmin ? 'Admin Logout' : 'Admin Panel'}
