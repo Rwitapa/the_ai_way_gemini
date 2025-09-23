@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Inter, Poppins } from 'next/font/google';
 import "../styles/globals.css";
 
-// Configure the fonts
+// Configure the fonts with variables
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -20,7 +20,7 @@ const poppins = Poppins({
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    // Add font variables to the main app container
+    // Apply font variables to the root of the application
     <div className={`${inter.variable} ${poppins.variable}`}>
       <Head>
         <title>The AI Way</title>
