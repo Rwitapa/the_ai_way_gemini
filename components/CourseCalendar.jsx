@@ -1,3 +1,4 @@
+// components/CourseCalendar.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -9,7 +10,7 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
 
     const getInitialDate = () => {
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize to the beginning of the day
+        today.setHours(0, 0, 0, 0);
 
         if (!cohortDates || cohortDates.length === 0) return today;
         const futureDates = cohortDates.filter(d => (courseType === 'sprint' ? d : d.start) >= today);
@@ -112,13 +113,14 @@ const CohortCalendarModal = ({ isOpen, onClose, courseTitle, cohortDates, onDate
         
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const threeMonthsFromNow = new Date(today);
-        threeMonthsFromNow.setMonth(threeMonthsFromNow.getMonth() + 3);
 
-        const displayableCohorts = cohortDates.filter(d => {
+        // --- START OF THE CHANGE ---
+        // Filter cohortDates to only include valid, future dates
+        const displayableCohorts = (cohortDates || []).filter(d => {
             const cohortStartDate = courseType === 'sprint' ? d : d.start;
-            return cohortStartDate >= today && cohortStartDate <= threeMonthsFromNow;
+            return cohortStartDate >= today;
         });
+        // --- END OF THE CHANGE ---
 
         const cohortDateStrings = displayableCohorts.map(d => (courseType === 'sprint' ? d : d.start).toDateString());
 
