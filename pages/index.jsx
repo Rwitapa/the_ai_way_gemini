@@ -124,35 +124,6 @@ const App = () => {
         }
     };
 
-    const forceSyncDates = async () => {
-        if (!auth.currentUser || auth.currentUser.isAnonymous) {
-            alert('You must be logged in as an admin to force sync.');
-            return;
-        }
-        if (!confirm("Are you sure? This will overwrite existing dates.")) return;
-        try {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const newSprints = getNextSprintDates(tomorrow, 60);
-            const newAccelerators = getNextAcceleratorDates(tomorrow, 5);
-            const newDatesForDb = {
-                sprint: newSprints.map(d => Timestamp.fromDate(d)),
-                accelerator: newAccelerators.map(c => ({
-                    start: Timestamp.fromDate(c.start),
-                    end: Timestamp.fromDate(c.end)
-                }))
-            };
-            const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
-            const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
-            await setDoc(datesDocRef, newDatesForDb);
-            setCohortDates({ sprint: newSprints, accelerator: newAccelerators });
-            alert('Default dates have been successfully synced!');
-        } catch (error) {
-            console.error("FORCE SYNC: Error:", error);
-            alert('An error occurred during the sync.');
-        }
-    };
-
     const handleOpenCalendar = (e, courseType) => {
         const rect = e.currentTarget.getBoundingClientRect();
         setCalendarPosition({ top: rect.bottom + 8, left: rect.left });
@@ -231,7 +202,6 @@ const App = () => {
             onSaveDates={handleSaveDates}
             formatSprintDate={formatSprintDate}
             formatAcceleratorDate={formatAcceleratorDate}
-            forceSync={forceSyncDates}
         >
             <AnimatePresence mode="wait">
               {showCoursesPage ? (
