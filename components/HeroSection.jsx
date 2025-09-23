@@ -40,7 +40,7 @@ export const HeroSection = () => {
                     <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/courses" passHref>
                             <motion.a
-                                className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
+                                className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -52,7 +52,7 @@ export const HeroSection = () => {
                             href={WHATSAPP_COMMUNITY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-[#0A472E] text-white"
+                            className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-[#0A472E] text-white"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
