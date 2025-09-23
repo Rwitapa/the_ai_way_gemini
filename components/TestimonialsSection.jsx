@@ -18,7 +18,8 @@ const TestimonialColumn = ({ testimonials, direction = 'up', className }) => {
     const y = useTransform(baseY, (v) => `${wrap(direction === 'up' ? -45 : -20, direction === 'up' ? -20 : -45, v)}%`);
 
     useAnimationFrame((t, delta) => {
-        let moveBy = (direction === 'up' ? 2 : -1.5) * (delta / 1000);
+        // Increased the 'up' direction speed from 2 to 3 for a faster scroll on mobile
+        let moveBy = (direction === 'up' ? 3 : -1.5) * (delta / 1000);
 
         if (velocityFactor.get() < 0) {
             moveBy *= direction === 'up' ? -1 : 1;
