@@ -8,13 +8,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // --- START OF THE CHANGE ---
-  // Get the secret from the request body
+  // Get the secret from the request body for more reliability
   const { secret } = req.body;
   if (secret !== process.env.CRON_SECRET) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-  // --- END OF THE CHANGE ---
 
   try {
     const tomorrow = new Date();
