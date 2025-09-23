@@ -26,9 +26,9 @@ export const HeroSection = () => {
                         Gen AI for Analysts
                     </span>
 
-                    <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-extrabold leading-normal text-white max-w-5xl">
-                        Still stuck fixing reports?
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
+                    <h1 className="mt-6 font-extrabold leading-normal text-white max-w-5xl pb-2">
+                        <span className="block text-4xl md:text-6xl lg:text-7xl">Still stuck fixing reports?</span>
+                        <span className="text-2xl md:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100">
                             Build AI agents that decide.
                         </span>
                     </h1>
@@ -40,7 +40,7 @@ export const HeroSection = () => {
                     <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/courses" passHref>
                             <motion.a
-                                className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
+                                className="w-full sm:w-auto py-4 px-12 text-xl font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -52,7 +52,7 @@ export const HeroSection = () => {
                             href={WHATSAPP_COMMUNITY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-[#0A472E] text-white"
+                            className="w-full sm:w-auto py-4 px-12 text-xl font-semibold rounded-full bg-[#0A472E] text-white"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
