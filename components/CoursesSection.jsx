@@ -38,9 +38,9 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                                 </button>
                             </div>
                             <ul className="text-gray-400 space-y-2 mb-6 text-sm">
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Learn to spot repetitive reports that eat your time.</span></li>
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Automate a high-value report using SQL or no-code.</span></li>
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Package your win into an Impact Memo.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Eliminate one repetitive reporting task from your workflow.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Build a working AI workflow that queries and summarizes your data.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-500 mr-2 mt-1 flex-shrink-0" /><span>Leave with proof that AI can save you hours every single week.</span></li>
                             </ul>
                             <div className="mb-6">
                                 <p className="text-white font-bold text-2xl inline-block mr-3">{courseData.sprint.price}</p>
@@ -66,9 +66,9 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                                 </button>
                             </div>
                             <ul className="text-gray-200 space-y-2 mb-6 text-sm">
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Master fundamentals without the fluff.</span></li>
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Design and deploy AI agents for reporting, funnels, and alerts.</span></li>
-                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Build a portfolio case study that proves ROI.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Solve 4 real-world analytics problems using 4 different AI techniques.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Design human-in-the-loop workflows that your team can actually trust.</span></li>
+                                <li className="flex items-start"><Icon name="check-circle" size={16} className="text-purple-300 mr-2 mt-1 flex-shrink-0" /><span>Package your work into a portfolio to brand yourself as an AI-powered analyst.</span></li>
                             </ul>
                             <div className="mb-6">
                                 <p className="text-white font-bold text-2xl inline-block mr-3">{courseData.accelerator.price}</p>
