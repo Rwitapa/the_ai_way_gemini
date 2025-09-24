@@ -1,7 +1,6 @@
 // components/CourseComparator.jsx
 import React from 'react';
 import { motion } from "framer-motion";
-import Icon from './common/Icon.jsx';
 
 const comparisonData = {
     headers: ['Feature', '3-Hour Champion Sprint', '16-Hour Superstar Accelerator'],
