@@ -12,7 +12,7 @@ import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
 import MentorSection from '../components/MentorSection';
-import CourseComparator from '../components/CourseComparator'; // <-- IMPORT THE NEW COMPONENT
+import CourseComparator from '../components/CourseComparator';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
@@ -187,7 +187,7 @@ const App = () => {
                 formatAcceleratorDate={formatAcceleratorDate}
             />
             <MentorSection sectionRef={sectionRefs.mentors} />
-            <CourseComparator /> {/* <-- REPLACE THE QUIZ WITH THE COMPARATOR */}
+            <CourseComparator />
             <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection />
             <FinalCTASection />
