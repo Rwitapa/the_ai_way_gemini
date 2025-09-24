@@ -23,8 +23,9 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
           transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
           <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-10 gap-12 mb-12 lg:mb-16">
-                  <div className="lg:col-span-4 flex flex-col">
+              {/* --- FIX: Changed to a 12-column grid and adjusted spans --- */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-12 lg:mb-16">
+                  <div className="lg:col-span-5 flex flex-col">
                       <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg flex flex-col flex-grow">
                           <div className="flex items-start gap-4 mb-4">
                               <div className="w-12 h-12 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
@@ -73,7 +74,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                       </div>
                   </div>
 
-                  <div className="lg:col-span-6">
+                  <div className="lg:col-span-7">
                       <div className="flex flex-col gap-8">
                           <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
                               <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
