@@ -156,12 +156,18 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
 
             <div className="relative z-10 container mx-auto px-6 md:px-12 pt-12 md:pt-16 pb-16">
                 <div className="text-center mb-12">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <span className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <p className="text-green-400 font-semibold">Registrations are now open!</p>
+                    </div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">Your Path to AI Mastery</h1>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto">Detailed curriculum and schedule for our hands-on, outcome-focused courses.</p>
                 </div>
 
                 <div className="flex justify-center mb-12">
-                    {/* --- START OF THE FIX --- */}
                     <div className="flex bg-gray-800/50 border border-gray-700 rounded-full p-1.5 w-full max-w-md">
                         {TABS.map((tab) => (
                             <button
@@ -182,7 +188,6 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
                             </button>
                         ))}
                     </div>
-                    {/* --- END OF THE FIX --- */}
                 </div>
 
                 <AnimatePresence mode="wait">
