@@ -136,6 +136,11 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
         }
     }, []);
 
+    const TABS = [
+        { id: 'sprint', label: 'Champion Sprint' },
+        { id: 'accelerator', label: 'Superstar Accelerator' },
+    ];
+
     const activeCourseData = activeCourseId === 'sprint' ? courseData.sprint : courseData.accelerator;
 
     return (
@@ -156,29 +161,28 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
                 </div>
 
                 <div className="flex justify-center mb-12">
-                    <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full p-1 w-full max-w-md">
-                        <button
-                            onClick={() => setActiveCourseId('sprint')}
-                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors rounded-full ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            Champion Sprint
-                        </button>
-                        <button
-                            onClick={() => setActiveCourseId('accelerator')}
-                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors rounded-full ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            Superstar Accelerator
-                        </button>
-                        <motion.div
-                            layoutId="course-selector-bg"
-                            className="absolute bg-purple-600/80 rounded-full z-0 inset-y-1"
-                            style={{ 
-                                width: 'calc(50% - 4px)',
-                            }}
-                            animate={{ x: activeCourseId === 'sprint' ? '4px' : 'calc(100% + 4px)' }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                        />
+                    {/* --- START OF THE FIX --- */}
+                    <div className="flex bg-gray-800/50 border border-gray-700 rounded-full p-1.5 w-full max-w-md">
+                        {TABS.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveCourseId(tab.id)}
+                                className={`relative w-1/2 rounded-full px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+                                    activeCourseId === tab.id ? 'text-white' : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                {activeCourseId === tab.id && (
+                                    <motion.div
+                                        layoutId="course-selector-bg"
+                                        className="absolute inset-0 bg-purple-600/80 border border-purple-500 rounded-full"
+                                        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                                    />
+                                )}
+                                <span className="relative z-10">{tab.label}</span>
+                            </button>
+                        ))}
                     </div>
+                    {/* --- END OF THE FIX --- */}
                 </div>
 
                 <AnimatePresence mode="wait">
