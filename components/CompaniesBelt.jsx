@@ -19,7 +19,7 @@ const CompaniesBelt = () => {
     return (
         <section id="companies" className="relative w-full pt-8 md:pt-10 pb-6 md:pb-8 overflow-hidden">
             <h3 className="text-center text-white/90 font-semibold text-lg md:text-xl mb-5 md:mb-6">
-                Our graduates work at leading tech companies
+                Alumni at leading companies including
             </h3>
 
             <motion.div
