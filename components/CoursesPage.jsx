@@ -26,11 +26,11 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 lg:mb-16">
                   {/* Left Column */}
                   <div className="lg:col-span-5 lg:row-span-2 flex flex-col">
-                      <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg flex flex-col flex-grow">
+                      <div className="bg-gray-900/50 rounded-2xl p-6 md:p-8 border border-gray-800 shadow-lg flex flex-col flex-grow">
                           <div className="flex items-start gap-4 mb-4">
                               <div className="w-12 h-12 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
                               <div>
-                                  <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
+                                  <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">{course.title}</h2>
                               </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4 text-base mb-6">
@@ -41,7 +41,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                               <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-3">Who It's For</h4>
                               <p className="text-gray-300 text-base">{course.whoIsItFor}</p>
                           </div>
-                          <div className="mt-auto">
+                          <div className="mt-auto pt-6">
                             <div className="mb-6">
                                 <label className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-2 block">Select Cohort Date</label>
                                 <button
@@ -71,8 +71,8 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                   </div>
                   
                   {/* Top Right Card */}
-                  <div className="lg:col-span-7 bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
-                      <h3 className="text-2xl font-bold text-white mb-4">What You'll Build</h3>
+                  <div className="lg:col-span-7 bg-gray-900/50 rounded-2xl p-6 md:p-8 border border-gray-800 shadow-lg">
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-4">What You'll Build</h3>
                       <div className="space-y-4">
                           {course.keyOutcomes.map((outcome, i) => (
                               <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
@@ -84,13 +84,13 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                   </div>
 
                   {/* Bottom Right Card */}
-                  <div className="lg:col-span-7 bg-gray-900/50 rounded-2xl p-8 border border-gray-800 shadow-lg">
-                      <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
+                  <div className="lg:col-span-7 bg-gray-900/50 rounded-2xl p-6 md:p-8 border border-gray-800 shadow-lg">
+                      <p className="text-gray-300 text-base md:text-lg leading-relaxed">{course.detailedDescription}</p>
                   </div>
               </div>
 
-              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden">
-                  <h3 className="text-3xl md:text-4xl font-bold text-white p-8 pb-6">Course Modules</h3>
+              <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden mt-16">
+                  <h3 className="text-2xl md:text-4xl font-bold text-white p-6 md:p-8 pb-6">Course Modules</h3>
                   <div className="border-t border-gray-800">
                       {course.modules.map((module, index) => (
                           <div key={index} className="border-b border-gray-800 last:border-b-0">
@@ -98,7 +98,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                   className="w-full flex justify-between items-center text-left p-5 hover:bg-gray-800/50 transition-colors"
                                   onClick={() => toggleModule(module.title)}
                               >
-                                  <h4 className="text-lg font-semibold text-white">{module.title}</h4>
+                                  <h4 className="text-base md:text-lg font-semibold text-white">{module.title}</h4>
                                   <motion.div animate={{ rotate: openModule === `${course.title}-${module.title}` ? 45 : 0 }}>
                                       <Icon name="plus" size={24} className="text-purple-500 transform transition-transform duration-300" strokeWidth={2.5} />
                                   </motion.div>
@@ -107,7 +107,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                   {openModule === `${course.title}-${module.title}` && (
                                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                           <div className="px-5 pb-5">
-                                          <p className="text-gray-400">{module.summary}</p>
+                                          <p className="text-gray-400 text-sm md:text-base">{module.summary}</p>
                                           </div>
                                       </motion.div>
                                   )}
