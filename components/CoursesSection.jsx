@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import React from 'react';
 import Link from 'next/link';
 import Icon from './common/Icon.jsx';
-import { courseData, mascots } from '../lib/constants';
+import { courseData } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
     return (
@@ -27,11 +27,8 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <motion.div className="bg-gray-900 rounded-2xl p-6 md:p-8 border border-gray-800 flex flex-col justify-between" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.2)' }} transition={{ type: 'spring', stiffness: 300 }}>
                         <div>
-                            <div className="text-center mb-6">
-                                <div className="w-12 h-12 mx-auto mb-3">{mascots.champion}</div>
-                                <h3 className="text-2xl font-bold text-white">{courseData.sprint.title}</h3>
-                                <p className="text-gray-400 mt-1">{courseData.sprint.tagline}</p>
-                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-2">{courseData.sprint.title}</h3>
+                            <p className="text-gray-400 mb-6">{courseData.sprint.tagline}</p>
                             
                             <ul className="text-gray-300 space-y-3 mb-8 text-base">
                                 {courseData.sprint.keyOutcomes.map((outcome, i) => (
@@ -56,15 +53,10 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                         </motion.button>
                     </motion.div>
                     <motion.div className="bg-gradient-to-br from-purple-900 to-gray-900 rounded-2xl p-6 md:p-8 border border-purple-700 flex flex-col justify-between relative" whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }} transition={{ type: 'spring', stiffness: 300 }}>
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <span className="px-3 py-1 bg-yellow-500 text-black font-bold rounded-full text-xs shadow-lg">Popular</span>
-                        </div>
+                        <div className="absolute top-0 right-0 -mt-3 mr-5 px-4 py-1 bg-yellow-500 text-black font-bold rounded-full text-sm">Popular</div>
                         <div>
-                            <div className="text-center mb-6">
-                                <div className="w-12 h-12 mx-auto mb-3">{mascots.accelerator}</div>
-                                <h3 className="text-2xl font-bold text-white whitespace-nowrap">{courseData.accelerator.title}</h3>
-                                <p className="text-purple-300 mt-1">{courseData.accelerator.tagline}</p>
-                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-2">{courseData.accelerator.title}</h3>
+                            <p className="text-purple-300 mb-6">{courseData.accelerator.tagline}</p>
 
                             <ul className="text-gray-200 space-y-3 mb-8 text-base">
                                 {courseData.accelerator.keyOutcomes.map((outcome, i) => (
