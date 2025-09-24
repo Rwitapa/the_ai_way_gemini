@@ -32,8 +32,8 @@ const comparisonData = [
 ];
 
 const Checkmark = ({ included }) => (
-    <div className={`flex items-center justify-center w-6 h-6 rounded-full ${included ? 'bg-green-500/20' : 'bg-red-500/10'}`}>
-        <Icon name={included ? 'check-circle' : 'x'} size={16} className={included ? 'text-green-400' : 'text-red-400/50'} />
+    <div className={`flex items-center justify-center w-7 h-7 rounded-full ${included ? 'bg-green-500/20' : 'bg-red-500/10'}`}>
+        <Icon name={included ? 'check-circle' : 'x'} size={18} className={included ? 'text-green-400' : 'text-red-400/50'} />
     </div>
 );
 
@@ -56,13 +56,13 @@ const CourseComparator = () => (
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6 }}
             >
-                <div className="grid grid-cols-[2fr_1fr_1fr] gap-px bg-gray-800 border border-gray-800 rounded-2xl overflow-hidden">
+                <div className="grid grid-cols-[2.5fr_1.5fr_2fr] gap-px bg-gray-800 border border-gray-800 rounded-2xl overflow-hidden">
                     {/* Headers */}
-                    <div className="bg-gray-900/50 p-6 font-semibold text-purple-400 uppercase text-sm tracking-wider">Feature</div>
-                    <div className="bg-gray-900/50 p-6 font-semibold text-white text-center">3-Hour Champion Sprint</div>
-                    <div className="bg-purple-900/20 p-6 font-semibold text-purple-300 text-center relative">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <span className="px-3 py-1 bg-yellow-500 text-black font-bold rounded-full text-xs">Popular</span>
+                    <div className="bg-gray-900/50 p-6 font-bold text-purple-400 uppercase text-sm tracking-wider">Feature</div>
+                    <div className="bg-gray-900/50 p-6 font-bold text-white text-center text-base">3-Hour Champion Sprint</div>
+                    <div className="bg-purple-900/20 p-6 font-bold text-purple-300 text-center relative text-base">
+                        <div className="absolute top-0 right-6 -translate-y-1/2">
+                            <span className="px-3 py-1 bg-yellow-500 text-black font-bold rounded-full text-xs shadow-lg">Popular</span>
                         </div>
                         16-Hour Superstar Accelerator
                     </div>
@@ -70,11 +70,11 @@ const CourseComparator = () => (
                     {/* Rows */}
                     {comparisonData.map((row, index) => (
                         <React.Fragment key={index}>
-                            <div className="bg-gray-900/50 p-6 font-semibold text-white">{row.feature}</div>
-                            <div className="bg-gray-900/50 p-6 text-gray-300 text-center flex items-center justify-center">
+                            <div className="bg-gray-900/50 p-6 font-semibold text-white text-lg flex items-center">{row.feature}</div>
+                            <div className="bg-gray-900/50 p-6 text-gray-300 text-center text-base flex items-center justify-center">
                                 {typeof row.sprint === 'object' ? <Checkmark included={row.sprint.included} /> : <p>{row.sprint}</p>}
                             </div>
-                            <div className="bg-purple-900/10 p-6 text-white text-center font-medium flex items-center justify-center">
+                            <div className="bg-purple-900/10 p-6 text-white text-center font-bold text-base flex items-center justify-center">
                                 {typeof row.accelerator === 'object' ? <Checkmark included={row.accelerator.included} /> : <p>{row.accelerator}</p>}
                             </div>
                         </React.Fragment>
@@ -83,29 +83,29 @@ const CourseComparator = () => (
             </motion.div>
 
             {/* Mobile View: Stacked Cards */}
-            <div className="block md:hidden max-w-lg mx-auto space-y-8">
+            <div className="block md:hidden max-w-lg mx-auto space-y-4">
                 {comparisonData.map((row, index) => (
                     <motion.div
                         key={index}
-                        className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6"
+                        className="bg-gray-900/50 border border-gray-800 rounded-2xl p-5"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.5 }}
                         transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
-                        <h4 className="font-semibold text-white text-lg text-center mb-4">{row.feature}</h4>
+                        <h4 className="font-semibold text-white text-base text-center mb-4">{row.feature}</h4>
                         <div className="space-y-4">
                             {/* Sprint */}
                             <div className="border-b border-gray-800 pb-4">
                                 <p className="text-sm font-medium text-gray-300 mb-2">3-Hour Champion Sprint</p>
-                                <div className="flex items-center gap-3 text-white">
+                                <div className="flex items-center gap-3 text-white text-sm">
                                     {typeof row.sprint === 'object' ? <Checkmark included={row.sprint.included} /> : <p>{row.sprint}</p>}
                                 </div>
                             </div>
                             {/* Accelerator */}
                             <div>
-                                <p className="text-sm font-medium text-purple-300 mb-2">16-Hour Superstar Accelerator</p>
-                                <div className="flex items-center gap-3 text-white font-semibold">
+                                <p className="text-sm font-semibold text-purple-300 mb-2">16-Hour Superstar Accelerator</p>
+                                <div className="flex items-center gap-3 text-white font-semibold text-sm">
                                     {typeof row.accelerator === 'object' ? <Checkmark included={row.accelerator.included} /> : <p>{row.accelerator}</p>}
                                 </div>
                             </div>
