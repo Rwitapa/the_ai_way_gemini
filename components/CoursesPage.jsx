@@ -160,7 +160,7 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveCourseId(tab.id)}
-                                className={`relative w-1/2 rounded-full px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap ${
+                                className={`relative w-1/2 rounded-full px-3 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                                     activeCourseId === tab.id ? 'text-white' : 'text-gray-400 hover:text-white'
                                 }`}
                             >
