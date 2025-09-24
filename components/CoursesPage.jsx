@@ -33,14 +33,13 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                               </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                          <div className="grid grid-cols-2 gap-4 text-base mb-6">
                               <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="bar-chart-2" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Level</p><p className="font-semibold text-white">{course.level}</p></div></div>
                               <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg"><Icon name="clock" size={18} className="text-purple-400"/> <div><p className="text-gray-400 text-xs">Duration</p><p className="font-semibold text-white">{course.duration}</p></div></div>
                           </div>
 
                           <div className="mb-6">
                               <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-3">Who It's For</h4>
-                              {/* --- FIX: Changed text-sm to text-base --- */}
                               <p className="text-gray-300 text-base">{course.whoIsItFor}</p>
                           </div>
                           
@@ -53,7 +52,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                 >
                                     <div className="flex items-center gap-3">
                                         <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
-                                        {/* --- FIX: Changed text-sm to text-base --- */}
                                         <span className="font-semibold text-white text-base">{formattedDate}</span>
                                     </div>
                                     <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
