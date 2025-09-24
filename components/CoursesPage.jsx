@@ -42,15 +42,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                               <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-3">Who It's For</h4>
                               <p className="text-gray-300 text-sm">{course.whoIsItFor}</p>
                           </div>
-
-                          <div className="mb-6">
-                              <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-3">Tech Covered</h4>
-                              <div className="flex flex-wrap gap-2">
-                                  {course.tools.map(tool => (
-                                      <span key={tool} className="text-xs font-medium bg-gray-700 text-gray-200 px-2 py-1 rounded-md">{tool}</span>
-                                  ))}
-                              </div>
-                          </div>
                           
                           <div className="mt-auto">
                             <div className="mb-6">
@@ -165,32 +156,29 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
                 </div>
 
                 <div className="flex justify-center mb-12">
-                    {/* --- START OF THE FIX --- */}
-                    <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full w-full max-w-md">
-                        <motion.div
-                            layoutId="course-selector-bg"
-                            className="absolute top-0 bottom-0 h-full p-1 z-0"
-                            style={{ width: '50%' }}
-                            animate={{ x: activeCourseId === 'sprint' ? '0%' : '100%' }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        >
-                            <div className="w-full h-full bg-purple-600/60 border border-purple-500 rounded-full"></div>
-                        </motion.div>
-                        
+                    <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full p-1 w-full max-w-md">
                         <button
                             onClick={() => setActiveCourseId('sprint')}
-                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors rounded-full ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                         >
                             Champion Sprint
                         </button>
                         <button
                             onClick={() => setActiveCourseId('accelerator')}
-                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors rounded-full ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                         >
                             Superstar Accelerator
                         </button>
+                        <motion.div
+                            layoutId="course-selector-bg"
+                            className="absolute bg-purple-600/80 rounded-full z-0 inset-y-1"
+                            style={{ 
+                                width: 'calc(50% - 4px)',
+                            }}
+                            animate={{ x: activeCourseId === 'sprint' ? '4px' : 'calc(100% + 4px)' }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                        />
                     </div>
-                    {/* --- END OF THE FIX --- */}
                 </div>
 
                 <AnimatePresence mode="wait">
