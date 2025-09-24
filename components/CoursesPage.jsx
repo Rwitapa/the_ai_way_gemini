@@ -23,7 +23,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
           transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
           <div className="max-w-7xl mx-auto">
-              {/* --- START OF THE FIX: Restructured the grid layout --- */}
+              {/* --- START OF THE FIX: Restructured the grid layout for perfect alignment --- */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 lg:mb-16">
                   {/* Left Column */}
                   <div className="lg:col-span-5 lg:row-span-2 flex flex-col">
