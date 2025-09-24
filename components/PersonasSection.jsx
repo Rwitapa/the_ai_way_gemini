@@ -8,9 +8,9 @@ import Icon from './common/Icon.jsx';
 const PersonasSection = () => (
     <section className="pt-10 md:pt-16 pb-16 bg-gray-950 animate-on-scroll">
         <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If You're An...</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If You're...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
-                Ambitious, practical, and tired of being seen as a "report generator." You want clarity, speed, and visibility.
+                Ambitious and practical, ready to stop handing over data exports and deliver decision-ready answers with AI.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {personas.map((persona, index) => (
