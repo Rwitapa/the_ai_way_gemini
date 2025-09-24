@@ -29,7 +29,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                           <div className="w-12 h-12 flex-shrink-0 mt-1">{mascots[course.mascot]}</div>
                           <div>
                               <h2 className="text-3xl font-bold text-white leading-tight">{course.title}</h2>
-                              <p className="text-lg text-purple-300 mt-2">{course.subtitle}</p>
                           </div>
                       </div>
 
