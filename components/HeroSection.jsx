@@ -30,7 +30,7 @@ export const HeroSection = () => {
                     <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-extrabold leading-normal text-white max-w-5xl">
                         Still fixing reports manually?
                         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-200 to-purple-100 pb-2">
-                            Build AI agents that decide.
+                            Build AI agents that find answers
                         </span>
                     </h1>
 
