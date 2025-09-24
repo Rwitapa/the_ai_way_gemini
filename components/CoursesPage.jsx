@@ -40,7 +40,8 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
 
                           <div className="mb-6">
                               <h4 className="text-sm font-semibold text-purple-400 uppercase tracking-wide mb-3">Who It's For</h4>
-                              <p className="text-gray-300 text-sm">{course.whoIsItFor}</p>
+                              {/* --- FIX: Changed text-sm to text-base --- */}
+                              <p className="text-gray-300 text-base">{course.whoIsItFor}</p>
                           </div>
                           
                           <div className="mt-auto">
@@ -52,7 +53,8 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                 >
                                     <div className="flex items-center gap-3">
                                         <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
-                                        <span className="font-semibold text-white text-sm">{formattedDate}</span>
+                                        {/* --- FIX: Changed text-sm to text-base --- */}
+                                        <span className="font-semibold text-white text-base">{formattedDate}</span>
                                     </div>
                                     <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
                                 </button>
@@ -81,7 +83,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                   {course.keyOutcomes.map((outcome, i) => (
                                       <div key={i} className="flex items-center gap-4 bg-gray-800/60 p-4 rounded-lg">
                                           <Icon name={outcome.icon} size={24} className="text-purple-400 flex-shrink-0" />
-                                          <span className="text-gray-200 font-medium">{outcome.text}</span>
+                                          <span className="text-gray-200 font-medium text-base">{outcome.text}</span>
                                       </div>
                                   ))}
                               </div>
