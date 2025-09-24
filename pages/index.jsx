@@ -12,7 +12,7 @@ import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
 import MentorSection from '../components/MentorSection';
-import CourseFinderQuiz from '../components/CourseFinderQuiz';
+import CourseComparator from '../components/CourseComparator'; // <-- IMPORT THE NEW COMPONENT
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
@@ -118,7 +118,6 @@ const App = () => {
     };
 
     const scrollToSection = (sectionName) => {
-        // Special case for quiz button to navigate to the new page
         if (sectionName === 'courses') {
             router.push('/courses');
         } else {
@@ -188,7 +187,7 @@ const App = () => {
                 formatAcceleratorDate={formatAcceleratorDate}
             />
             <MentorSection sectionRef={sectionRefs.mentors} />
-            <CourseFinderQuiz scrollToSection={scrollToSection} />
+            <CourseComparator /> {/* <-- REPLACE THE QUIZ WITH THE COMPARATOR */}
             <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection />
             <FinalCTASection />
