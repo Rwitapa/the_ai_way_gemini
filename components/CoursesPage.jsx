@@ -23,7 +23,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
           transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
           <div className="max-w-7xl mx-auto">
-              {/* --- START OF THE FIX: Restructured the grid layout for perfect alignment --- */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 lg:mb-16">
                   {/* Left Column */}
                   <div className="lg:col-span-5 lg:row-span-2 flex flex-col">
@@ -89,7 +88,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                       <p className="text-gray-300 text-lg leading-relaxed">{course.detailedDescription}</p>
                   </div>
               </div>
-              {/* --- END OF THE FIX --- */}
 
               <div className="bg-gray-900/50 rounded-2xl border border-gray-800 shadow-lg overflow-hidden">
                   <h3 className="text-3xl md:text-4xl font-bold text-white p-8 pb-6">Course Modules</h3>
