@@ -48,10 +48,7 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
                                     onClick={onOpenCalendar}
                                     className="w-full text-left p-3 rounded-xl border border-gray-700 bg-gray-800 hover:bg-purple-900/30 hover:border-purple-600 transition-all flex justify-between items-center group"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
-                                        <span className="font-semibold text-white text-base">{formattedDate}</span>
-                                    </div>
+                                    <span className="font-semibold text-white text-base">{formattedDate}</span>
                                     <Icon name="calendar" size={20} className="text-purple-400 transition-colors group-hover:text-purple-300"/>
                                 </button>
                             </div>
