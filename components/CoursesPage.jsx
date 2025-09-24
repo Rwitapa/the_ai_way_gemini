@@ -24,7 +24,6 @@ const CourseContent = ({ course, selectedCohort, onOpenCalendar, openCheckoutFor
       >
           <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-10 gap-12 mb-12 lg:mb-16">
-                  {/* --- FIX: Removed lg:sticky and lg:top-32 --- */}
                   <div className="lg:col-span-4 flex flex-col">
                       <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800 shadow-lg flex flex-col flex-grow">
                           <div className="flex items-start gap-4 mb-4">
@@ -166,28 +165,32 @@ const CoursesPage = ({ cohortDates, handleOpenCalendar, selectedCohorts, openChe
                 </div>
 
                 <div className="flex justify-center mb-12">
-                    <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full p-1.5 w-full max-w-xs sm:max-w-sm">
-                        {/* --- FIX: Added w-1/2 to each button --- */}
+                    {/* --- START OF THE FIX --- */}
+                    <div className="relative flex items-center bg-gray-800/50 border border-gray-700 rounded-full w-full max-w-md">
+                        <motion.div
+                            layoutId="course-selector-bg"
+                            className="absolute top-0 bottom-0 h-full p-1 z-0"
+                            style={{ width: '50%' }}
+                            animate={{ x: activeCourseId === 'sprint' ? '0%' : '100%' }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        >
+                            <div className="w-full h-full bg-purple-600/60 border border-purple-500 rounded-full"></div>
+                        </motion.div>
+                        
                         <button
                             onClick={() => setActiveCourseId('sprint')}
-                            className={`w-1/2 flex justify-center px-6 py-2.5 text-sm font-semibold rounded-full relative z-10 transition-colors ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors ${activeCourseId === 'sprint' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                         >
                             Champion Sprint
                         </button>
                         <button
                             onClick={() => setActiveCourseId('accelerator')}
-                            className={`w-1/2 flex justify-center px-6 py-2.5 text-sm font-semibold rounded-full relative z-10 transition-colors ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`relative z-10 w-1/2 flex items-center justify-center whitespace-nowrap px-4 sm:px-6 py-2.5 text-sm font-semibold transition-colors ${activeCourseId === 'accelerator' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
                         >
                             Superstar Accelerator
                         </button>
-                        <motion.div
-                            layoutId="course-selector-bg"
-                            className="absolute inset-y-0 h-full bg-purple-600/60 border border-purple-500 rounded-full z-0"
-                            animate={{ x: activeCourseId === 'sprint' ? '0%' : '100%' }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                            style={{ width: '50%', padding: '6px' }}
-                        />
                     </div>
+                    {/* --- END OF THE FIX --- */}
                 </div>
 
                 <AnimatePresence mode="wait">
