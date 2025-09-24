@@ -10,7 +10,7 @@ const PersonasSection = () => (
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">This Is For You If You're...</h2>
             <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
-                Ambitious and practical, ready to stop handing over data exports and deliver decision-ready answers with AI.
+                Ambitious and Practical, ready to stop handing over data exports and deliver decision-ready answers with AI.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {personas.map((persona, index) => (
