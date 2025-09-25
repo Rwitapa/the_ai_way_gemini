@@ -1,8 +1,6 @@
-// components/CourseFinderQuiz.jsx
-import React, 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
-// This import is now correct
 import { courseData, mascots } from '../lib/constants';
 
 const CourseFinderQuiz = ({ scrollToSection }) => {
@@ -43,7 +41,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
 
     const handleAnswer = (answerScore) => {
         const newScore = score + answerScore;
-        if (step < questions.length - 1) {
+        if (step < questions.length) {
             setScore(newScore);
             setStep(step + 1);
         } else {
@@ -65,6 +63,10 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         setResult(null);
     };
 
+    const startQuiz = () => {
+        setStep(1);
+    };
+
     return (
         <section className="pt-8 md:pt-10 pb-16 md:pb-20 bg-gray-950">
             <div className="container mx-auto px-6">
@@ -76,7 +78,31 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                     transition={{ duration: 0.6 }}
                 >
                     <AnimatePresence mode="wait">
-                        {result ? (
+                        {step === 0 ? (
+                            <motion.div
+                                key="start"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="text-center"
+                            >
+                                <div className="flex justify-center items-center gap-3 mb-4">
+                                    <Icon name="compass" size={32} className="text-purple-400"/>
+                                    <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path</h3>
+                                </div>
+                                <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
+                                    Answer a few quick questions to see if the 3-Hour Champion Sprint or the 16-Hour Superstar Accelerator is right for you.
+                                </p>
+                                <motion.button
+                                    onClick={startQuiz}
+                                    className="py-3 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Start Quiz
+                                </motion.button>
+                            </motion.div>
+                        ) : result ? (
                             <motion.div
                                 key="result"
                                 initial={{ opacity: 0, y: 20 }}
@@ -115,23 +141,19 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                             >
                                 <div className="flex flex-col items-center mb-4">
                                     <div className="font-mono text-sm text-purple-400 bg-gray-950/50 px-2 py-1 rounded-full mb-3">
-                                        {step + 1} / {questions.length}
-                                    </div>
-                                    <div className="flex justify-center items-center gap-3 mb-2">
-                                        <Icon name="compass" size={32} className="text-purple-400"/>
-                                        <h3 className="text-2xl md:text-3xl font-bold text-white text-center">Not sure where to start?</h3>
+                                        {step} / {questions.length}
                                     </div>
                                     <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 </div>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
-                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+                                    <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
                                 </div>
                                 
                                 <div className="max-w-xl mx-auto">
-                                    <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step].question}</p>
+                                    <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step - 1].question}</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {questions[step].options.map(option => (
+                                        {questions[step - 1].options.map(option => (
                                             <motion.button
                                                 key={option.text}
                                                 onClick={() => handleAnswer(option.score)}
