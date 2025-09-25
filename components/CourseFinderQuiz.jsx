@@ -1,4 +1,3 @@
-// components/CourseFinderQuiz.jsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -14,32 +13,32 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
             id: 'painPoint',
             question: "What's your biggest pain point right now?",
             options: [
-                { text: "Repetitive, manual reporting", score: 0, value: 'reporting' },
-                { text: "Dashboards that don't drive action", score: 1, value: 'action' }
+                { text: "I spend too much time on repetitive, manual reporting.", score: 0, value: 'reporting' },
+                { text: "My dashboards are good, but they don't drive action.", score: 1, value: 'action' }
             ],
         },
         {
             id: 'goal',
             question: "What's your primary goal with AI?",
             options: [
-                { text: "Get a quick, tangible win", score: 0, value: 'quickWin' },
-                { text: "Build a portfolio of AI projects", score: 1, value: 'portfolio' }
+                { text: "To automate a specific task and get a quick, tangible win.", score: 0, value: 'quickWin' },
+                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1, value: 'portfolio' }
             ],
         },
         {
             id: 'comfortLevel',
             question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "I'm just starting out", score: 0, value: 'beginner' },
-                { text: "Ready to dive into advanced topics", score: 1, value: 'advanced' }
+                { text: "I'm just starting out and want a practical introduction.", score: 0, value: 'beginner' },
+                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1, value: 'advanced' }
             ],
         },
         {
             id: 'biggerWin',
             question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Saving hours and proving AI's value", score: 0, value: 'timeSaving' },
-                { text: "Delivering instant business answers", score: 1, value: 'strategy' }
+                { text: "Saving hours each week and proving AI's value to my manager.", score: 0, value: 'timeSaving' },
+                { text: "Building systems that deliver business answers instantly, not just data.", score: 1, value: 'strategy' }
             ],
         }
     ];
@@ -78,10 +77,10 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
             }
         } else { // accelerator
             if (painPointAnswer === 'action') {
-                return "You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap and providing actionable answers.";
+                return "You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap.";
             }
             if (goalAnswer === 'portfolio') {
-                return "85% of AI hiring managers say a strong portfolio of real-world projects is more influential than a traditional CV. You're thinking like a top candidate!";
+                return "85% of AI hiring managers say a strong portfolio is more influential than a traditional CV. You're thinking like a top candidate!";
             }
         }
         return "Automating just one daily 30-minute task can save you over 120 hours a year!";
@@ -124,7 +123,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="text-center"
+                                className="text-center flex-grow flex flex-col justify-center"
                             >
                                 <div className="flex justify-center items-center gap-4 mb-4">
                                     <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path!</h3>
@@ -162,15 +161,15 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                         {result === 'sprint' ? mascots.champion : mascots.accelerator}
                                     </div>
                                 </div>
-                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">Based on your goals, we recommend the...</h3>
+                                <h3 className="text-2xl font-bold text-white mb-2">Based on your goals, we recommend the...</h3>
                                 <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
                                     {result === 'sprint' ? courseData.sprint.title : courseData.accelerator.title}
                                 </h2>
                                 <div className="bg-gray-800/50 p-3 rounded-lg max-w-xl mx-auto mb-6 text-sm italic text-green-300 border border-gray-700">
                                     {getInsight()}
                                 </div>
-                                <p className="text-gray-300 max-w-xl mx-auto mb-6">
-                                    {result === 'sprint' ? "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
+                                <p className="text-gray-400 max-w-xl mx-auto mb-6 text-base">
+                                    {result === 'sprint' ? "This course will give you a quick, tangible win and help you master the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems."}
                                 </p>
                                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
