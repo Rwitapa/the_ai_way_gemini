@@ -13,29 +13,29 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         {
             question: "What's your biggest pain point right now?",
             options: [
-                { text: "I spend too much time on repetitive, manual reporting.", score: 0 },
-                { text: "My dashboards are good, but they don't drive action.", score: 1 }
+                { text: "I spend too much time on repetitive, manual reporting.", score: 0, icon: "file-text" },
+                { text: "My dashboards are good, but they don't drive action.", score: 1, icon: "bar-chart-2" }
             ],
         },
         {
             question: "What's your primary goal with AI?",
             options: [
-                { text: "To automate a specific task and get a quick, tangible win.", score: 0 },
-                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1 }
+                { text: "To automate a specific task and get a quick, tangible win.", score: 0, icon: "bolt" },
+                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1, icon: "briefcase" }
             ],
         },
         {
             question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "I'm just starting out and want a practical introduction.", score: 0 },
-                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1 }
+                { text: "I'm just starting out and want a practical introduction.", score: 0, icon: "book" },
+                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1, icon: "rocket" }
             ],
         },
         {
             question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Saving hours each week and proving AI's value to my manager.", score: 0 },
-                { text: "Building systems that deliver business answers instantly, not just data.", score: 1 }
+                { text: "Saving hours each week and proving AI's value to my manager.", score: 0, icon: "clock" },
+                { text: "Building systems that deliver business answers instantly, not just data.", score: 1, icon: "award" }
             ],
         }
     ];
@@ -68,6 +68,14 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         setStep(1);
     };
 
+    const goBack = () => {
+        if (step > 1) {
+            setStep(step - 1);
+        } else {
+            setStep(0);
+        }
+    };
+
     return (
         <section className="pt-8 md:pt-10 pb-16 md:pb-20 bg-gray-950">
             <div className="container mx-auto px-6">
@@ -92,7 +100,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path</h3>
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
-                                    Answer a few quick questions to see if the 3-Hour Champion Sprint or the 16-Hour Superstar Accelerator is right for you.
+                                    Answer a few quick questions to see which course is right for you.
                                 </p>
                                 <motion.button
                                     onClick={startQuiz}
@@ -140,8 +148,11 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className="flex flex-col items-center mb-4">
-                                    <div className="font-mono text-sm text-purple-400 bg-gray-950/50 px-2 py-1 rounded-full mb-3">
+                                <div className="flex justify-between items-center mb-4">
+                                    <button onClick={goBack} className="text-gray-400 hover:text-white transition-colors">
+                                        <Icon name="arrow-left" size={24} />
+                                    </button>
+                                    <div className="font-mono text-sm text-purple-400 bg-gray-950/50 px-2 py-1 rounded-full">
                                         {step} / {questions.length}
                                     </div>
                                 </div>
@@ -157,9 +168,10 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                             <motion.button
                                                 key={option.text}
                                                 onClick={() => handleAnswer(option.score)}
-                                                className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all"
+                                                className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all flex items-center gap-3"
                                                 whileHover={{ y: -3 }}
                                             >
+                                                <Icon name={option.icon} size={24} className="text-purple-400" />
                                                 <p className="font-semibold text-white">{option.text}</p>
                                             </motion.button>
                                         ))}
