@@ -13,29 +13,29 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         {
             question: "What's your biggest pain point right now?",
             options: [
-                { text: "I spend too much time on repetitive, manual reporting.", score: 0, icon: "file-text" },
-                { text: "My dashboards are good, but they don't drive action.", score: 1, icon: "bar-chart-2" }
+                { text: "I spend too much time on repetitive, manual reporting.", score: 0 },
+                { text: "My dashboards are good, but they don't drive action.", score: 1 }
             ],
         },
         {
             question: "What's your primary goal with AI?",
             options: [
-                { text: "To automate a specific task and get a quick, tangible win.", score: 0, icon: "bolt" },
-                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1, icon: "briefcase" }
+                { text: "To automate a specific task and get a quick, tangible win.", score: 0 },
+                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1 }
             ],
         },
         {
             question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "I'm just starting out and want a practical introduction.", score: 0, icon: "book" },
-                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1, icon: "rocket" }
+                { text: "I'm just starting out and want a practical introduction.", score: 0 },
+                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1 }
             ],
         },
         {
             question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Saving hours each week and proving AI's value to my manager.", score: 0, icon: "clock" },
-                { text: "Building systems that deliver business answers instantly, not just data.", score: 1, icon: "award" }
+                { text: "Saving hours each week and proving AI's value to my manager.", score: 0 },
+                { text: "Building systems that deliver business answers instantly, not just data.", score: 1 }
             ],
         }
     ];
@@ -95,21 +95,30 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 exit={{ opacity: 0, y: -20 }}
                                 className="text-center"
                             >
-                                <div className="flex justify-center items-center gap-3 mb-4">
-                                    <Icon name="compass" size={32} className="text-purple-400"/>
-                                    <h3 className="text-3xl md:text-4xl font-bold text-white">Not Sure which course to pick?</h3>
+                                <div className="flex justify-center items-center gap-4 mb-4">
+                                    <Icon name="compass" size={40} className="text-purple-400" />
+                                    <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path!</h3>
+                                    <Icon name="rocket" size={40} className="text-pink-400" />
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
-                                    Answer a few quick questions to see which course is right for you.
+                                    Answer a few quick questions to see if the 3-Hour Champion Sprint or the 16-Hour Superstar Accelerator is right for you. Get personalized insight to match your interests and goals!
                                 </p>
-                                <motion.button
-                                    onClick={startQuiz}
-                                    className="py-3 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    Start Quiz
-                                </motion.button>
+                                <div className="flex justify-center gap-6">
+                                    <div className="w-16 h-16 flex items-center justify-center bg-gray-800 rounded-full text-purple-400">
+                                        <Icon name="cpu" size={32} />
+                                    </div>
+                                    <motion.button
+                                        onClick={startQuiz}
+                                        className="py-3 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl flex items-center justify-center"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Start Quiz
+                                    </motion.button>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-gray-800 rounded-full text-purple-400">
+                                        <Icon name="book" size={32} />
+                                    </div>
+                                </div>
                             </motion.div>
                         ) : result ? (
                             <motion.div
@@ -147,6 +156,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
+                                className="min-h-[300px] flex flex-col justify-between" // Added min-h to maintain card size
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <button onClick={goBack} className="text-gray-400 hover:text-white transition-colors">
@@ -161,7 +171,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
                                 </div>
                                 
-                                <div className="max-w-xl mx-auto">
+                                <div className="max-w-xl mx-auto flex-grow"> {/* flex-grow to push options down if content is short */}
                                     <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step - 1].question}</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {questions[step - 1].options.map(option => (
@@ -171,7 +181,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                                 className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all flex items-center gap-3"
                                                 whileHover={{ y: -3 }}
                                             >
-                                                <Icon name={option.icon} size={24} className="text-purple-400" />
+                                                {/* Removed individual option icons here */}
                                                 <p className="font-semibold text-white">{option.text}</p>
                                             </motion.button>
                                         ))}
