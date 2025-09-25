@@ -6,61 +6,90 @@ import { courseData, mascots } from '../lib/constants';
 
 const CourseFinderQuiz = ({ scrollToSection }) => {
     const [step, setStep] = useState(0);
-    const [score, setScore] = useState(0);
+    const [answers, setAnswers] = useState([]);
     const [result, setResult] = useState(null);
 
     const questions = [
         {
+            id: 'painPoint',
             question: "What's your biggest pain point right now?",
             options: [
-                { text: "I spend too much time on repetitive, manual reporting.", score: 0 },
-                { text: "My dashboards are good, but they don't drive action.", score: 1 }
+                { text: "I spend too much time on repetitive, manual reporting.", score: 0, value: 'reporting' },
+                { text: "My dashboards are good, but they don't drive action.", score: 1, value: 'action' }
             ],
         },
         {
+            id: 'goal',
             question: "What's your primary goal with AI?",
             options: [
-                { text: "To automate a specific task and get a quick, tangible win.", score: 0 },
-                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1 }
+                { text: "To automate a specific task and get a quick, tangible win.", score: 0, value: 'quickWin' },
+                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1, value: 'portfolio' }
             ],
         },
         {
+            id: 'comfortLevel',
             question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "I'm just starting out and want a practical introduction.", score: 0 },
-                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1 }
+                { text: "I'm just starting out and want a practical introduction.", score: 0, value: 'beginner' },
+                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1, value: 'advanced' }
             ],
         },
         {
+            id: 'biggerWin',
             question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Saving hours each week and proving AI's value to my manager.", score: 0 },
-                { text: "Building systems that deliver business answers instantly, not just data.", score: 1 }
+                { text: "Saving hours each week and proving AI's value to my manager.", score: 0, value: 'timeSaving' },
+                { text: "Building systems that deliver business answers instantly, not just data.", score: 1, value: 'strategy' }
             ],
         }
     ];
 
-    const handleAnswer = (answerScore) => {
-        const newScore = score + answerScore;
+    const handleAnswer = (answer) => {
+        const newAnswers = [...answers.slice(0, step - 1), answer];
+        setAnswers(newAnswers);
+
         if (step < questions.length) {
-            setScore(newScore);
             setStep(step + 1);
         } else {
-            calculateResult(newScore);
+            calculateResult(newAnswers);
         }
     };
 
-    const calculateResult = (finalScore) => {
+    const calculateResult = (finalAnswers) => {
+        const finalScore = finalAnswers.reduce((total, ans) => total + ans.score, 0);
         if (finalScore >= 2) {
             setResult('accelerator');
         } else {
             setResult('sprint');
         }
     };
+    
+    const getInsight = () => {
+        const painPointAnswer = answers.find(a => a.id === 'painPoint')?.value;
+        const goalAnswer = answers.find(a => a.id === 'goal')?.value;
+
+        if (result === 'sprint') {
+            if (painPointAnswer === 'reporting') {
+                return "Fun Fact: Analysts spend up to 8 hours a week on repetitive reporting. You're on the right track to reclaim that time!";
+            }
+            if (goalAnswer === 'quickWin') {
+                return "Insight: A single, successful automation project is often the fastest way to get management's attention and buy-in for more AI initiatives.";
+            }
+        } else { // accelerator
+            if (painPointAnswer === 'action') {
+                return "Insight: You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap and providing actionable answers.";
+            }
+            if (goalAnswer === 'portfolio') {
+                return "Fun Fact: 85% of AI hiring managers say a strong portfolio of real-world projects is more influential than a traditional CV. You're thinking like a top candidate!";
+            }
+        }
+        return "Fun Fact: Automating just one daily 30-minute task can save you over 120 hours a year!";
+    };
+
 
     const resetQuiz = () => {
         setStep(0);
-        setScore(0);
+        setAnswers([]);
         setResult(null);
     };
 
@@ -80,7 +109,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="pt-8 md:pt-10 pb-16 md:pb-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div
-                    className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative"
+                    className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative min-h-[400px] flex flex-col justify-center"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -98,12 +127,12 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 <div className="flex justify-center items-center gap-4 mb-4">
                                     <Icon name="compass" size={40} className="text-purple-400" />
                                     <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path!</h3>
-                                    <Icon name="rocket" size={40} className="text-pink-400" />
+                                     <Icon name="award" size={40} className="text-pink-400" />
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
-                                    Answer a few quick questions to see if the 3-Hour Champion Sprint or the 16-Hour Superstar Accelerator is right for you. Get personalized insight to match your interests and goals!
+                                    Answer a few quick questions to find which course is best for you right now. Get personalized insight to match your interests and goals!
                                 </p>
-                                <div className="flex justify-center gap-6">
+                                <div className="flex justify-center items-center gap-6">
                                     <div className="w-16 h-16 flex items-center justify-center bg-gray-800 rounded-full text-purple-400">
                                         <Icon name="cpu" size={32} />
                                     </div>
@@ -137,6 +166,9 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
                                     {result === 'sprint' ? courseData.sprint.title : courseData.accelerator.title}
                                 </h2>
+                                <div className="bg-gray-800/50 p-3 rounded-lg max-w-xl mx-auto mb-6 text-sm italic text-cyan-300 border border-gray-700">
+                                    {getInsight()}
+                                </div>
                                 <p className="text-gray-300 max-w-xl mx-auto mb-6">
                                     {result === 'sprint' ? "This course is perfect for getting a quick, impactful win and mastering the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
                                 </p>
@@ -156,7 +188,6 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
-                                className="min-h-[300px] flex flex-col justify-between" // Added min-h to maintain card size
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <button onClick={goBack} className="text-gray-400 hover:text-white transition-colors">
@@ -171,17 +202,16 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
                                 </div>
                                 
-                                <div className="max-w-xl mx-auto flex-grow"> {/* flex-grow to push options down if content is short */}
+                                <div className="max-w-xl mx-auto">
                                     <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step - 1].question}</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {questions[step - 1].options.map(option => (
                                             <motion.button
                                                 key={option.text}
-                                                onClick={() => handleAnswer(option.score)}
-                                                className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all flex items-center gap-3"
+                                                onClick={() => handleAnswer({ id: questions[step - 1].id, ...option })}
+                                                className="w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900 hover:bg-purple-900/50 hover:border-purple-700 transition-all flex items-center"
                                                 whileHover={{ y: -3 }}
                                             >
-                                                {/* Removed individual option icons here */}
                                                 <p className="font-semibold text-white">{option.text}</p>
                                             </motion.button>
                                         ))}
