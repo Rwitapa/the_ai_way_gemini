@@ -14,32 +14,32 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
             id: 'painPoint',
             question: "What's your biggest pain point right now?",
             options: [
-                { text: "I spend too much time on repetitive, manual reporting.", score: 0, value: 'reporting' },
-                { text: "My dashboards are good, but they don't drive action.", score: 1, value: 'action' }
+                { text: "Repetitive, manual reporting", score: 0, value: 'reporting' },
+                { text: "Dashboards that don't drive action", score: 1, value: 'action' }
             ],
         },
         {
             id: 'goal',
             question: "What's your primary goal with AI?",
             options: [
-                { text: "To automate a specific task and get a quick, tangible win.", score: 0, value: 'quickWin' },
-                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1, value: 'portfolio' }
+                { text: "Get a quick, tangible win", score: 0, value: 'quickWin' },
+                { text: "Build a portfolio of AI projects", score: 1, value: 'portfolio' }
             ],
         },
         {
             id: 'comfortLevel',
             question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "I'm just starting out and want a practical introduction.", score: 0, value: 'beginner' },
-                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1, value: 'advanced' }
+                { text: "I'm just starting out", score: 0, value: 'beginner' },
+                { text: "Ready to dive into advanced topics", score: 1, value: 'advanced' }
             ],
         },
         {
             id: 'biggerWin',
             question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Saving hours each week and proving AI's value to my manager.", score: 0, value: 'timeSaving' },
-                { text: "Building systems that deliver business answers instantly, not just data.", score: 1, value: 'strategy' }
+                { text: "Saving hours and proving AI's value", score: 0, value: 'timeSaving' },
+                { text: "Delivering instant business answers", score: 1, value: 'strategy' }
             ],
         }
     ];
@@ -170,7 +170,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     {getInsight()}
                                 </div>
                                 <p className="text-gray-300 max-w-xl mx-auto mb-6">
-                                    {result === 'sprint' ? "This course is perfect for getting a quick, impactful win and mastering the fundamentals of automation." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
+                                    {result === 'sprint' ? "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career." : "This course will give you the deep, portfolio-ready skills to build end-to-end AI systems and accelerate your career."}
                                 </p>
                                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                                     <motion.button onClick={() => scrollToSection('courses')} className="w-full sm:w-auto py-3 px-8 text-base font-semibold rounded-full bg-purple-600 text-white shadow-xl" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
