@@ -188,7 +188,7 @@ const App = () => {
                 formatAcceleratorDate={formatAcceleratorDate}
             />
             <MentorSection sectionRef={sectionRefs.mentors} />
-            <CourseComparator />
+            <CourseFinderQuiz scrollToSection={scrollToSection} />
             <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection />
             <FinalCTASection />
