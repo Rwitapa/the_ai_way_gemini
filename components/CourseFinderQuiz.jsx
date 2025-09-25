@@ -97,7 +97,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                             >
                                 <div className="flex justify-center items-center gap-3 mb-4">
                                     <Icon name="compass" size={32} className="text-purple-400"/>
-                                    <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path</h3>
+                                    <h3 className="text-3xl md:text-4xl font-bold text-white">Not Sure which course to pick?</h3>
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
                                     Answer a few quick questions to see which course is right for you.
