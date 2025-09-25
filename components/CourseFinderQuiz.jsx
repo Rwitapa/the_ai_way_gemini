@@ -71,7 +71,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
 
         if (result === 'sprint') {
             if (painPointAnswer === 'reporting') {
-                return "Fun Fact: Analysts spend up to 8 hours a week on repetitive reporting. You're on the right track to reclaim that time!";
+                return "Analysts spend up to 8 hours a week on repetitive reporting. You're on the right track to reclaim that time!";
             }
             if (goalAnswer === 'quickWin') {
                 return "A single, successful automation project is often the fastest way to get management's attention and buy-in for more AI initiatives.";
@@ -81,10 +81,10 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                 return "You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap and providing actionable answers.";
             }
             if (goalAnswer === 'portfolio') {
-                return "Fun Fact: 85% of AI hiring managers say a strong portfolio of real-world projects is more influential than a traditional CV. You're thinking like a top candidate!";
+                return "85% of AI hiring managers say a strong portfolio of real-world projects is more influential than a traditional CV. You're thinking like a top candidate!";
             }
         }
-        return "Fun Fact: Automating just one daily 30-minute task can save you over 120 hours a year!";
+        return "Automating just one daily 30-minute task can save you over 120 hours a year!";
     };
 
 
@@ -127,9 +127,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 className="text-center"
                             >
                                 <div className="flex justify-center items-center gap-4 mb-4">
-                                    <Icon name="compass" size={40} className="text-purple-400" />
                                     <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path!</h3>
-                                    <Icon name="award" size={40} className="text-purple-400" />
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
                                     Answer a few quick questions to find which course is best for you right now. Get personalized insight to match your interests and goals!
@@ -168,7 +166,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
                                     {result === 'sprint' ? courseData.sprint.title : courseData.accelerator.title}
                                 </h2>
-                                <div className="bg-gray-800/50 p-3 rounded-lg max-w-xl mx-auto mb-6 text-sm italic text-cyan-300 border border-gray-700">
+                                <div className="bg-gray-800/50 p-3 rounded-lg max-w-xl mx-auto mb-6 text-sm italic text-green-300 border border-gray-700">
                                     {getInsight()}
                                 </div>
                                 <p className="text-gray-300 max-w-xl mx-auto mb-6">
