@@ -1,3 +1,4 @@
+// components/CourseFinderQuiz.jsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from './common/Icon.jsx';
@@ -10,31 +11,31 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
 
     const questions = [
         {
-            question: "Which best describes your day-to-day with data?",
+            question: "What's your biggest pain point right now?",
             options: [
-                { text: "Mostly in Excel/Sheets, creating reports manually.", score: 0 },
-                { text: "I write SQL and use BI tools like Tableau/Power BI.", score: 1 }
+                { text: "I spend too much time on repetitive, manual reporting.", score: 0 },
+                { text: "My dashboards are good, but they don't drive action.", score: 1 }
             ],
         },
         {
-            question: "What kind of project excites you more right now?",
+            question: "What's your primary goal with AI?",
             options: [
-                { text: "Automating a repetitive task to save hours each week.", score: 0 },
-                { text: "Building a complex AI agent from scratch for my portfolio.", score: 1 }
+                { text: "To automate a specific task and get a quick, tangible win.", score: 0 },
+                { text: "To build a portfolio of AI projects and become an AI-powered analyst.", score: 1 }
             ],
         },
         {
-            question: "How much time can you commit?",
+            question: "How comfortable are you with advanced analytics concepts?",
             options: [
-                { text: "A single focused session to get a quick win.", score: 0 },
-                { text: "A couple of weekends for a deep-dive experience.", score: 1 }
+                { text: "I'm just starting out and want a practical introduction.", score: 0 },
+                { text: "I'm ready to dive into topics like RAG and agentic workflows.", score: 1 }
             ],
         },
         {
-            question: "What's your main career goal with this course?",
+            question: "What would be a bigger win for you right now?",
             options: [
-                { text: "Prove my value and efficiency in my current role.", score: 0 },
-                { text: "Transition to a more senior or specialized AI-focused role.", score: 1 }
+                { text: "Saving hours each week and proving AI's value to my manager.", score: 0 },
+                { text: "Building systems that deliver business answers instantly, not just data.", score: 1 }
             ],
         }
     ];
@@ -143,7 +144,6 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     <div className="font-mono text-sm text-purple-400 bg-gray-950/50 px-2 py-1 rounded-full mb-3">
                                         {step} / {questions.length}
                                     </div>
-                                    <p className="text-gray-400 text-center mb-8">Answer these {questions.length} quick questions to find your perfect path.</p>
                                 </div>
                                 
                                 <div className="w-full bg-gray-700 rounded-full h-1.5 mb-8">
