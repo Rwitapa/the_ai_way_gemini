@@ -48,15 +48,16 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         const newAnswers = [...answers.slice(0, step - 1), answer];
         setAnswers(newAnswers);
 
+        const currentScore = newAnswers.reduce((total, ans) => total + ans.score, 0);
+
         if (step < questions.length) {
             setStep(step + 1);
         } else {
-            calculateResult(newAnswers);
+            calculateResult(currentScore);
         }
     };
 
-    const calculateResult = (finalAnswers) => {
-        const finalScore = finalAnswers.reduce((total, ans) => total + ans.score, 0);
+    const calculateResult = (finalScore) => {
         if (finalScore >= 2) {
             setResult('accelerator');
         } else {
@@ -73,11 +74,11 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                 return "Fun Fact: Analysts spend up to 8 hours a week on repetitive reporting. You're on the right track to reclaim that time!";
             }
             if (goalAnswer === 'quickWin') {
-                return "Insight: A single, successful automation project is often the fastest way to get management's attention and buy-in for more AI initiatives.";
+                return "A single, successful automation project is often the fastest way to get management's attention and buy-in for more AI initiatives.";
             }
         } else { // accelerator
             if (painPointAnswer === 'action') {
-                return "Insight: You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap and providing actionable answers.";
+                return "You've noticed that dashboards often show 'what' but not 'why.' Building AI agents is the key to bridging that gap and providing actionable answers.";
             }
             if (goalAnswer === 'portfolio') {
                 return "Fun Fact: 85% of AI hiring managers say a strong portfolio of real-world projects is more influential than a traditional CV. You're thinking like a top candidate!";
@@ -98,6 +99,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
     };
 
     const goBack = () => {
+        setAnswers(prev => prev.slice(0, -1));
         if (step > 1) {
             setStep(step - 1);
         } else {
@@ -109,7 +111,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
         <section className="pt-8 md:pt-10 pb-16 md:pb-20 bg-gray-950">
             <div className="container mx-auto px-6">
                 <motion.div
-                    className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative min-h-[400px] flex flex-col justify-center"
+                    className="w-full bg-gradient-to-br from-purple-900/40 via-gray-900 to-gray-900 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/20 border border-purple-800/60 relative min-h-[420px] flex flex-col justify-center"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
@@ -127,12 +129,12 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 <div className="flex justify-center items-center gap-4 mb-4">
                                     <Icon name="compass" size={40} className="text-purple-400" />
                                     <h3 className="text-3xl md:text-4xl font-bold text-white">Find Your Perfect Path!</h3>
-                                     <Icon name="award" size={40} className="text-pink-400" />
+                                    <Icon name="award" size={40} className="text-purple-400" />
                                 </div>
                                 <p className="text-gray-300 max-w-2xl mx-auto text-lg mb-8">
                                     Answer a few quick questions to find which course is best for you right now. Get personalized insight to match your interests and goals!
                                 </p>
-                                <div className="flex justify-center items-center gap-6">
+                                <div className="flex justify-center items-center gap-12">
                                     <div className="w-16 h-16 flex items-center justify-center bg-gray-800 rounded-full text-purple-400">
                                         <Icon name="cpu" size={32} />
                                     </div>
@@ -155,7 +157,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="text-center"
+                                className="text-center flex-grow flex flex-col justify-center"
                             >
                                 <div className="flex justify-center mb-4">
                                     <div className="w-24 h-24 text-purple-400">
@@ -188,6 +190,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
+                                className="flex-grow flex flex-col"
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <button onClick={goBack} className="text-gray-400 hover:text-white transition-colors">
@@ -202,7 +205,7 @@ const CourseFinderQuiz = ({ scrollToSection }) => {
                                     <motion.div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" initial={{width:0}} animate={{ width: `${((step) / questions.length) * 100}%` }} />
                                 </div>
                                 
-                                <div className="max-w-xl mx-auto">
+                                <div className="max-w-xl mx-auto flex-grow flex flex-col justify-center">
                                     <p className="font-semibold text-white text-lg mb-4 text-center">{questions[step - 1].question}</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {questions[step - 1].options.map(option => (
