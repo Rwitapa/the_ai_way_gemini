@@ -30,6 +30,8 @@ function App() {
     const sectionRefs = {
         courses: useRef(null),
         faq: useRef(null),
+        mentors: useRef(null),
+        testimonials: useRef(null),
     };
 
     useEffect(() => {
@@ -125,12 +127,8 @@ function App() {
         setCalendarFor(null);
     };
     
-    const scrollToCourses = () => {
-        sectionRefs.courses.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-    
-    const scrollToFAQ = () => {
-        sectionRefs.faq.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollToSection = (section) => {
+        sectionRefs[section].current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const openCheckoutForm = (course) => {
@@ -189,8 +187,7 @@ function App() {
 
     return (
         <Layout
-            scrollToCourses={scrollToCourses}
-            scrollToFAQ={scrollToFAQ}
+            scrollToSection={scrollToSection}
         >
             <HeroSection />
             <CompaniesBelt />
@@ -203,9 +200,9 @@ function App() {
                 formatSprintDate={formatSprintDate}
                 formatAcceleratorDate={formatAcceleratorDate}
             />
-            <MentorSection />
-            <CourseFinderQuiz scrollToCourses={scrollToCourses} />
-            <TestimonialsSection />
+            <MentorSection sectionRef={sectionRefs.mentors} />
+            <CourseFinderQuiz scrollToSection={scrollToSection} />
+            <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection sectionRef={sectionRefs.faq} />
             <FinalCTASection />
             
@@ -233,4 +230,3 @@ function App() {
 }
 
 export default App;
-
