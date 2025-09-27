@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import Icon from './common/Icon';
 import { WHATSAPP_COMMUNITY_URL } from '../lib/constants';
 
-const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
+const Layout = ({ children, scrollToSection }) => {
     const [scrolled, setScrolled] = useState(false);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -18,23 +20,27 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navItemVariants = {
-        hidden: { y: -20, opacity: 0 },
-        visible: { y: 0, opacity: 1 }
-    };
-
-    const mobileMenuVariants = {
-        hidden: { opacity: 0, scale: 0.95 },
-        visible: { opacity: 1, scale: 1, transition: { duration: 0.2, ease: 'easeOut' } },
-        exit: { opacity: 0, scale: 0.95, transition: { duration: 0.15, ease: 'easeIn' } }
-    };
-    
     const navLinks = [
-        { name: 'Courses', action: scrollToCourses, isExternal: false, isButton: false, href: "/#courses" },
-        { name: 'FAQs', action: scrollToFAQ, isExternal: false, isButton: false, href: "/#faq" },
-        { name: 'Community', action: () => window.open(WHATSAPP_COMMUNITY_URL, '_blank'), isExternal: true, isButton: false, href: WHATSAPP_COMMUNITY_URL },
-        { name: 'Enroll Now', action: scrollToCourses, isExternal: false, isButton: true, href: "/#courses" }
+        { name: 'Courses', href: '/courses' },
+        { name: 'Mentors', section: 'mentors' },
+        { name: 'Testimonials', section: 'testimonials' },
+        { name: 'Join Community', href: WHATSAPP_COMMUNITY_URL, isExternal: true },
     ];
+    
+    const handleNavClick = (link) => {
+        if (link.href && !link.isExternal) {
+            router.push(link.href);
+        } else if (link.isExternal) {
+            window.open(link.href, '_blank', 'noopener,noreferrer');
+        } else if (link.section) {
+            if (router.pathname === '/') {
+                scrollToSection(link.section);
+            } else {
+                router.push(`/#${link.section}`);
+            }
+        }
+        setMobileMenuOpen(false);
+    };
 
     return (
         <div className="bg-gray-950 text-gray-300 font-sans">
@@ -48,25 +54,24 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link, index) => (
-                            <motion.div key={link.name} variants={navItemVariants} initial="hidden" animate="visible" transition={{ delay: index * 0.1 }}>
-                                {link.isButton ? (
-                                    <button onClick={link.action} className="bg-purple-600 text-white font-semibold px-5 py-2 rounded-full hover:bg-purple-700 transition-colors">
-                                        {link.name}
-                                    </button>
-                                ) : (
-                                    <button onClick={link.action} className="font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1">
-                                        {link.name} {link.isExternal && <Icon name="external-link" size={14} />}
-                                    </button>
-                                )}
-                            </motion.div>
+                    <nav className="hidden md:flex items-center gap-6">
+                        {navLinks.map((link) => (
+                             <button
+                                key={link.name}
+                                onClick={() => handleNavClick(link)}
+                                className={link.name === 'Join Community'
+                                    ? "bg-green-600 text-white font-semibold px-5 py-2 rounded-full hover:bg-green-700 transition-colors"
+                                    : "font-semibold text-gray-300 hover:text-white transition-colors"
+                                }
+                            >
+                                {link.name}
+                            </button>
                         ))}
                     </nav>
 
                     {/* Mobile Navigation */}
                     <div className="md:hidden">
-                        <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
+                        <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
                             <Icon name={isMobileMenuOpen ? "x" : "menu"} size={24} />
                         </button>
                     </div>
@@ -74,21 +79,17 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            variants={mobileMenuVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
                             className="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-800"
                         >
                             <nav className="flex flex-col items-center gap-6 py-8">
                                 {navLinks.map(link => (
                                      <button
                                         key={link.name}
-                                        onClick={() => {
-                                            link.action();
-                                            setMobileMenuOpen(false);
-                                        }}
-                                        className={`${link.isButton ? 'bg-purple-600 text-white font-semibold px-6 py-3 rounded-full' : 'text-lg font-semibold'}`}
+                                        onClick={() => handleNavClick(link)}
+                                        className="text-lg font-semibold"
                                      >
                                         {link.name}
                                      </button>
