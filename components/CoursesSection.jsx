@@ -7,11 +7,16 @@ import { courseData } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
     
-    // Using custom key outcomes for the homepage sprint course card
     const sprintHomePageKeyOutcomes = [
         { icon: 'bolt', text: 'Automate one repetitive report with AI and save hours every week.' },
         { icon: 'code-2', text: 'Learn practical prompt patterns for SQL, summaries, and structured outputs.' },
         { icon: 'git-fork', text: 'Build a working n8n workflow on your data and leave with a proof-of-concept you can show your manager.' }
+    ];
+
+    const acceleratorHomePageKeyOutcomes = [
+        { icon: 'compass', text: 'Solve 4 real problems: Dashboard Narratives, Retention Insights, Inventory/Stockout Alerts, Marketing Anomaly Tracking.'},
+        { icon: 'tool', text: 'Learn to use the right AI solution for each: Automation, RAG, AI Agents, Anomaly Detection.' },
+        { icon: 'briefcase', text: 'Add human-in-the-loop checks so outputs are trusted, and package your work into a portfolio that proves impact.' }
     ];
 
     return (
@@ -67,7 +72,7 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                             <p className="text-purple-300 mb-6">{courseData.accelerator.tagline}</p>
 
                             <ul className="text-gray-200 space-y-3 mb-8 text-base">
-                                {courseData.accelerator.keyOutcomes.map((outcome, i) => (
+                                {acceleratorHomePageKeyOutcomes.map((outcome, i) => (
                                      <li key={i} className="flex items-start gap-3"><Icon name="check-circle" size={20} className="text-green-400 mt-0.5 flex-shrink-0" /><span>{outcome.text}</span></li>
                                 ))}
                             </ul>
