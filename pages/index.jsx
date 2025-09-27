@@ -1,11 +1,6 @@
 // pages/index.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { auth, db } from "../lib/firebaseClient";
-import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
-import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 import Layout from '../components/Layout';
 import HeroSection from '../components/HeroSection';
 import CompaniesBelt from '../components/CompaniesBelt';
@@ -16,12 +11,15 @@ import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
 import FinalCTASection from '../components/FinalCTASection';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
+import { auth, db } from "../lib/firebaseClient";
+import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
 const CohortCalendarModal = dynamic(() => import('../components/CourseCalendar'));
 const CheckoutForm = dynamic(() => import('../components/CheckoutForm'));
 
-const App = () => {
-    const router = useRouter();
+function App() {
     const [cohortDates, setCohortDates] = useState({ sprint: [], accelerator: [] });
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
@@ -43,18 +41,21 @@ const App = () => {
                 unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
-                        const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
-                        setCohortDates({ sprint: futureSprints, accelerator: futureAccelerators });
+                        setCohortDates({
+                            sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
+                            accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [],
+                        });
                     }
                 });
             } else {
                 signInAnonymously(auth).catch((error) => console.error("Anonymous sign-in failed.", error));
             }
         });
-        return () => { authUnsubscribe(); unsubscribe(); };
+
+        return () => {
+            authUnsubscribe();
+            unsubscribe();
+        };
     }, []);
 
     useEffect(() => {
@@ -62,6 +63,7 @@ const App = () => {
         today.setHours(0, 0, 0, 0);
         const futureSprints = cohortDates.sprint.filter(d => d >= today);
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
+
         setSelectedCohorts({
             sprint: futureSprints[0] || null,
             accelerator: futureAccelerators[0] || null,
@@ -77,7 +79,9 @@ const App = () => {
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, {
+            threshold: 0.1
+        });
         scrollElements.forEach(el => observer.observe(el));
         return () => observer.disconnect();
     }, []);
@@ -87,8 +91,10 @@ const App = () => {
             alert('Admin access required to save changes.');
             return;
         }
+    
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+    
         try {
             const firestoreReadyDates = {
                 sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
@@ -107,7 +113,10 @@ const App = () => {
 
     const handleOpenCalendar = (e, courseType) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setCalendarPosition({ top: rect.bottom + 8, left: rect.left });
+        setCalendarPosition({
+            top: rect.bottom + 8,
+            left: rect.left,
+        });
         setCalendarFor(courseType);
     };
 
@@ -134,13 +143,17 @@ const App = () => {
         const course = checkoutCourse;
         const cohortTypeKey = course.mascot === 'champion' ? 'sprint' : 'accelerator';
         const selectedCohort = selectedCohorts[cohortTypeKey];
+
         if (!selectedCohort) {
             alert('Please select a cohort date before enrolling.');
             return;
         }
+
         const orderResponse = await fetch('/api/create-razorpay-order', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
                 courseType: course.title,
@@ -148,7 +161,9 @@ const App = () => {
                 ...customerDetails,
             }),
         });
+
         const order = await orderResponse.json();
+
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: order.amount,
@@ -156,15 +171,21 @@ const App = () => {
             name: 'The AI Way',
             description: course.title,
             order_id: order.id,
-            handler: (response) => {
-                router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
+            handler: function (response) {
+                alert('Payment successful! You are now enrolled.');
             },
-            prefill: { ...customerDetails },
-            theme: { color: '#8B5CF6' }
+            prefill: {
+                ...customerDetails,
+            },
+            theme: {
+                color: '#8B5CF6'
+            }
         };
+
         const rzp = new window.Razorpay(options);
         rzp.open();
     };
+
 
     return (
         <Layout
@@ -196,8 +217,9 @@ const App = () => {
                 onDateSelect={handleSelectCohort}
                 courseType={calendarFor}
                 position={calendarPosition}
+                onSave={handleSaveDates}
             />
-            {showCheckoutForm && checkoutCourse && (
+             {showCheckoutForm && checkoutCourse && (
                 <CheckoutForm
                     isOpen={showCheckoutForm}
                     onClose={() => setShowCheckoutForm(false)}
@@ -208,6 +230,7 @@ const App = () => {
             )}
         </Layout>
     );
-};
+}
 
 export default App;
+
