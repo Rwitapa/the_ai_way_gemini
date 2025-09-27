@@ -32,9 +32,16 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
     const navLinks = [
         { name: 'Gen AI for Analysts', action: scrollToCourses, isExternal: false, isButton: false, href: "/" },
         { name: 'FAQs', action: scrollToFAQ, isExternal: false, isButton: false, href: "/" },
-        { name: 'Community', action: WHATSAPP_COMMUNITY_URL, isExternal: true, isButton: false, href: WHATSAPP_COMMUNITY_URL },
+        { name: 'Community', action: () => window.open(WHATSAPP_COMMUNITY_URL, '_blank', 'noopener,noreferrer'), isExternal: true, isButton: false, href: WHATSAPP_COMMUNITY_URL },
         { name: 'Enroll Now', action: scrollToCourses, isExternal: false, isButton: true, href: "/" }
     ];
+
+    const handleLinkClick = (link) => {
+        if (link.action) {
+            link.action();
+        }
+        setMobileMenuOpen(false);
+    };
 
     return (
         <div className="bg-gray-950 text-gray-300 font-sans">
@@ -51,19 +58,9 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                     <nav className="hidden md:flex items-center gap-8">
                         {navLinks.map((link, index) => (
                             <motion.div key={link.name} variants={navItemVariants} initial="hidden" animate="visible" transition={{ delay: index * 0.1 }}>
-                                {link.isExternal ? (
-                                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
-                                        {link.name} <Icon name="external-link" size={14} />
-                                    </a>
-                                ) : link.isButton ? (
-                                    <button onClick={link.action} className="bg-purple-600 text-white font-semibold px-5 py-2 rounded-full hover:bg-purple-700 transition-colors">
-                                        {link.name}
-                                    </button>
-                                ) : (
-                                    <button onClick={link.action} className="font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer">
-                                        {link.name}
-                                    </button>
-                                )}
+                                <button onClick={() => handleLinkClick(link)} className={link.isButton ? "bg-purple-600 text-white font-semibold px-5 py-2 rounded-full hover:bg-purple-700 transition-colors" : "font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1"}>
+                                    {link.name} {link.isExternal && <Icon name="external-link" size={14} />}
+                                </button>
                             </motion.div>
                         ))}
                     </nav>
@@ -88,14 +85,7 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                                 {navLinks.map(link => (
                                      <button
                                         key={link.name}
-                                        onClick={() => {
-                                            if (link.isExternal) {
-                                                window.open(link.href, '_blank', 'noopener,noreferrer');
-                                            } else {
-                                                link.action();
-                                            }
-                                            setMobileMenuOpen(false);
-                                        }}
+                                        onClick={() => handleLinkClick(link)}
                                         className={`${link.isButton ? 'bg-purple-600 text-white font-semibold px-6 py-3 rounded-full' : 'text-lg font-semibold'}`}
                                      >
                                         {link.name}
@@ -117,3 +107,4 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
 };
 
 export default Layout;
+
