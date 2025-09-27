@@ -30,12 +30,12 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
     };
     
     const navLinks = [
-        { name: 'Gen AI for Analysts', action: scrollToCourses, isExternal: false, isButton: false },
-        { name: 'FAQs', action: scrollToFAQ, isExternal: false, isButton: false },
-        { name: 'Community', href: WHATSAPP_COMMUNITY_URL, isExternal: true, isButton: false },
-        { name: 'Enroll Now', action: scrollToCourses, isExternal: false, isButton: true }
+        { name: 'Gen AI for Analysts', action: scrollToCourses, isExternal: false, isButton: false, href: "/" },
+        { name: 'FAQs', action: scrollToFAQ, isExternal: false, isButton: false, href: "/" },
+        { name: 'Community', action: WHATSAPP_COMMUNITY_URL, isExternal: true, isButton: false, href: WHATSAPP_COMMUNITY_URL },
+        { name: 'Enroll Now', action: scrollToCourses, isExternal: false, isButton: true, href: "/" }
     ];
-    
+
     return (
         <div className="bg-gray-950 text-gray-300 font-sans">
             <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-gray-950/80 backdrop-blur-lg border-b border-gray-800' : 'bg-transparent'}`}>
@@ -52,7 +52,7 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                         {navLinks.map((link, index) => (
                             <motion.div key={link.name} variants={navItemVariants} initial="hidden" animate="visible" transition={{ delay: index * 0.1 }}>
                                 {link.isExternal ? (
-                                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1">
+                                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
                                         {link.name} <Icon name="external-link" size={14} />
                                     </a>
                                 ) : link.isButton ? (
@@ -86,22 +86,20 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
                         >
                             <nav className="flex flex-col items-center gap-6 py-8">
                                 {navLinks.map(link => (
-                                    link.isExternal ? (
-                                        <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" className="text-lg font-semibold flex items-center gap-1.5" onClick={() => setMobileMenuOpen(false)}>
-                                            {link.name} <Icon name="external-link" size={16} />
-                                        </a>
-                                    ) : (
-                                        <button
-                                            key={link.name}
-                                            onClick={() => {
-                                                if (link.action) link.action();
-                                                setMobileMenuOpen(false);
-                                            }}
-                                            className={`${link.isButton ? 'bg-purple-600 text-white font-semibold px-6 py-3 rounded-full' : 'text-lg font-semibold'}`}
-                                        >
-                                            {link.name}
-                                        </button>
-                                    )
+                                     <button
+                                        key={link.name}
+                                        onClick={() => {
+                                            if (link.isExternal) {
+                                                window.open(link.href, '_blank', 'noopener,noreferrer');
+                                            } else {
+                                                link.action();
+                                            }
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className={`${link.isButton ? 'bg-purple-600 text-white font-semibold px-6 py-3 rounded-full' : 'text-lg font-semibold'}`}
+                                     >
+                                        {link.name}
+                                     </button>
                                 ))}
                             </nav>
                         </motion.div>
@@ -119,3 +117,4 @@ const Layout = ({ children, scrollToCourses, scrollToFAQ }) => {
 };
 
 export default Layout;
+
