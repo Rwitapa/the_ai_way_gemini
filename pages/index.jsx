@@ -6,8 +6,8 @@ import { auth, db } from "../lib/firebaseClient";
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
-import { Layout } from '../components/Layout';
-import { HeroSection } from '../components/HeroSection';
+import Layout from '../components/Layout';
+import HeroSection from '../components/HeroSection';
 import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
 import CoursesSection from '../components/CoursesSection';
@@ -31,8 +31,7 @@ const App = () => {
 
     const sectionRefs = {
         courses: useRef(null),
-        mentors: useRef(null),
-        testimonials: useRef(null),
+        faq: useRef(null),
     };
 
     useEffect(() => {
@@ -116,13 +115,13 @@ const App = () => {
         setSelectedCohorts(prev => ({ ...prev, [courseType]: cohort }));
         setCalendarFor(null);
     };
-
-    const scrollToSection = (sectionName) => {
-        if (sectionName === 'courses') {
-            router.push('/courses');
-        } else {
-            sectionRefs[sectionName]?.current?.scrollIntoView({ behavior: 'smooth' });
-        }
+    
+    const scrollToCourses = () => {
+        sectionRefs.courses.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+    
+    const scrollToFAQ = () => {
+        sectionRefs.faq.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const openCheckoutForm = (course) => {
@@ -169,11 +168,8 @@ const App = () => {
 
     return (
         <Layout
-            scrollToSection={scrollToSection}
-            cohortDates={cohortDates}
-            onSaveDates={handleSaveDates}
-            formatSprintDate={formatSprintDate}
-            formatAcceleratorDate={formatAcceleratorDate}
+            scrollToCourses={scrollToCourses}
+            scrollToFAQ={scrollToFAQ}
         >
             <HeroSection />
             <CompaniesBelt />
@@ -186,10 +182,10 @@ const App = () => {
                 formatSprintDate={formatSprintDate}
                 formatAcceleratorDate={formatAcceleratorDate}
             />
-            <MentorSection sectionRef={sectionRefs.mentors} />
-            <CourseFinderQuiz scrollToSection={scrollToSection} />
-            <TestimonialsSection sectionRef={sectionRefs.testimonials} />
-            <FAQSection />
+            <MentorSection />
+            <CourseFinderQuiz scrollToCourses={scrollToCourses} />
+            <TestimonialsSection />
+            <FAQSection sectionRef={sectionRefs.faq} />
             <FinalCTASection />
             
             <CohortCalendarModal 
