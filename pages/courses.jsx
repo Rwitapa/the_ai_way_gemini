@@ -1,26 +1,27 @@
 // pages/courses.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { auth, db } from "../lib/firebaseClient";
-import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
-
-import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 import Layout from '../components/Layout';
 import CoursesPage from '../components/CoursesPage';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
+import { auth, db } from "../lib/firebaseClient";
+import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
 
 const CohortCalendarModal = dynamic(() => import('../components/CourseCalendar'));
 const CheckoutForm = dynamic(() => import('../components/CheckoutForm'));
 
 const CoursesRoute = () => {
-    const router = useRouter();
     const [cohortDates, setCohortDates] = useState({ sprint: [], accelerator: [] });
     const [calendarFor, setCalendarFor] = useState(null);
     const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
     const [selectedCohorts, setSelectedCohorts] = useState({ sprint: null, accelerator: null });
     const [showCheckoutForm, setShowCheckoutForm] = useState(false);
     const [checkoutCourse, setCheckoutCourse] = useState(null);
+    const sectionRefs = {
+        courses: useRef(null),
+        faq: useRef(null),
+    };
 
     useEffect(() => {
         let unsubscribe = () => {};
@@ -31,18 +32,23 @@ const CoursesRoute = () => {
                 unsubscribe = onSnapshot(datesDocRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const futureSprints = data.sprint ? data.sprint.map(d => d.toDate()).filter(d => d >= today) : [];
-                        const futureAccelerators = data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })).filter(c => c.start >= today) : [];
-                        setCohortDates({ sprint: futureSprints, accelerator: futureAccelerators });
+                        setCohortDates({
+                            sprint: data.sprint ? data.sprint.map(d => d.toDate()) : [],
+                            accelerator: data.accelerator ? data.accelerator.map(c => ({ start: c.start.toDate(), end: c.end.toDate() })) : [],
+                        });
                     }
-                }, (error) => console.error("Error fetching cohort dates:", error));
+                }, (error) => {
+                    console.error("Error fetching cohort dates:", error);
+                });
             } else {
                 signInAnonymously(auth).catch((error) => console.error("Anonymous sign-in failed.", error));
             }
         });
-        return () => { authUnsubscribe(); unsubscribe(); };
+
+        return () => {
+            authUnsubscribe();
+            unsubscribe();
+        };
     }, []);
 
     useEffect(() => {
@@ -50,6 +56,7 @@ const CoursesRoute = () => {
         today.setHours(0, 0, 0, 0);
         const futureSprints = cohortDates.sprint.filter(d => d >= today);
         const futureAccelerators = cohortDates.accelerator.filter(c => c.start >= today);
+
         if (!selectedCohorts.sprint && futureSprints.length > 0) {
             setSelectedCohorts(prev => ({ ...prev, sprint: futureSprints[0] }));
         }
@@ -63,8 +70,10 @@ const CoursesRoute = () => {
             alert('Admin access required to save changes.');
             return;
         }
+    
         const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || 'default-app-id';
         const datesDocRef = doc(db, `/artifacts/${appId}/public/data/cohorts/dates`);
+    
         try {
             const firestoreReadyDates = {
                 sprint: newDates.sprint.map(d => Timestamp.fromDate(new Date(d))),
@@ -80,10 +89,13 @@ const CoursesRoute = () => {
             alert(`Error: ${error.message}`);
         }
     };
-
+    
     const handleOpenCalendar = (e, courseType) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setCalendarPosition({ top: rect.bottom + 8, left: rect.left });
+        setCalendarPosition({
+            top: rect.bottom + 8,
+            left: rect.left,
+        });
         setCalendarFor(courseType);
     };
 
@@ -110,7 +122,9 @@ const CoursesRoute = () => {
 
         const orderResponse = await fetch('/api/create-razorpay-order', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 amount: parseFloat(course.price.replace('₹', '').replace(',', '')) * 100,
                 courseType: course.title,
@@ -118,7 +132,9 @@ const CoursesRoute = () => {
                 ...customerDetails,
             }),
         });
+
         const order = await orderResponse.json();
+
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: order.amount,
@@ -126,22 +142,27 @@ const CoursesRoute = () => {
             name: 'The AI Way',
             description: course.title,
             order_id: order.id,
-            handler: (response) => {
-                router.push(`/thank-you?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`);
+            handler: function (response) {
+                alert('Payment successful! You are now enrolled.');
             },
-            prefill: { ...customerDetails },
-            theme: { color: '#8B5CF6' }
+            prefill: {
+                ...customerDetails,
+            },
+            theme: {
+                color: '#8B5CF6'
+            }
         };
+
         const rzp = new window.Razorpay(options);
         rzp.open();
     };
     
     const scrollToCourses = () => {
-        router.push('/#courses');
+        sectionRefs.courses.current?.scrollIntoView({ behavior: 'smooth' });
     };
     
     const scrollToFAQ = () => {
-        router.push('/#faq');
+        sectionRefs.faq.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
@@ -163,6 +184,7 @@ const CoursesRoute = () => {
                 onDateSelect={handleSelectCohort}
                 courseType={calendarFor}
                 position={calendarPosition}
+                onSave={handleSaveDates}
             />
             {showCheckoutForm && checkoutCourse && (
                 <CheckoutForm
@@ -178,3 +200,4 @@ const CoursesRoute = () => {
 };
 
 export default CoursesRoute;
+
