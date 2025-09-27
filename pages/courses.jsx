@@ -7,7 +7,7 @@ import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 
 import { formatSprintDate, formatAcceleratorDate } from '../lib/constants';
-import { Layout } from '../components/Layout';
+import Layout from '../components/Layout';
 import CoursesPage from '../components/CoursesPage';
 
 const CohortCalendarModal = dynamic(() => import('../components/CourseCalendar'));
@@ -56,7 +56,7 @@ const CoursesRoute = () => {
         if (!selectedCohorts.accelerator && futureAccelerators.length > 0) {
             setSelectedCohorts(prev => ({ ...prev, accelerator: futureAccelerators[0] }));
         }
-    }, [cohortDates]);
+    }, [cohortDates, selectedCohorts.sprint, selectedCohorts.accelerator]);
 
     const handleSaveDates = async (newDates) => {
         if (!auth.currentUser || auth.currentUser.isAnonymous) {
@@ -135,13 +135,19 @@ const CoursesRoute = () => {
         const rzp = new window.Razorpay(options);
         rzp.open();
     };
+    
+    const scrollToCourses = () => {
+        router.push('/#courses');
+    };
+    
+    const scrollToFAQ = () => {
+        router.push('/#faq');
+    };
 
     return (
         <Layout
-            cohortDates={cohortDates}
-            onSaveDates={handleSaveDates}
-            formatSprintDate={formatSprintDate}
-            formatAcceleratorDate={formatAcceleratorDate}
+            scrollToCourses={scrollToCourses}
+            scrollToFAQ={scrollToFAQ}
         >
             <CoursesPage
                 cohortDates={cohortDates}
