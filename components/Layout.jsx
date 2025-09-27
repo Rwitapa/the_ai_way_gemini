@@ -60,8 +60,8 @@ const Layout = ({ children, scrollToSection }) => {
                                 key={link.name}
                                 onClick={() => handleNavClick(link)}
                                 className={link.name === 'Join Community'
-                                    ? "bg-[#0A472E] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#083925] transition-colors"
-                                    : "font-semibold text-gray-300 hover:text-white transition-colors"
+                                    ? "bg-[#0A472E] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#083925] transition-colors text-lg"
+                                    : "font-semibold text-gray-300 hover:text-white transition-colors text-lg"
                                 }
                             >
                                 {link.name}
@@ -89,7 +89,7 @@ const Layout = ({ children, scrollToSection }) => {
                                      <button
                                         key={link.name}
                                         onClick={() => handleNavClick(link)}
-                                        className="text-lg font-semibold"
+                                        className="text-xl font-semibold"
                                      >
                                         {link.name}
                                      </button>
