@@ -60,7 +60,7 @@ const Layout = ({ children, scrollToSection }) => {
                                 key={link.name}
                                 onClick={() => handleNavClick(link)}
                                 className={link.name === 'Join Community'
-                                    ? "bg-green-600 text-white font-semibold px-5 py-2 rounded-full hover:bg-green-700 transition-colors"
+                                    ? "bg-[#0A472E] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#083925] transition-colors"
                                     : "font-semibold text-gray-300 hover:text-white transition-colors"
                                 }
                             >
@@ -110,4 +110,3 @@ const Layout = ({ children, scrollToSection }) => {
 };
 
 export default Layout;
-
