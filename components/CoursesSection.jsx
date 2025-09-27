@@ -6,6 +6,14 @@ import Icon from './common/Icon.jsx';
 import { courseData } from '../lib/constants';
 
 const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
+    
+    // Using custom key outcomes for the homepage sprint course card
+    const sprintHomePageKeyOutcomes = [
+        { icon: 'bolt', text: 'Automate one repetitive report with AI and save hours every week.' },
+        { icon: 'code-2', text: 'Learn practical prompt patterns for SQL, summaries, and structured outputs.' },
+        { icon: 'git-fork', text: 'Build a working n8n workflow on your data and leave with a proof-of-concept you can show your manager.' }
+    ];
+
     return (
         <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
             <div className="container mx-auto px-6">
@@ -31,7 +39,7 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
                             <p className="text-gray-400 mb-6">{courseData.sprint.tagline}</p>
                             
                             <ul className="text-gray-300 space-y-3 mb-8 text-base">
-                                {courseData.sprint.keyOutcomes.map((outcome, i) => (
+                                {sprintHomePageKeyOutcomes.map((outcome, i) => (
                                     <li key={i} className="flex items-start gap-3"><Icon name="check-circle" size={20} className="text-purple-500 mt-0.5 flex-shrink-0" /><span>{outcome.text}</span></li>
                                 ))}
                             </ul>
