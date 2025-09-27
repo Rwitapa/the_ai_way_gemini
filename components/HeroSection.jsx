@@ -23,12 +23,12 @@ export const HeroSection = () => {
 
             <div className="relative z-10 container mx-auto px-6 w-full">
                 <div className="min-h-[86svh] md:min-h-[88vh] pt-24 md:pt-28 pb-10 md:pb-10 flex flex-col items-center justify-center text-center">
-                    <div className="mb-4">
+                    <div className="mb-2 -mt-4">
                         <Image
                             src="/ai_stamp.png"
                             alt="AI Generated Stamp"
-                            width={150}
-                            height={150}
+                            width={160}
+                            height={160}
                             className="opacity-90"
                         />
                     </div>
