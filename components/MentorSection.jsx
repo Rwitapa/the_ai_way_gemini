@@ -78,10 +78,11 @@ const MentorSection = ({ sectionRef }) => {
                                 </span>
                             </div>
                             <p className="text-gray-400 text-base">
-                                Your instructor has walked the path you're on. Rwitapa transformed from a curious analyst to
-                                Director of Analytics at India's top companies. She has scaled high-growth startups by turning
-                                analytics into action with measurable outcomes, won PharmEasy’s hackathon, and is a mentor at
-                                Google’s Agentic AI Hackathon.
+                                Your instructor has walked the path you’re on. Rwitapa grew from a curious analyst to Director of Analytics at
+                                India’s top product companies, scaling high-growth startups by turning analytics into action with measurable outcomes.
+                                She was the youngest female panelist at the Bharat Gen AI & Analytics Summit,
+                                won PharmEasy’s ₹5-lakh hackathon,and mentored at Google’s Agentic AI Hackathon (a Guinness World Record holder)
+                                and Open Source Connect India.
                             </p>
                             <p className="text-gray-400 text-base mt-3">
                                 <strong>Real Results:</strong> She has revolutionized supply chains (25% efficiency gains),
