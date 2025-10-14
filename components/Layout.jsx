@@ -111,7 +111,7 @@ const Layout = ({ children, scrollToSection }) => {
             <main>{children}</main>
             <footer className="bg-gray-900 border-t border-gray-800">
                 <div className="container mx-auto px-6 py-12">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
                         {/* Column 1: Brand */}
                         <div className="flex flex-col items-center md:items-start">
                             <Link href="/" passHref>
@@ -125,17 +125,7 @@ const Layout = ({ children, scrollToSection }) => {
                             </p>
                         </div>
 
-                        {/* Column 2: Quick Links */}
-                        <div>
-                            <h3 className="font-semibold text-white uppercase tracking-wider mb-4">Quick Links</h3>
-                            <nav className="flex flex-col space-y-3">
-                                <button onClick={() => handleNavClick({ section: 'courses' })} className="text-gray-400 hover:text-purple-400 transition-colors">Courses</button>
-                                <button onClick={() => handleNavClick({ section: 'mentors' })} className="text-gray-400 hover:text-purple-400 transition-colors">Mentors</button>
-                                <button onClick={() => handleNavClick({ section: 'testimonials' })} className="text-gray-400 hover:text-purple-400 transition-colors">Testimonials</button>
-                            </nav>
-                        </div>
-
-                        {/* Column 3: Connect */}
+                        {/* Column 2: Connect */}
                         <div>
                             <h3 className="font-semibold text-white uppercase tracking-wider mb-4">Connect</h3>
                             <nav className="flex flex-col space-y-3">
