@@ -23,15 +23,6 @@ export const HeroSection = () => {
 
             <div className="relative z-10 container mx-auto px-6 w-full">
                 <div className="min-h-[86svh] md:min-h-[88vh] pt-24 md:pt-28 pb-10 md:pb-10 flex flex-col items-center justify-center text-center">
-                    <div className="mb-4">
-                        <Image
-                            src="/ai_stamp.png"
-                            alt="AI Generated Stamp"
-                            width={150}
-                            height={150}
-                            className="opacity-90"
-                        />
-                    </div>
                     <Link href="/courses" passHref>
                         <a className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm cursor-pointer hover:bg-purple-900/80 transition-colors">
                             Gen AI for Analysts
