@@ -195,6 +195,7 @@ function App() {
             <PersonasSection />
             <AiGeneratedSection />
             <CoursesSection
+                id="courses"
                 sectionRef={sectionRefs.courses}
                 handleOpenCalendar={handleOpenCalendar}
                 selectedCohorts={selectedCohorts}
@@ -202,9 +203,9 @@ function App() {
                 formatSprintDate={formatSprintDate}
                 formatAcceleratorDate={formatAcceleratorDate}
             />
-            <MentorSection sectionRef={sectionRefs.mentors} />
+            <MentorSection id="mentors" sectionRef={sectionRefs.mentors} />
             <CourseFinderQuiz scrollToSection={scrollToSection} />
-            <TestimonialsSection sectionRef={sectionRefs.testimonials} />
+            <TestimonialsSection id="testimonials" sectionRef={sectionRefs.testimonials} />
             <FAQSection sectionRef={sectionRefs.faq} />
             <PromiseSection />
             
