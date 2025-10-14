@@ -27,7 +27,7 @@ const PromiseSection = () => {
         <section className="py-16 md:py-20 bg-gradient-to-br from-gray-950 to-purple-950 text-center animate-on-scroll border-t border-purple-900">
             <div className="container mx-auto px-6">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
-                    Stop Delivering Dashboards. Start Delivering Answers.
+                    From Dashboards to Decisions.
                 </h2>
                 <p className="text-base md:text-lg text-purple-200 max-w-3xl mx-auto mb-12 drop-shadow">
                     Your company has enough charts. They need insights that drive action. Our hands-on courses teach you to build the AI systems that find them.
