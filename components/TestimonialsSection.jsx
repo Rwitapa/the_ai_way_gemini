@@ -1,3 +1,4 @@
+// components/TestimonialsSection.jsx
 import React from 'react';
 import { motion, useAnimationFrame, useMotionValue, useScroll, useSpring, useTransform, useVelocity, wrap } from 'framer-motion';
 import { testimonials, TestimonialCard } from '../lib/constants';
@@ -45,14 +46,14 @@ const TestimonialColumn = ({ testimonials, direction = 'up', className }) => {
 };
 
 
-const TestimonialsSection = ({ sectionRef }) => {
+const TestimonialsSection = ({ sectionRef, id }) => {
     const middleIndex = Math.ceil(testimonials.length / 2);
     // We duplicate the testimonials to create a seamless loop
     const column1Testimonials = [...testimonials.slice(0, middleIndex), ...testimonials.slice(0, middleIndex)];
     const column2Testimonials = [...testimonials.slice(middleIndex), ...testimonials.slice(middleIndex)];
 
     return (
-        <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 overflow-hidden animate-on-scroll">
+        <section ref={sectionRef} id={id} className="py-16 md:py-20 bg-gray-900 overflow-hidden animate-on-scroll">
             <div className="container mx-auto px-6 text-center">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-10">What Our Students Are Saying</h2>
                 <div className="relative h-[450px] overflow-hidden">
