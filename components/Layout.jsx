@@ -21,9 +21,10 @@ const Layout = ({ children, scrollToSection }) => {
     }, []);
 
     const navLinks = [
-        { name: 'Courses', section: 'courses', href: '/courses' },
+        { name: 'Courses', section: 'courses' },
         { name: 'Mentors', section: 'mentors' },
         { name: 'Testimonials', section: 'testimonials' },
+        { name: 'FAQ', section: 'faq' },
         { name: 'Join Community', href: WHATSAPP_COMMUNITY_URL, isExternal: true },
     ];
     
@@ -69,8 +70,8 @@ const Layout = ({ children, scrollToSection }) => {
                                 key={link.name}
                                 onClick={() => handleNavClick(link)}
                                 className={link.name === 'Join Community'
-                                    ? "bg-[#0A472E] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#083925] transition-colors"
-                                    : "font-semibold text-gray-300 hover:text-white transition-colors"
+                                    ? "bg-green-600/90 text-white font-semibold px-5 py-2 rounded-full hover:bg-green-700 transition-colors"
+                                    : "font-semibold text-gray-300 hover:text-purple-400 transition-colors"
                                 }
                             >
                                 {link.name}
@@ -136,9 +137,13 @@ const Layout = ({ children, scrollToSection }) => {
                     </div>
 
                     <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
-                        <p className="mb-2">
+                        <p className="mb-4">
                             For questions or support, email us at <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a>
                         </p>
+                        <div className="flex justify-center space-x-6 mb-4 text-sm">
+                            <Link href="/privacy-policy" passHref><a className="hover:text-purple-400 transition-colors">Privacy Policy</a></Link>
+                            <Link href="/refund-policy" passHref><a className="hover:text-purple-400 transition-colors">Refund Policy</a></Link>
+                        </div>
                         <p>&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
                     </div>
                 </div>
