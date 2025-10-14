@@ -24,12 +24,12 @@ const PromiseSection = () => {
     ];
 
     return (
-        <section className="py-16 md:py-20 bg-gray-950 text-center animate-on-scroll">
+        <section className="py-16 md:py-20 bg-gradient-to-br from-gray-950 to-purple-950 text-center animate-on-scroll border-t border-purple-900">
             <div className="container mx-auto px-6">
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
                     Stop Delivering Dashboards. Start Delivering Answers.
                 </h2>
-                <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+                <p className="text-base md:text-lg text-purple-200 max-w-3xl mx-auto mb-12 drop-shadow">
                     Your company has enough charts. They need insights that drive action. Our hands-on courses teach you to build the AI systems that find them.
                 </p>
                 
@@ -37,15 +37,16 @@ const PromiseSection = () => {
                     {keyPoints.map((point, index) => (
                         <motion.div 
                             key={index}
-                            className="bg-gray-900 border border-gray-800 rounded-xl p-6"
+                            className="bg-gray-900/70 border border-purple-800 rounded-xl p-6 shadow-xl backdrop-blur-sm"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.5 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
+                            whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(124, 58, 237, 0.3)' }}
                         >
-                            <Icon name={point.icon} size={32} className="text-purple-500 mb-4" />
+                            <Icon name={point.icon} size={32} className="text-purple-400 mb-4" />
                             <h3 className="text-xl font-bold text-white mb-2">{point.title}</h3>
-                            <p className="text-gray-400">{point.description}</p>
+                            <p className="text-gray-300">{point.description}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -53,8 +54,8 @@ const PromiseSection = () => {
                 <div className="flex justify-center">
                     <Link href="/courses" passHref>
                         <motion.a 
-                            className="py-3 px-8 text-lg font-semibold rounded-full bg-white text-gray-950 cursor-pointer" 
-                            whileHover={{ scale: 1.05 }} 
+                            className="py-3 px-8 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-2xl ring-2 ring-purple-400 hover:bg-purple-700 transition-all duration-300 cursor-pointer" 
+                            whileHover={{ scale: 1.07, boxShadow: '0 0 25px rgba(168, 85, 247, 0.6)' }} 
                             whileTap={{ scale: 0.95 }}
                         >
                             Explore Courses
