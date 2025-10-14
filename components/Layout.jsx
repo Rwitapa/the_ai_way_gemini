@@ -21,25 +21,34 @@ const Layout = ({ children, scrollToSection }) => {
     }, []);
 
     const navLinks = [
-        { name: 'Courses', href: '/courses' },
+        { name: 'Courses', section: 'courses', href: '/courses' },
         { name: 'Mentors', section: 'mentors' },
         { name: 'Testimonials', section: 'testimonials' },
         { name: 'Join Community', href: WHATSAPP_COMMUNITY_URL, isExternal: true },
     ];
     
     const handleNavClick = (link) => {
-        if (link.href && !link.isExternal) {
-            router.push(link.href);
-        } else if (link.isExternal) {
+        setMobileMenuOpen(false);
+
+        if (link.isExternal) {
             window.open(link.href, '_blank', 'noopener,noreferrer');
-        } else if (link.section) {
+            return;
+        }
+
+        if (link.section) {
             if (router.pathname === '/') {
-                scrollToSection(link.section);
+                if(scrollToSection) {
+                    scrollToSection(link.section);
+                }
             } else {
                 router.push(`/#${link.section}`);
             }
+            return;
         }
-        setMobileMenuOpen(false);
+        
+        if (link.href) {
+            router.push(link.href);
+        }
     };
 
     return (
