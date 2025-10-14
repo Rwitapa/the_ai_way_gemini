@@ -22,13 +22,12 @@ export const HeroSection = () => {
             <div className="absolute inset-0 bg-gray-950/25" aria-hidden="true" />
 
             <div className="relative z-10 container mx-auto px-6 w-full">
-                <div className="min-h-[80svh] md:min-h-[88vh] pt-20 md:pt-28 pb-10 flex flex-col items-center justify-center text-center">
+                <div className="min-h-[86svh] md:min-h-[88vh] pt-24 md:pt-28 pb-10 flex flex-col items-center justify-center text-center">
                     <Link href="/courses" passHref>
                         <a className="inline-block py-1.5 px-5 rounded-full text-sm font-semibold text-purple-100 bg-purple-900/60 backdrop-blur-sm cursor-pointer hover:bg-purple-900/80 transition-colors">
                             Gen AI for Analysts
                         </a>
                     </Link>
-
 
                     <h1 className="mt-4 text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight md:leading-normal text-white max-w-5xl">
                         Still fixing reports manually?
@@ -44,7 +43,8 @@ export const HeroSection = () => {
                     <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/courses" passHref>
                             <motion.a
-                                className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"                                whileHover={{ scale: 1.05 }}
+                                className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-purple-600 text-white shadow-xl cursor-pointer"
+                                whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 Explore Courses
@@ -55,7 +55,7 @@ export const HeroSection = () => {
                             href={WHATSAPP_COMMUNITY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-[#0A472E] text-white"
+                            className="w-full sm:w-auto py-3.5 px-10 text-lg font-semibold rounded-full bg-green-600/90 text-white"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
