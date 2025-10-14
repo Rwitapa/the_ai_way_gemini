@@ -15,8 +15,8 @@ const AiGeneratedSection = () => (
             <div className="inline-block bg-gray-800 p-3 rounded-full mb-4">
                 <Icon name="cpu" size={28} className="text-purple-400" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white">This Entire Website Was Built Using the Skills We Teach</h2>
-            <p className="text-lg md:text-xl text-gray-400 mt-4">Learn the skills that deliver real business growth. This isn't just a demo; it's proof.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">This Entire Website Is Completely AI Generated.</h2>
+            <p className="text-lg md:text-xl text-gray-400 mt-4">Built using the skills we teach, this site is proof that you can deliver real business growth. This isn't just a demo; it's a demonstration.</p>
         </motion.div>
     </section>
 );
