@@ -1,10 +1,10 @@
-// FAQ
+// components/FAQSection.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { faqs } from '../lib/constants';
 import Icon from './common/Icon.jsx';
 
-const FAQSection = () => {
+const FAQSection = ({ sectionRef, id }) => {
     const [openFaq, setOpenFaq] = useState(null);
     const videoRef = useRef(null);
 
@@ -17,7 +17,7 @@ const FAQSection = () => {
     }, []);
 
     return (
-        <section className="relative py-16 md:py-20 animate-on-scroll overflow-hidden">
+        <section ref={sectionRef} id={id} className="relative py-16 md:py-20 animate-on-scroll overflow-hidden">
             <video
                 ref={videoRef}
                 poster="/poster.png"
@@ -34,7 +34,7 @@ const FAQSection = () => {
             <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
                 <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h2>
                 <p className="text-base md:text-lg text-gray-400 max-w-3xl mx-auto mb-12">Your most common questions, answered.</p>
-                <div className="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
+                <div className="text-left space-y-4 max-h-[70vh] md:max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
                     {faqs.map((faq, index) => (
                         <div key={index} className="rounded-lg border border-purple-800/30 bg-gray-950/50 backdrop-blur-sm overflow-hidden">
                             <button className="w-full flex items-center justify-between p-6 text-left" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}>
