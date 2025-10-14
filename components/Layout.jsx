@@ -137,13 +137,9 @@ const Layout = ({ children, scrollToSection }) => {
                     </div>
 
                     <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
-                        <p className="mb-4">
+                        <p className="mb-2">
                             For questions or support, email us at <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a>
                         </p>
-                        <div className="flex justify-center space-x-6 mb-4 text-sm">
-                            <Link href="/privacy-policy" passHref><a className="hover:text-purple-400 transition-colors">Privacy Policy</a></Link>
-                            <Link href="/refund-policy" passHref><a className="hover:text-purple-400 transition-colors">Refund Policy</a></Link>
-                        </div>
                         <p>&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
                     </div>
                 </div>
