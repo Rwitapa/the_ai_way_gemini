@@ -9,17 +9,17 @@ const PromiseSection = () => {
         {
             icon: 'rocket',
             title: 'Build Real AI Solutions',
-            description: "Go beyond theory. Automate repetitive reports, build RAG agents to query unstructured data, and deploy real-time anomaly detectors. You'll ship four complete portfolio projects."
+            description: "Automate reports, build RAG agents, and deploy anomaly detectors. You'll ship four portfolio-ready projects that solve real business problems."
         },
         {
             icon: 'bar-chart-2',
             title: 'Drive Measurable ROI',
-            description: "Learn to identify high-value problems and create AI systems that save hundreds of hours, uncover revenue opportunities, and prove your impact with compelling memos."
+            description: "Create AI systems that save hours, uncover revenue, and prove your impact. Learn to build solutions that management notices and values."
         },
         {
             icon: 'user-check',
             title: 'Master Director-Level Playbooks',
-            description: "Get direct mentorship from a Director of Analytics. You'll learn the battle-tested strategies used to drive billion-dollar growth at Flipkart, PharmEasy, and more."
+            description: "Learn the exact playbooks used by a Director of Analytics to drive billion-dollar growth at companies like Flipkart and PharmEasy. Get direct mentorship and career strategy."
         }
     ];
 
