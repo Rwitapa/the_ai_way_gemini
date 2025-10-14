@@ -10,7 +10,7 @@ import MentorSection from '../components/MentorSection';
 import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
-import FinalCTASection from '../components/FinalCTASection';
+import PromiseSection from '../components/PromiseSection'; // Import the new section
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from "../lib/firebaseClient";
@@ -204,7 +204,7 @@ function App() {
             <CourseFinderQuiz scrollToSection={scrollToSection} />
             <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection sectionRef={sectionRefs.faq} />
-            <FinalCTASection />
+            <PromiseSection /> {/* Use the new section here */}
             
             <CohortCalendarModal 
                 isOpen={!!calendarFor}
