@@ -5,12 +5,13 @@ import Layout from '../components/Layout';
 import HeroSection from '../components/HeroSection';
 import CompaniesBelt from '../components/CompaniesBelt';
 import PersonasSection from '../components/PersonasSection';
+import AiGeneratedSection from '../components/AiGeneratedSection'; // Import the new section
 import CoursesSection from '../components/CoursesSection';
 import MentorSection from '../components/MentorSection';
 import CourseFinderQuiz from '../components/CourseFinderQuiz';
 import TestimonialsSection from '../components/TestimonialsSection';
 import FAQSection from '../components/FAQSection';
-import PromiseSection from '../components/PromiseSection'; // Import the new section
+import PromiseSection from '../components/PromiseSection';
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from "../lib/firebaseClient";
@@ -192,6 +193,7 @@ function App() {
             <HeroSection />
             <CompaniesBelt />
             <PersonasSection />
+            <AiGeneratedSection />
             <CoursesSection
                 sectionRef={sectionRefs.courses}
                 handleOpenCalendar={handleOpenCalendar}
@@ -204,7 +206,7 @@ function App() {
             <CourseFinderQuiz scrollToSection={scrollToSection} />
             <TestimonialsSection sectionRef={sectionRefs.testimonials} />
             <FAQSection sectionRef={sectionRefs.faq} />
-            <PromiseSection /> {/* Use the new section here */}
+            <PromiseSection />
             
             <CohortCalendarModal 
                 isOpen={!!calendarFor}
