@@ -7,8 +7,8 @@ const PromiseSection = () => {
     const promises = [
         {
             icon: 'rocket',
-            title: 'Ship Real Projects, Not Demos.',
-            description: "You won't just learn theory. You'll build and deploy a working AI workflow that solves a real business problem. You leave with a tangible portfolio asset, not just a certificate."
+            title: 'Ship Production-Ready AI, Not Toy Demos.',
+            description: "Stop watching tutorials. In the 3-hour Sprint, you’ll automate one of your own repetitive reports. In the 16-hour Accelerator, you’ll build four complete AI projects, including automated dashboard narratives, customer insight agents using RAG, and real-time anomaly detection. You leave with a portfolio of working systems that prove you can deliver."
         },
         {
             icon: 'user-check',
@@ -17,8 +17,8 @@ const PromiseSection = () => {
         },
         {
             icon: 'bar-chart-2',
-            title: 'Focus on Career Impact, Not Tools.',
-            description: "Our curriculum is designed to make you highly employable. You'll learn how to prove your ROI, build impact memos, and position yourself as the AI leader on your team."
+            title: 'Go from Report Builder to ROI Driver.',
+            description: "Tools become obsolete; real-world impact doesn't. We teach you to identify high-value business problems and build trusted AI solutions with essential human-in-the-loop checks. You'll learn to create compelling impact memos that get you noticed, positioning yourself as the go-to AI expert who drives measurable results."
         }
     ];
 
