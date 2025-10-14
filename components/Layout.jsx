@@ -110,8 +110,47 @@ const Layout = ({ children, scrollToSection }) => {
             </header>
             <main>{children}</main>
             <footer className="bg-gray-900 border-t border-gray-800">
-                <div className="container mx-auto px-6 py-8 text-center text-gray-500">
-                    <p>&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
+                <div className="container mx-auto px-6 py-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                        {/* Column 1: Brand */}
+                        <div className="flex flex-col items-center md:items-start">
+                            <Link href="/" passHref>
+                                <a className="flex items-center gap-2 mb-4">
+                                    <Image src="/brand/aiway-mark.png" alt="The AI Way Logo" width={32} height={32} />
+                                    <span className="font-bold text-xl text-white">The AI Way</span>
+                                </a>
+                            </Link>
+                            <p className="text-gray-400 max-w-xs">
+                                A career accelerator for analysts ready to drive business impact with AI.
+                            </p>
+                        </div>
+
+                        {/* Column 2: Quick Links */}
+                        <div>
+                            <h3 className="font-semibold text-white uppercase tracking-wider mb-4">Quick Links</h3>
+                            <nav className="flex flex-col space-y-3">
+                                <button onClick={() => handleNavClick({ section: 'courses' })} className="text-gray-400 hover:text-purple-400 transition-colors">Courses</button>
+                                <button onClick={() => handleNavClick({ section: 'mentors' })} className="text-gray-400 hover:text-purple-400 transition-colors">Mentors</button>
+                                <button onClick={() => handleNavClick({ section: 'testimonials' })} className="text-gray-400 hover:text-purple-400 transition-colors">Testimonials</button>
+                            </nav>
+                        </div>
+
+                        {/* Column 3: Connect */}
+                        <div>
+                            <h3 className="font-semibold text-white uppercase tracking-wider mb-4">Connect</h3>
+                            <nav className="flex flex-col space-y-3">
+                                <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-400 transition-colors">Join Community</a>
+                                <a href="https://www.linkedin.com/in/rwitapa-mitra-3b43a999/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-400 transition-colors">LinkedIn</a>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
+                        <p className="mb-2">
+                            For questions or support, email us at <a href="mailto:theaiway.official@gmail.com" className="text-purple-400 hover:underline">theaiway.official@gmail.com</a>
+                        </p>
+                        <p>&copy; {new Date().getFullYear()} The AI Way. All rights reserved.</p>
+                    </div>
                 </div>
             </footer>
         </div>
