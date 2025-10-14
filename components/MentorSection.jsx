@@ -1,9 +1,10 @@
+// components/MentorSection.jsx
 import React, { useEffect, useRef } from 'react';
 import { motion } from "framer-motion";
 
 import Icon from './common/Icon.jsx';
 
-const MentorSection = ({ sectionRef }) => {
+const MentorSection = ({ sectionRef, id }) => {
     const videoRef = useRef(null);
 
     useEffect(() => {
@@ -17,6 +18,7 @@ const MentorSection = ({ sectionRef }) => {
     return (
         <motion.section
             ref={sectionRef}
+            id={id}
             className="pt-16 md:pt-20 pb-8 md:pb-10 bg-gray-950"
             initial="hidden"
             whileInView="visible"
