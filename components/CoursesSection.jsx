@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Icon from './common/Icon.jsx';
 import { courseData } from '../lib/constants';
 
-const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
+const CoursesSection = ({ sectionRef, id, handleOpenCalendar, selectedCohorts, openCheckoutForm, formatSprintDate, formatAcceleratorDate }) => {
     
     const sprintHomePageKeyOutcomes = [
         { icon: 'bolt', text: 'Automate one repetitive report with AI and save hours every week.' },
@@ -20,7 +20,7 @@ const CoursesSection = ({ sectionRef, handleOpenCalendar, selectedCohorts, openC
     ];
 
     return (
-        <section ref={sectionRef} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
+        <section ref={sectionRef} id={id} className="py-16 md:py-20 bg-gray-900 animate-on-scroll">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
                     <div className="flex items-center justify-center gap-2 mb-4">
