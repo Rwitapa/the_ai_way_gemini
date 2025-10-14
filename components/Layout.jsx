@@ -94,12 +94,12 @@ const Layout = ({ children, scrollToSection }) => {
                             exit={{ opacity: 0, height: 0 }}
                             className="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-800"
                         >
-                            <nav className="flex flex-col items-center gap-6 py-8">
+                            <nav className="flex flex-col items-center gap-4 py-6">
                                 {navLinks.map(link => (
                                      <button
                                         key={link.name}
                                         onClick={() => handleNavClick(link)}
-                                        className="text-lg font-semibold"
+                                        className="text-lg font-semibold px-4 py-3"
                                      >
                                         {link.name}
                                      </button>
